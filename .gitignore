@@ -56,9 +56,9 @@ env.bak/
 venv.bak/
 
 # IDE & Editor files
-.vscode/
 .idea/
 *.swp
+*.swo
 *.swo
 *~
 

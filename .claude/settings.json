@@ -1,0 +1,10 @@
+{
+  "skills": [
+    "expert-cloud-agent-architecture",
+    "expert-ui-ux-design"
+  ],
+  "rules": [
+    ".agents/rules/cloud-agent-architecture.md",
+    ".agents/rules/ui-ux-pro-max.md"
+  ]
+}

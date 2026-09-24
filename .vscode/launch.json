@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Drone Person Detector (Synthetic Test)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/detect.py",
+      "args": ["--source", "test_drone.mp4", "--headless"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Generate Synthetic Test Video",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/generate_test_video.py",
+      "args": ["--output", "test_drone.mp4", "--num-people", "4"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
