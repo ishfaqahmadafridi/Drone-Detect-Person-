@@ -1,7 +1,5 @@
 """
-Alert Manager module.
-Evaluates detection & intrusion states, manages alarm levels, logs security incidents,
-and captures evidentiary snapshots with cooldown control.
+Alert Service: State Machine, Cooldown-governed Evidence Logging & Storage.
 """
 
 import os
@@ -11,14 +9,9 @@ import csv
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 import cv2
+from app.core.constants import AlertLevel
 
-class AlertLevel:
-    CLEAR = "CLEAR"               # 0 persons detected
-    MONITORING = "MONITORING"     # 1 person detected (normal surveillance)
-    MULTI_PERSON = "MULTI_PERSON" # 2 or more persons detected (Gathering Alert)
-    INTRUSION = "INTRUSION"       # Person(s) inside restricted zone
-
-class AlertManager:
+class AlertManagerService:
     def __init__(
         self,
         output_dir: str = "runs/output",
@@ -39,7 +32,6 @@ class AlertManager:
         self.current_threat_level = AlertLevel.CLEAR
         self.alert_history: List[Dict] = []
         
-        # Setup files
         self.log_file_csv = os.path.join(self.logs_dir, "intrusion_events.csv")
         self.log_file_json = os.path.join(self.logs_dir, "intrusion_events.json")
         self._init_csv()
@@ -65,10 +57,6 @@ class AlertManager:
         gatherings: List[Tuple[int, int, float]],
         frame_idx: int = 0
     ) -> Tuple[str, str, Dict]:
-        """
-        Evaluate frame detections to determine current security status.
-        Returns (threat_level, alert_message, details_dict)
-        """
         total_count = len(detected_persons)
         intruder_count = len(intruders)
         gathering_count = len(gatherings)
@@ -111,10 +99,6 @@ class AlertManager:
         threat_level: str,
         details: Dict
     ) -> Optional[str]:
-        """
-        If threat level is active (Intrusion or 2+ People) and cooldown passed,
-        save timestamped snapshot and append incident log.
-        """
         now = time.time()
         is_active_alert = threat_level in [AlertLevel.INTRUSION, AlertLevel.MULTI_PERSON]
         
@@ -125,16 +109,13 @@ class AlertManager:
             filename = f"alert_{threat_level.lower()}_{timestamp_str}.jpg"
             filepath = os.path.join(self.snapshots_dir, filename)
             
-            # Save frame to disk
             cv2.imwrite(filepath, frame)
             snapshot_saved_path = filepath
             
-            # Record incident log
             details_copy = dict(details)
             details_copy['snapshot_path'] = filepath
             self.alert_history.append(details_copy)
             
-            # Write to CSV
             with open(self.log_file_csv, mode='a', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
                 writer.writerow([
@@ -147,7 +128,6 @@ class AlertManager:
                     filepath
                 ])
                 
-            # Keep recent JSON log file updated
             try:
                 with open(self.log_file_json, mode='w', encoding='utf-8') as jf:
                     json.dump(self.alert_history[-100:], jf, indent=2)

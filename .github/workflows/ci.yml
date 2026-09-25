@@ -7,7 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-and-test:
+  backend-test:
+    name: Backend CI (FastAPI & Vision Engine)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,16 +19,19 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
+          cache-dependency-path: backend/requirements.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r backend/requirements.txt
 
       - name: Test Synthetic Flight Generator
         run: |
+          cd backend
           python generate_test_video.py --output test_drone.mp4 --duration 2 --num-people 3
 
       - name: Test Drone Person & Intrusion Detector (Headless)
         run: |
+          cd backend
           python detect.py --source test_drone.mp4 --headless --max-frames 10
