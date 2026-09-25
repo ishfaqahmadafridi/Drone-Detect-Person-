@@ -3,6 +3,7 @@ Terrain Renderer: Procedural rendering of aerial ground, grass, and restricted z
 """
 
 import math
+from typing import Tuple
 import cv2
 import numpy as np
 from app.simulator.config import SimulationConfig
