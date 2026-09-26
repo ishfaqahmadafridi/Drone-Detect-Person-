@@ -1,0 +1,26 @@
+{
+  "ground": {
+    "name": "MOT20 YOLO26s pedestrian",
+    "filename": "ground_mot20_yolo26s.pt",
+    "source": "https://huggingface.co/Halftom/mot20-yolo26s-pedestrian",
+    "revision": "dbb13e25874f73927640165f7ae4079fb738129b",
+    "download_url": "https://huggingface.co/Halftom/mot20-yolo26s-pedestrian/resolve/dbb13e25874f73927640165f7ae4079fb738129b/best.pt",
+    "person_classes": [0],
+    "confidence": 0.25,
+    "iou": 0.5,
+    "recommended_imgsz": 1280,
+    "sha256": "f24d5aa4af4948f2d0357baef34d8dcea03e4b0caef4fee5c0471de9297d30e4"
+  },
+  "aerial": {
+    "name": "VisDrone YOLO11n person",
+    "filename": "aerial_visdrone_yolo11n.pt",
+    "source": "https://github.com/pratap424/visdrone_mot",
+    "revision": "main",
+    "download_url": "https://raw.githubusercontent.com/pratap424/visdrone_mot/main/models/visdrone_person_best.pt",
+    "person_classes": [0],
+    "confidence": 0.25,
+    "iou": 0.5,
+    "recommended_imgsz": 1280,
+    "sha256": "e3ada842a2bf94dd420c45ab34669c874a180160fa302bab3a2d6e7a44e263a2"
+  }
+}

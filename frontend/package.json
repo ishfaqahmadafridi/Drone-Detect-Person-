@@ -1,0 +1,12 @@
+{
+  "name": "birds-eye-fyp-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Ground and aerial person re-identification frontend prototype",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node scripts/check.mjs && node --test scripts/inference.test.mjs"
+  },
+  "engines": { "node": ">=18" }
+}

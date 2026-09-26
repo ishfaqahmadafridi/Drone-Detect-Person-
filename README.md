@@ -1,5 +1,23 @@
 # Drone-Detect-Person: Aerial Multi-Person Intrusion & Gathering Detection System
 
+## BIRDS EYE FYP: ground and aerial detection
+
+The FYP's primary direction is **ground-to-aerial person re-identification**. The dashboard now runs two selected person detectors on local videos or webcam frames:
+
+- Ground: [Halftom/MOT20 YOLO26s pedestrian](https://huggingface.co/Halftom/mot20-yolo26s-pedestrian).
+- Aerial: the fine-tuned YOLO11n checkpoint from [pratap424/visdrone_mot](https://github.com/pratap424/visdrone_mot). This uses its detector weights, not the publisher's complete tracking pipeline.
+
+Run these commands from this repository on Windows. Setup installs Python and CPU dependencies locally, then downloads and verifies both checkpoints. If setup is already complete, just run the second command.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-models.ps1
+.\.venv\Scripts\python.exe app.py
+```
+
+Open **http://localhost:8000**, select **Manage sources**, choose a video for each camera, then select **Run detector** on each feed. The default animated scenes are explicitly simulated. Real detection is enabled for video/webcam sources. Use a person box or the crop tool to select one reference; pause previews if needed.
+
+Detection confidence is not identity confidence. Generative view synthesis, cross-camera Re-ID, and drone control are still future stages. See the [dashboard guide](frontend/README.md) for controls, API details and verification, and [project context](docs/PROJECT_CONTEXT.md) for the approved scope. The original single-source detection/tracking and intrusion CLI is described below; it now accepts the same model profiles.
+
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![YOLOv8](https://img.shields.io/badge/YOLO-v8%20%2F%20v11-green.svg)](https://github.com/ultralytics/ultralytics)
 [![UI/UX Pro Max](https://img.shields.io/badge/UI%2FUX-Pro%20Max-violet.svg)](.agents/skills/expert-ui-ux-design/SKILL.md)
@@ -66,17 +84,27 @@ Drone-Detect-Person/
 3. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
+   python scripts/download_models.py
    ```
+
+The selected detectors require Ultralytics 8.4 or later (Python 3.12 is tested). The Windows setup above installs a CPU PyTorch build; GPU inference requires a compatible CUDA PyTorch installation.
 
 ---
 
 ## 🎮 Quickstart Guide
 
 ### 1. Test Instantly with Synthetic Drone Footage (No Drone Needed)
-Generate a realistic overhead drone aerial test video and run the detection pipeline:
+Generate a synthetic overhead test video and exercise the pipeline. This checks execution, not detection accuracy on real aerial footage:
 ```bash
 python generate_test_video.py --output test_drone.mp4 --num-people 4
 python detect.py --source test_drone.mp4
+```
+
+Use `--view ground` for the MOT20 model or `--view aerial` for the VisDrone model (the default). Both profiles use class 0 for people, confidence 0.25, and CLI input size 1280 by default. Choose `--imgsz 640` for a lighter CPU workload.
+
+```powershell
+.\.venv\Scripts\python.exe detect.py --view ground --source ground.mp4 --imgsz 640 --headless
+.\.venv\Scripts\python.exe detect.py --view aerial --source aerial.mp4 --imgsz 1280 --headless
 ```
 
 ### 2. Live Webcam / USB Drone Receiver
@@ -98,7 +126,7 @@ python detect.py --source input_footage.mp4 --headless --save-video --output-vid
 
 ## ⚙️ Configuration & Custom Alert Rules
 
-Customize parameters in [`config.py`](file:///Users/mc/.gemini/antigravity-ide/scratch/Drone-Detect-Person-/config.py):
+Customize parameters in [`config.py`](config.py). The CLI overrides its legacy model/confidence defaults using [`models/registry.json`](models/registry.json); `--model`, `--conf` and `--imgsz` override the selected profile:
 
 | Parameter | Default | Description |
 | :--- | :--- | :--- |

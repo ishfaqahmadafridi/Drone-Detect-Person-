@@ -9,6 +9,8 @@ import numpy as np
 import cv2
 import time
 from collections import defaultdict, deque
+import os
+from pathlib import Path
 from config import DetectionConfig
 
 class DronePersonDetector:
@@ -16,6 +18,8 @@ class DronePersonDetector:
         self.config = config or DetectionConfig()
         
         # Lazy load ultralytics YOLO
+        settings_dir = Path(os.environ.setdefault("YOLO_CONFIG_DIR", str(Path(__file__).resolve().parent / ".runtime" / "ultralytics")))
+        settings_dir.mkdir(parents=True, exist_ok=True)
         from ultralytics import YOLO
         print(f"[INFO] Initializing YOLO Aerial Model: {self.config.model_name} on device: {self.config.device}...")
         self.model = YOLO(self.config.model_name)
@@ -63,6 +67,7 @@ class DronePersonDetector:
                 iou=self.config.iou_threshold,
                 classes=self.config.target_classes,
                 device=self.config.device,
+                imgsz=self.config.img_size,
                 persist=True,
                 verbose=False
             )
@@ -73,6 +78,7 @@ class DronePersonDetector:
                 iou=self.config.iou_threshold,
                 classes=self.config.target_classes,
                 device=self.config.device,
+                imgsz=self.config.img_size,
                 verbose=False
             )
 

@@ -54,6 +54,11 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.runtime/
+.cache/
+Ultralytics/
+models/downloads.json
+models/*.partial
 
 # IDE & Editor files
 .idea/

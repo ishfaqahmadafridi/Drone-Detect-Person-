@@ -14,22 +14,30 @@ from config import DetectionConfig
 from detector import DronePersonDetector
 from zone_monitor import ZoneMonitor
 from alert_manager import AlertManager, AlertLevel
+from model_registry import profile_for, weights_for
 
 def run_detection(
     source: str = "0",
-    model_name: str = "yolov8n.pt",
-    confidence: float = 0.35,
+    model_name: str = None,
+    confidence: float = None,
     multi_person_threshold: int = 2,
     proximity_dist_px: int = 120,
     save_video: bool = False,
     output_video_path: str = "runs/output/annotated_output.mp4",
     headless: bool = False,
-    max_frames: int = 0
+    max_frames: int = 0,
+    view: str = "aerial",
+    device: str = "cpu",
+    img_size: int = None,
 ):
+    profile = profile_for(view)
+    model_name = model_name or str(weights_for(view))
+    confidence = profile["confidence"] if confidence is None else confidence
     print("=" * 70)
     print("🚁 DRONE PERSON & MULTI-PERSON INTRUSION DETECTION SYSTEM 🚁")
     print("=" * 70)
     print(f"[CONFIG] Source: {source}")
+    print(f"[CONFIG] View: {view}")
     print(f"[CONFIG] Model: {model_name} (Confidence: {confidence:.2f})")
     print(f"[CONFIG] Multi-Person Alert Threshold: >= {multi_person_threshold} People")
     print(f"[CONFIG] Proximity Gathering Distance: {proximity_dist_px} px")
@@ -41,7 +49,10 @@ def run_detection(
         model_name=model_name,
         confidence_threshold=confidence,
         multi_person_threshold=multi_person_threshold,
-        proximity_alert_distance_px=proximity_dist_px
+        proximity_alert_distance_px=proximity_dist_px,
+        device=device,
+        img_size=img_size or profile["recommended_imgsz"],
+        target_classes=profile["person_classes"],
     )
 
     # Parse camera / video source
@@ -50,10 +61,7 @@ def run_detection(
     else:
         video_src = source
         if not os.path.exists(source) and not source.startswith(("rtsp://", "http://", "https://")):
-            print(f"[ERROR] Source '{source}' does not exist! Generating a synthetic test video instead...")
-            from generate_test_video import create_synthetic_drone_video
-            create_synthetic_drone_video("test_drone.mp4")
-            video_src = "test_drone.mp4"
+            raise FileNotFoundError(f"Video source does not exist: {source}")
 
     cap = cv2.VideoCapture(video_src)
     if not cap.isOpened():
@@ -81,7 +89,7 @@ def run_detection(
     # Video Writer setup if enabled
     writer = None
     if save_video:
-        os.makedirs(os.path.dirname(output_video_path), exist_ok=True)
+        os.makedirs(os.path.dirname(output_video_path) or ".", exist_ok=True)
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         writer = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
         print(f"[INFO] Recording annotated output to: {output_video_path}")
@@ -94,14 +102,14 @@ def run_detection(
 
     try:
         while True:
+            if max_frames > 0 and frame_idx >= max_frames:
+                break
             ret, frame = cap.read()
             if not ret:
                 print("[INFO] End of video stream or feed disconnected.")
                 break
 
             frame_idx += 1
-            if max_frames > 0 and frame_idx > max_frames:
-                break
 
             zone_monitor.update_resolution(frame.shape[1], frame.shape[0])
 
@@ -190,8 +198,11 @@ def run_detection(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Drone Person & Multi-Person Intrusion Detection")
     parser.add_argument("--source", "-s", type=str, default="test_drone.mp4", help="Video path, RTSP stream URL, or webcam index (0)")
-    parser.add_argument("--model", "-m", type=str, default="yolov8n.pt", help="YOLO model path or name")
-    parser.add_argument("--conf", "-c", type=float, default=0.35, help="Detection confidence threshold")
+    parser.add_argument("--view", choices=["ground", "aerial"], default="aerial", help="Select the user-chosen detection checkpoint")
+    parser.add_argument("--model", "-m", type=str, default=None, help="Optional explicit model override")
+    parser.add_argument("--conf", "-c", type=float, default=None, help="Detection confidence threshold (profile default: 0.25)")
+    parser.add_argument("--device", default="cpu", help="cpu or an installed CUDA device, e.g. 0")
+    parser.add_argument("--imgsz", type=int, choices=[640, 960, 1280], default=None, help="Inference resolution (profile default: 1280)")
     parser.add_argument("--multi-thresh", "-t", type=int, default=2, help="Multi-person alert trigger threshold (default: 2)")
     parser.add_argument("--proximity-dist", "-p", type=int, default=120, help="Proximity threshold in pixels")
     parser.add_argument("--save-video", action="store_true", help="Save annotated output video to disk")
@@ -210,5 +221,8 @@ if __name__ == "__main__":
         save_video=args.save_video,
         output_video_path=args.output_video,
         headless=args.headless,
-        max_frames=args.max_frames
+        max_frames=args.max_frames,
+        view=args.view,
+        device=args.device,
+        img_size=args.imgsz,
     )

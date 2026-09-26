@@ -22,12 +22,29 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check frontend and frame alignment
+        working-directory: frontend
+        run: npm run check
+
+      - name: Test API validation and serving
+        run: python -m unittest discover -s tests -v
+
+      - name: Download and verify selected checkpoints
+        run: python scripts/download_models.py
 
       - name: Test Synthetic Flight Generator
         run: |
           python generate_test_video.py --output test_drone.mp4 --duration 2 --num-people 3
 
-      - name: Test Drone Person & Intrusion Detector (Headless)
+      - name: Smoke-test both detectors (not an accuracy evaluation)
         run: |
-          python detect.py --source test_drone.mp4 --headless --max-frames 10
+          python detect.py --view ground --source test_drone.mp4 --headless --max-frames 2 --imgsz 640
+          python detect.py --view aerial --source test_drone.mp4 --headless --max-frames 2 --imgsz 640
