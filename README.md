@@ -1,123 +1,94 @@
-# Drone-Detect-Person: Aerial Multi-Person Intrusion & Gathering Detection System
+# 🚁 AERO-GUARD: Drone Aerial Person & Multi-Person Intrusion Detection HUD
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![YOLOv8](https://img.shields.io/badge/YOLO-v8%20%2F%20v11-green.svg)](https://github.com/ultralytics/ultralytics)
-[![UI/UX Pro Max](https://img.shields.io/badge/UI%2FUX-Pro%20Max-violet.svg)](.agents/skills/expert-ui-ux-design/SKILL.md)
-[![Cloud Architect](https://img.shields.io/badge/Cloud-Ready-orange.svg)](.agents/skills/expert-cloud-agent-architecture/SKILL.md)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-A real-time aerial computer vision and drone surveillance system. Detects people from overhead drone camera feeds, tracks individual movement paths, monitors restricted zones (ROI), and automatically triggers high-priority security alarms when **two or more people** gather or enter restricted perimeters.
+A real-time aerial surveillance platform designed for drones, featuring **YOLOv8 & ByteTrack** multi-person detection, restricted perimeter intrusion tracking, gathering proximity analysis (≥ 2 persons), an interactive restricted zone editor, automated incident evidence snapshot logging, and a **Next.js 16 + TypeScript + Tailwind CSS** tactical HUD.
 
 ---
 
-## 🚀 Key Features
+## 🏗️ Architecture Overview
 
-- 🎯 **Aerial Drone Person Detection**: Optimized for high-altitude overhead and oblique drone camera perspectives using YOLOv8 / YOLOv11.
-- 🚨 **Multi-Person Gathering Triggers**: Real-time detection and alarm trigger whenever **2 or more people** are present in the frame or cluster together.
-- 🛡️ **Restricted Zone (ROI) Perimeters**: Configurable polygonal / rectangular security perimeters with instant breach alerts.
-- 📍 **Multi-Object Tracking (MOT)**: Persistent target ID assignment, trajectory trails, and dwell-time monitoring.
-- 📏 **Proximity & Clustering Engine**: Calculates pairwise Euclidean distances between persons and flags close-contact gatherings with visual links.
-- 📸 **Automatic Evidence Capture**: Saves timestamped high-resolution snapshot evidence and writes structured event logs (`CSV` / `JSON`).
-- 🧪 **Zero-Hardware Simulation**: Built-in synthetic drone flight video generator to test detection and alert pipelines immediately without needing a physical drone.
-- ☁️ **Cloud & Agent Ready**: Pre-configured with Principal Cloud Architect and UI/UX Pro Max skills for scalable container deployment (AWS ECS / GCP) and telemetry dashboards.
-
----
-
-## 📁 Repository Structure
-
-```tree
-Drone-Detect-Person/
-├── .agents/
-│   ├── skills/
-│   │   ├── expert-cloud-agent-architecture/ # Cloud IaC, AWS/GCP, & Autonomous Agent Skill
-│   │   └── expert-ui-ux-design/             # UI/UX Pro Max Design System & Accessibility Skill
-│   └── rules/
-│       ├── cloud-agent-architecture.md      # Cloud architecture governance rules
-│       └── ui-ux-pro-max.md                 # UI/UX Pro Max design rules
-├── AGENTS.md                                # AI Agent guidelines and directives
-├── GEMINI.md                                # System configuration rules
-├── config.py                                # Central configuration for thresholds, zones, and alerts
-├── detector.py                              # YOLO aerial detection, tracking, & tactical HUD engine
-├── zone_monitor.py                          # ROI polygon intrusion & proximity calculation
-├── alert_manager.py                         # Threat levels, cooldowns, logs, & evidence snapshots
-├── detect.py                                # Main CLI & stream processing pipeline
-├── generate_test_video.py                   # Synthetic drone flight simulator for instant testing
-├── requirements.txt                         # Package dependencies
-├── .gitignore                               # Comprehensive gitignore rules
-└── README.md                                # Project documentation
+```
+Drone_FYP/
+├── backend/                      # 🐍 FastAPI Computer Vision Backend
+│   ├── app.py                   # FastAPI application with MJPEG streaming & WebSockets
+│   ├── config.py                # System thresholds, polygon ROI, and filepaths
+│   ├── detector.py              # YOLOv8 / YOLOv11 person inference & tracking engine
+│   ├── zone_monitor.py          # Ray-casting polygon intrusion & gathering proximity
+│   ├── alert_manager.py         # Threat state machine, evidence capture & CSV/JSON audit
+│   ├── detect.py                # Standalone CLI detection runner
+│   ├── generate_test_video.py   # Synthetic aerial footage generator
+│   └── requirements.txt         # Backend Python dependencies
+│
+├── frontend/                     # ⚛️ Next.js TypeScript Tactical HUD
+│   ├── src/
+│   │   ├── app/                 # App Router (page.tsx, layout.tsx, globals.css)
+│   │   ├── components/          # Tactical UI Components
+│   │   │   ├── Header.tsx       # Live status ribbon, UTC clock, audio siren toggle
+│   │   │   ├── VideoViewport.tsx# Real-time optical feed & interactive Canvas Zone Editor
+│   │   │   ├── TelemetryCards.tsx# 4 tactical glowing metrics (Persons, Intruders, Clusters, FPS)
+│   │   │   ├── TuningPanel.tsx  # Dynamic sliders for thresholds & proximity tuning
+│   │   │   ├── IncidentLogs.tsx # Live incident table with CSV export
+│   │   │   ├── SnapshotGallery.tsx# Evidentiary snapshot carousel & lightbox modal
+│   │   │   └── AudioSynthesizer.ts# Web Audio API tactical alarm synthesizer
+│   │   ├── lib/utils.ts         # Tailwind className merger (cn)
+│   │   └── types/index.ts       # TypeScript interfaces for telemetry & alerts
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── next.config.ts           # Automatic API and WebSocket proxy to backend
+│
+├── runs/output/                 # 📂 Incident evidence snapshots & CSV event logs
+├── start_system.sh              # 🚀 One-click launcher for backend & frontend
+└── README.md
 ```
 
 ---
 
-## 📦 Installation & Setup
+## ⚡ Quick Start
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/ishfaqahmadafridi/Drone-Detect-Person-.git
-   cd Drone-Detect-Person-
-   ```
-
-2. **Create and activate a virtual environment:**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   ```
-
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
----
-
-## 🎮 Quickstart Guide
-
-### 1. Test Instantly with Synthetic Drone Footage (No Drone Needed)
-Generate a realistic overhead drone aerial test video and run the detection pipeline:
+### 1. Install Backend Dependencies
 ```bash
-python generate_test_video.py --output test_drone.mp4 --num-people 4
-python detect.py --source test_drone.mp4
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### 2. Live Webcam / USB Drone Receiver
+### 2. Install Frontend Dependencies
 ```bash
-python detect.py --source 0
+cd frontend
+npm install
 ```
 
-### 3. Drone RTSP Live Stream
+### 3. Launch Both Services (One Command)
 ```bash
-python detect.py --source rtsp://username:password@192.168.1.100:554/stream1
+./start_system.sh
 ```
+Or start them individually:
 
-### 4. Headless Mode & Video Recording
-```bash
-python detect.py --source input_footage.mp4 --headless --save-video --output-video runs/output/recorded.mp4
-```
+- **Backend (Port 8000)**:
+  ```bash
+  cd backend
+  python3 app.py
+  ```
+- **Frontend (Port 3000)**:
+  ```bash
+  cd frontend
+  npm run dev
+  ```
 
 ---
 
-## ⚙️ Configuration & Custom Alert Rules
+## 🌟 Key Features
 
-Customize parameters in [`config.py`](file:///Users/mc/.gemini/antigravity-ide/scratch/Drone-Detect-Person-/config.py):
-
-| Parameter | Default | Description |
-| :--- | :--- | :--- |
-| `model_name` | `"yolov8n.pt"` | YOLO weights (`yolov8n.pt`, `yolov8s.pt`, or custom drone weights) |
-| `confidence_threshold` | `0.35` | Confidence threshold for small aerial targets |
-| `multi_person_threshold` | `2` | Number of people to trigger multi-person gathering alert |
-| `proximity_alert_distance_px`| `120` | Distance in pixels to flag close gathering clusters |
-| `enable_zone_intrusion` | `True` | Enables polygonal security zone breach detection |
-| `snapshot_cooldown_seconds` | `3.0` | Cooldown period between auto-captured evidence snapshots |
-
----
-
-## 🤖 Agent Customizations & Skills
-
-This repository includes workspace customizations in `.agents/`:
-- **Expert Cloud Architecture**: Multi-cloud deployment topologies, ECS Fargate containerization, and FinOps practices.
-- **UI/UX Pro Max**: Design tokens, glassmorphism, fluid typography, and WCAG 2.2 AAA accessibility standards.
-
----
-
-## 📜 License
-This project is open-source and licensed under the [MIT License](LICENSE).
+1. **Interactive Restricted Zone Editor**:
+   - Security operators can click and drag polygon vertices directly over the live drone video feed to redefine restricted perimeters dynamically in real time.
+2. **Multi-Person Gathering Analytics**:
+   - Triggers security alerts when ≥ 2 persons congregate within the specified proximity pixel radius.
+3. **Stateless FastAPI REST & WebSocket Telemetry**:
+   - `/api/stream/video_feed`: MJPEG live streaming.
+   - `/ws/telemetry`: High-frequency metrics broadcast (detections, FPS, threat state).
+   - `/api/config`: Dynamic runtime parameter tuning without restarting the server.
+   - `/api/video/upload`: Custom drone footage upload & instant analysis.
+4. **Automated Evidentiary Snapshot Capture**:
+   - Timestamped evidence photos saved automatically to disk whenever an intrusion or gathering breach is detected (with cooldown control).
+5. **Tactical Web Audio Alarm Synthesizer**:
+   - Built-in Web Audio API alarm sounds for real-time alert dispatching without external assets.
