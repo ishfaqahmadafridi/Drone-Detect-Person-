@@ -54,4 +54,21 @@ export interface SnapshotItem {
   size_kb: number;
 }
 
+export interface ModelProfileInfo {
+  name: string;
+  filename: string;
+  available: boolean;
+  loaded: boolean;
+  is_active: boolean;
+  confidence: number;
+  iou: number;
+  description: string;
+}
+
+export interface ModelsStatusResponse {
+  active_view: "aerial" | "ground";
+  device: string;
+  profiles: Record<string, ModelProfileInfo>;
+}
+
 export * from "./components";

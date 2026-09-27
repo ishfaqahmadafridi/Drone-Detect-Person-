@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import { StreamSourceType } from "@/types";
+import { StreamSourceType, ModelsStatusResponse } from "@/types";
 
 export const streamApi = {
   switchSource: async (sourceType: StreamSourceType, sourcePath?: string): Promise<{ message: string }> => {
@@ -27,8 +27,8 @@ export const streamApi = {
     return data;
   },
 
-  getModelsStatus: async (): Promise<any> => {
-    const { data } = await apiClient.get<any>("/stream/models/status");
+  getModelsStatus: async (): Promise<ModelsStatusResponse> => {
+    const { data } = await apiClient.get<ModelsStatusResponse>("/stream/models/status");
     return data;
   },
 };
