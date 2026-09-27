@@ -7,7 +7,10 @@ import time
 import threading
 from datetime import datetime
 from typing import List, Dict, Tuple, Optional
-import cv2
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 from fastapi import WebSocket
 
 from app.core.config import DetectionConfig, SYNTHETIC_VIDEO_PATH, SNAPSHOTS_DIR, LOGS_DIR

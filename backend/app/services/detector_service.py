@@ -6,7 +6,12 @@ import time
 from typing import List, Dict, Tuple, Optional
 from collections import defaultdict, deque
 import numpy as np
-import cv2
+
+try:
+    import cv2
+except ImportError:
+    cv2 = None
+
 from app.core.config import DetectionConfig
 from app.services.inference_service import inference_service
 from app.services.tracking_service import tracking_service
@@ -22,6 +27,7 @@ class DronePersonDetectorService:
         self.last_fps_time = time.time()
         self.fps = 0.0
         self.frame_count = 0
+        self.track_history = defaultdict(lambda: deque(maxlen=30))
 
     def set_view(self, view: str):
         self.active_view = inference_service.set_active_view(view)
@@ -57,19 +63,9 @@ class DronePersonDetectorService:
         else:
             results = model.predict(
                 source=frame,
-                conf=self.config.confidence_threshold,
-                iou=self.config.iou_threshold,
-                classes=self.config.target_classes,
-                device=self.config.device,
-                persist=True,
-                verbose=False
-            )
-        else:
-            results = self.model.predict(
-                source=frame,
-                conf=self.config.confidence_threshold,
-                iou=self.config.iou_threshold,
-                classes=self.config.target_classes,
+                conf=conf_thresh,
+                iou=iou_thresh,
+                classes=profile.get("person_classes", [0]),
                 device=self.config.device,
                 verbose=False
             )
