@@ -11,7 +11,7 @@ import { StreamSourceType } from "@/types";
 
 export function useVideoViewport() {
   const dispatch = useAppDispatch();
-  const { fps, source_type, zone_polygon } = useAppSelector((state) => state.telemetry);
+  const { fps, source_type, view_mode, zone_polygon } = useAppSelector((state) => state.telemetry);
   const { isEditingZone } = useAppSelector((state) => state.ui);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,8 +24,12 @@ export function useVideoViewport() {
   const [showUploadField, setShowUploadField] = useState(false);
 
   const configMutation = useConfigMutation();
-  const { switchSource, uploadVideo } = useStreamMutation();
+  const { switchSource, uploadVideo, switchView } = useStreamMutation();
   const { toggleFullscreen } = useFullscreen(containerRef);
+
+  const handleViewSelect = async (view: "aerial" | "ground") => {
+    await switchView.mutateAsync(view);
+  };
 
   const {
     handleMouseDown,
@@ -121,6 +125,8 @@ export function useVideoViewport() {
     handleFileUpload,
     handleRtspSubmit,
     handleSourceSelect,
+    handleViewSelect,
+    viewMode: (view_mode as "aerial" | "ground") || "aerial",
     handleStreamError,
   };
 }

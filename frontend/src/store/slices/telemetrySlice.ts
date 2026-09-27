@@ -17,6 +17,7 @@ const initialState: TelemetryState = {
   timestamp: "",
   detections: [],
   source_type: "synthetic",
+  view_mode: "aerial",
   multi_person_threshold: 2,
   confidence_threshold: 0.35,
   proximity_distance_px: 120,

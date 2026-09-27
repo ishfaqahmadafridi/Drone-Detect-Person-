@@ -56,6 +56,7 @@ class StreamManagerService:
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "detections": [],
             "source_type": self.source_type,
+            "view_mode": self.detector.active_view,
             "multi_person_threshold": self.config.multi_person_threshold,
             "confidence_threshold": self.config.confidence_threshold,
             "proximity_distance_px": self.config.proximity_alert_distance_px,
@@ -63,6 +64,13 @@ class StreamManagerService:
         }
 
         self.active_websockets: List[WebSocket] = []
+
+    def set_view_mode(self, view_mode: str) -> str:
+        with self.lock:
+            self.detector.set_view(view_mode)
+            self.latest_telemetry["view_mode"] = self.detector.active_view
+            print(f"[STREAM] Switched perspective view to: {self.detector.active_view}")
+            return self.detector.active_view
 
     def set_source(self, source_type: str, source_path: Optional[str] = None):
         with self.lock:
@@ -167,10 +175,13 @@ class StreamManagerService:
                                 "id": p["id"],
                                 "conf": round(p["conf"], 2),
                                 "bbox": p["bbox"],
+                                "speed_px_s": p.get("speed_px_s", 0.0),
+                                "trajectory_len": len(p.get("trajectory", [])),
                                 "is_intruder": p.get("is_intruder", False)
                             } for p in detected_persons
                         ],
                         "source_type": self.source_type,
+                        "view_mode": detector.active_view,
                         "multi_person_threshold": cfg.multi_person_threshold,
                         "confidence_threshold": cfg.confidence_threshold,
                         "proximity_distance_px": cfg.proximity_alert_distance_px,

@@ -5,6 +5,8 @@ export interface Detection {
   id: number;
   conf: number;
   bbox: [number, number, number, number];
+  speed_px_s?: number;
+  trajectory_len?: number;
   is_intruder: boolean;
 }
 
@@ -19,6 +21,7 @@ export interface TelemetryData {
   timestamp: string;
   detections: Detection[];
   source_type: StreamSourceType;
+  view_mode?: "aerial" | "ground";
   multi_person_threshold: number;
   confidence_threshold: number;
   proximity_distance_px: number;

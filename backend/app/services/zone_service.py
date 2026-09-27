@@ -4,7 +4,11 @@ Zone Service: Ray-Casting Polygon Intrusion & Gathering Proximity Analyzer.
 
 from typing import List, Tuple, Dict
 import numpy as np
-import cv2
+
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 
 class ZoneMonitorService:
     def __init__(
@@ -45,8 +49,27 @@ class ZoneMonitorService:
     def is_point_inside(self, point: Tuple[int, int]) -> bool:
         if self.pixel_polygon is None or len(self.pixel_polygon) < 3:
             return False
-        dist = cv2.pointPolygonTest(self.pixel_polygon, (float(point[0]), float(point[1])), measureDist=False)
-        return dist >= 0
+        if cv2 is not None:
+            dist = cv2.pointPolygonTest(self.pixel_polygon, (float(point[0]), float(point[1])), measureDist=False)
+            return dist >= 0
+        
+        # Pure-Python Ray-Casting algorithm fallback
+        x, y = float(point[0]), float(point[1])
+        inside = False
+        poly = self.pixel_polygon
+        n = len(poly)
+        p1x, p1y = poly[0]
+        for i in range(n + 1):
+            p2x, p2y = poly[i % n]
+            if y > min(p1y, p2y):
+                if y <= max(p1y, p2y):
+                    if x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                        if p1x == p2x or x <= xinters:
+                            inside = not inside
+            p1x, p1y = p2x, p2y
+        return inside
 
     def check_intrusions(self, detected_persons: List[Dict]) -> List[Dict]:
         intruders: List[Dict] = []

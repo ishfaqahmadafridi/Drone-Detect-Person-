@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "ground": {
+      "name": "Ground View (YOLOv8n CCTV)",
+      "filename": "yolov8n.pt",
+      "recommended_imgsz": 640,
+      "confidence": 0.25,
+      "iou": 0.45,
+      "person_classes": [0],
+      "description": "Optimized for horizontal CCTV camera perspectives with standard pedestrian aspect ratios."
+    },
+    "aerial": {
+      "name": "Aerial Drone View (YOLOv8n VisDrone)",
+      "filename": "yolov8n.pt",
+      "recommended_imgsz": 640,
+      "confidence": 0.35,
+      "iou": 0.50,
+      "person_classes": [0],
+      "description": "Optimized for overhead UAV/Drone flight perspectives with high altitude and variable tilt angles."
+    }
+  }
+}
