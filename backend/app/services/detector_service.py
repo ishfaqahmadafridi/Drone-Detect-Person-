@@ -6,23 +6,35 @@ import time
 from typing import List, Dict, Tuple, Optional
 from collections import defaultdict, deque
 import numpy as np
-import cv2
+
+try:
+    import cv2
+except ImportError:
+    cv2 = None
+
 from app.core.config import DetectionConfig
+from app.services.inference_service import inference_service
+from app.services.tracking_service import tracking_service
 
 class DronePersonDetectorService:
     def __init__(self, config: Optional[DetectionConfig] = None):
         self.config = config or DetectionConfig()
+        self.active_view = "aerial"
         
-        from ultralytics import YOLO
-        print(f"[INFO] Initializing YOLO Aerial Model: {self.config.model_name} on device: {self.config.device}...")
-        self.model = YOLO(self.config.model_name)
+        # Pre-warm default view model
+        self.model = inference_service.get_model(self.active_view)
         
-        self.track_history = defaultdict(lambda: deque(maxlen=30))
         self.last_fps_time = time.time()
         self.fps = 0.0
         self.frame_count = 0
+        self.track_history = defaultdict(lambda: deque(maxlen=30))
 
-    def process_frame(self, frame: np.ndarray, use_tracking: bool = True) -> List[Dict]:
+    def set_view(self, view: str):
+        self.active_view = inference_service.set_active_view(view)
+        self.model = inference_service.get_model(self.active_view)
+        tracking_service.reset()
+
+    def process_frame(self, frame: np.ndarray, use_tracking: bool = True, view: Optional[str] = None) -> List[Dict]:
         self.frame_count += 1
         now = time.time()
         dt = now - self.last_fps_time
@@ -31,22 +43,29 @@ class DronePersonDetectorService:
             self.frame_count = 0
             self.last_fps_time = now
 
+        current_view = view or self.active_view
+        model = inference_service.get_model(current_view)
+
+        profile = inference_service.get_profile(current_view)
+        conf_thresh = self.config.confidence_threshold if self.config.confidence_threshold > 0 else profile.get("confidence", 0.3)
+        iou_thresh = self.config.iou_threshold if self.config.iou_threshold > 0 else profile.get("iou", 0.45)
+
         if use_tracking:
-            results = self.model.track(
+            results = model.track(
                 source=frame,
-                conf=self.config.confidence_threshold,
-                iou=self.config.iou_threshold,
-                classes=self.config.target_classes,
+                conf=conf_thresh,
+                iou=iou_thresh,
+                classes=profile.get("person_classes", [0]),
                 device=self.config.device,
                 persist=True,
                 verbose=False
             )
         else:
-            results = self.model.predict(
+            results = model.predict(
                 source=frame,
-                conf=self.config.confidence_threshold,
-                iou=self.config.iou_threshold,
-                classes=self.config.target_classes,
+                conf=conf_thresh,
+                iou=iou_thresh,
+                classes=profile.get("person_classes", [0]),
                 device=self.config.device,
                 verbose=False
             )
@@ -83,7 +102,7 @@ class DronePersonDetectorService:
                 'is_intruder': False
             })
 
-        return detected_persons
+        return tracking_service.update_tracks(detected_persons)
 
     def draw_annotations(
         self,

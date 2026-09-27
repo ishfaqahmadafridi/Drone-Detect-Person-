@@ -33,6 +33,8 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
     handleFileUpload,
     handleRtspSubmit,
     handleSourceSelect,
+    handleViewSelect,
+    viewMode,
     handleStreamError,
   } = useVideoViewport();
 
@@ -63,6 +65,7 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
 
       <StreamToolbar
         sourceType={sourceType}
+        viewMode={viewMode}
         showUploadField={showUploadField}
         showRtspField={showRtspField}
         isUploading={isUploading}
@@ -70,6 +73,7 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
         rtspInput={rtspInput}
         fileInputRef={fileInputRef}
         onSourceSelect={handleSourceSelect}
+        onViewSelect={handleViewSelect}
         onFileUpload={handleFileUpload}
         onRtspInputChange={setRtspInput}
         onRtspSubmit={handleRtspSubmit}

@@ -32,6 +32,23 @@ def switch_source(req: StreamSourceRequest):
         "source_path": stream_service.source_path
     }
 
+@router.get("/stream/models/status")
+def get_models_status():
+    from app.services.inference_service import inference_service
+    return inference_service.get_status()
+
+@router.post("/stream/view")
+def switch_view(view: str):
+    valid_views = ["aerial", "ground"]
+    if view not in valid_views:
+        raise HTTPException(status_code=400, detail=f"Invalid view '{view}'. Must be one of {valid_views}")
+    
+    active = stream_service.set_view_mode(view)
+    return {
+        "message": f"Perspective view switched to {active}",
+        "active_view": active
+    }
+
 @router.post("/video/upload")
 async def upload_video(file: UploadFile = File(...)):
     filename = f"{int(time.time())}_{file.filename}"

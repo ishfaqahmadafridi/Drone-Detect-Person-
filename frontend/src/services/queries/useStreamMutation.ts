@@ -34,5 +34,14 @@ export const useStreamMutation = () => {
     },
   });
 
-  return { switchSource, uploadVideo };
+  const switchView = useMutation({
+    mutationFn: async (view: "aerial" | "ground") => {
+      return await streamApi.switchView(view);
+    },
+    onSuccess: (data) => {
+      dispatch(setTelemetryData({ view_mode: data.active_view as "aerial" | "ground" }));
+    },
+  });
+
+  return { switchSource, uploadVideo, switchView };
 };

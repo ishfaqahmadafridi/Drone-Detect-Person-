@@ -59,6 +59,7 @@ export interface ZoneBannerProps {
 
 export interface StreamToolbarProps {
   sourceType: string;
+  viewMode?: "aerial" | "ground";
   showUploadField: boolean;
   showRtspField: boolean;
   isUploading: boolean;
@@ -66,6 +67,7 @@ export interface StreamToolbarProps {
   rtspInput: string;
   fileInputRef: RefObject<HTMLInputElement | null>;
   onSourceSelect: (type: StreamSourceType) => void;
+  onViewSelect?: (view: "aerial" | "ground") => void;
   onFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
   onRtspInputChange: (val: string) => void;
   onRtspSubmit: (e: FormEvent) => void;

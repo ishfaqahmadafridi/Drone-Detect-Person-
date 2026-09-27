@@ -7,6 +7,7 @@ import { Upload } from "lucide-react";
 
 export const StreamToolbar: React.FC<StreamToolbarProps> = ({
   sourceType,
+  viewMode = "aerial",
   showUploadField,
   showRtspField,
   isUploading,
@@ -14,29 +15,62 @@ export const StreamToolbar: React.FC<StreamToolbarProps> = ({
   rtspInput,
   fileInputRef,
   onSourceSelect,
+  onViewSelect,
   onFileUpload,
   onRtspInputChange,
   onRtspSubmit,
 }) => {
   return (
     <div className="p-3 px-4 bg-slate-950/60 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
-      <div className="flex items-center gap-2">
-        <span className="font-mono-code text-xs text-slate-400">STREAM SOURCE:</span>
-        <div className="flex rounded-md overflow-hidden border border-slate-800">
-          {STREAM_SOURCE_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => onSourceSelect(opt.value as StreamSourceType)}
-              className={`px-3 py-1 text-xs font-display font-semibold uppercase transition-colors border-r border-slate-800 last:border-r-0 ${
-                sourceType === opt.value
-                  ? "bg-cyan-500/20 text-cyan-400"
-                  : "bg-slate-900 text-slate-400 hover:bg-slate-800"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+      <div className="flex flex-wrap items-center gap-4">
+        {/* Stream Source */}
+        <div className="flex items-center gap-2">
+          <span className="font-mono-code text-xs text-slate-400">STREAM SOURCE:</span>
+          <div className="flex rounded-md overflow-hidden border border-slate-800">
+            {STREAM_SOURCE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => onSourceSelect(opt.value as StreamSourceType)}
+                className={`px-3 py-1 text-xs font-display font-semibold uppercase transition-colors border-r border-slate-800 last:border-r-0 ${
+                  sourceType === opt.value
+                    ? "bg-cyan-500/20 text-cyan-400"
+                    : "bg-slate-900 text-slate-400 hover:bg-slate-800"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* View Mode Toggle: Aerial vs Ground */}
+        {onViewSelect && (
+          <div className="flex items-center gap-2">
+            <span className="font-mono-code text-xs text-slate-400">PERSPECTIVE:</span>
+            <div className="flex rounded-md overflow-hidden border border-slate-800">
+              <button
+                onClick={() => onViewSelect("aerial")}
+                className={`px-3 py-1 text-xs font-display font-semibold uppercase transition-colors border-r border-slate-800 ${
+                  viewMode === "aerial"
+                    ? "bg-emerald-500/20 text-emerald-400"
+                    : "bg-slate-900 text-slate-400 hover:bg-slate-800"
+                }`}
+              >
+                AERIAL DRONE
+              </button>
+              <button
+                onClick={() => onViewSelect("ground")}
+                className={`px-3 py-1 text-xs font-display font-semibold uppercase transition-colors ${
+                  viewMode === "ground"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : "bg-slate-900 text-slate-400 hover:bg-slate-800"
+                }`}
+              >
+                GROUND CCTV
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {showUploadField && (

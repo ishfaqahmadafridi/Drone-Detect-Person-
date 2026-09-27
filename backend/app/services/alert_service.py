@@ -8,7 +8,10 @@ import json
 import csv
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple
-import cv2
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 from app.core.constants import AlertLevel
 
 class AlertManagerService:

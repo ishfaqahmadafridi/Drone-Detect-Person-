@@ -5,6 +5,8 @@ export interface Detection {
   id: number;
   conf: number;
   bbox: [number, number, number, number];
+  speed_px_s?: number;
+  trajectory_len?: number;
   is_intruder: boolean;
 }
 
@@ -19,6 +21,7 @@ export interface TelemetryData {
   timestamp: string;
   detections: Detection[];
   source_type: StreamSourceType;
+  view_mode?: "aerial" | "ground";
   multi_person_threshold: number;
   confidence_threshold: number;
   proximity_distance_px: number;
@@ -49,6 +52,23 @@ export interface SnapshotItem {
   url: string;
   created_at: string;
   size_kb: number;
+}
+
+export interface ModelProfileInfo {
+  name: string;
+  filename: string;
+  available: boolean;
+  loaded: boolean;
+  is_active: boolean;
+  confidence: number;
+  iou: number;
+  description: string;
+}
+
+export interface ModelsStatusResponse {
+  active_view: "aerial" | "ground";
+  device: string;
+  profiles: Record<string, ModelProfileInfo>;
 }
 
 export * from "./components";
