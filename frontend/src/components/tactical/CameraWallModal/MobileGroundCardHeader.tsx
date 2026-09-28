@@ -10,7 +10,7 @@ export const MobileGroundCardHeader: React.FC<MobileGroundCardHeaderProps> = ({ 
       <div className="flex items-center gap-2">
         <Camera className="w-3.5 h-3.5 text-emerald-400" />
         <span className="font-display font-bold text-xs text-white uppercase">
-          CH-02: MOBILE PHONE / GROUND WEBCAM
+          CH-02: MOBILE PHONE / GROUND CCTV
         </span>
       </div>
       {isActive ? (

@@ -24,16 +24,6 @@ export const useStreamMutation = () => {
     },
   });
 
-  const uploadVideo = useMutation({
-    mutationFn: async (file: File) => {
-      return await streamApi.uploadVideo(file);
-    },
-    onSuccess: () => {
-      dispatch(setTelemetryData({ source_type: "file" }));
-      queryClient.invalidateQueries({ queryKey: ["config"] });
-    },
-  });
-
   const switchView = useMutation({
     mutationFn: async (view: "aerial" | "ground") => {
       return await streamApi.switchView(view);
@@ -43,5 +33,5 @@ export const useStreamMutation = () => {
     },
   });
 
-  return { switchSource, uploadVideo, switchView };
+  return { switchSource, switchView };
 };

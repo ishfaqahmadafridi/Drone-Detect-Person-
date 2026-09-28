@@ -1,25 +1,16 @@
 "use client";
 
-import React from "react";
-import { SidebarNavListProps, TacticalNavTab } from "@/types";
+import { SidebarNavListProps } from "@/types";
+
 import { NAV_ITEMS } from "@/constants";
 import { SidebarNavItem } from "./SidebarNavItem";
-import { SidebarCameraWallTrigger } from "./SidebarCameraWallTrigger";
 
 export const SidebarNavList: React.FC<SidebarNavListProps> = ({
   activeTab,
   onTabChange,
   isCollapsed,
-  onOpenWall,
   threatLevel,
 }) => {
-  const handleItemSelect = (id: TacticalNavTab) => {
-    onTabChange(id);
-    if (id === "cameras") {
-      onOpenWall();
-    }
-  };
-
   return (
     <div className="flex-1 flex flex-col gap-1.5 p-2.5 overflow-y-auto">
       <div
@@ -37,16 +28,12 @@ export const SidebarNavList: React.FC<SidebarNavListProps> = ({
           isActive={activeTab === item.id}
           isCollapsed={isCollapsed}
           threatLevel={threatLevel}
-          onSelect={handleItemSelect}
+          onSelect={onTabChange}
         />
       ))}
-
-      {/* Multi-Camera Quick Trigger */}
-      <SidebarCameraWallTrigger
-        isCollapsed={isCollapsed}
-        onOpenWall={onOpenWall}
-      />
     </div>
+
+
   );
 };
 

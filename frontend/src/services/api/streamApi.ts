@@ -31,4 +31,9 @@ export const streamApi = {
     const { data } = await apiClient.get<ModelsStatusResponse>("/stream/models/status");
     return data;
   },
+
+  captureSnapshot: async (): Promise<{ message: string; filename: string; url: string; view_mode: string }> => {
+    const { data } = await apiClient.post<{ message: string; filename: string; url: string; view_mode: string }>("/snapshots/capture");
+    return data;
+  },
 };

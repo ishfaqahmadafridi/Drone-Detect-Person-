@@ -11,15 +11,19 @@ import { useDashboardOrchestrator } from "@/hooks";
 export default function DroneDashboardPage() {
   const {
     activeTab,
-    setActiveTab,
     isSidebarCollapsed,
     toggleSidebar,
+
     handleManualRefresh,
+    handleCaptureSnapshot,
     threatLevel,
     isMuted,
     toggleMute,
     flight,
     wall,
+    viewMode,
+    handleViewSelect,
+    handleTabChange,
   } = useDashboardOrchestrator();
 
   return (
@@ -27,15 +31,19 @@ export default function DroneDashboardPage() {
       {/* 1. Tactical Navigation Sidebar */}
       <TacticalSidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={toggleSidebar}
         onOpenWall={wall.openWall}
+
         avionics={flight.avionics}
         isMuted={isMuted}
         onToggleMute={toggleMute}
         threatLevel={threatLevel}
+        viewMode={viewMode}
+        onViewSelect={handleViewSelect}
       />
+
 
       {/* 2. Main Mission Command Viewport */}
       <MissionCommandViewport
@@ -46,9 +54,10 @@ export default function DroneDashboardPage() {
         batteryPercent={flight.batteryPercent}
         isCommandPending={flight.isCommandPending}
         onCommand={flight.handleCommand}
-        onConnectWebcam={flight.handleConnectWebcam}
+        onConnectAirLink={flight.handleConnectDroneLink}
         onOpenFlightDeck={flight.handleLaunchDroneFlight}
         onRefresh={handleManualRefresh}
+        onSnapshotTrigger={handleCaptureSnapshot}
         onOpenWall={wall.openWall}
       />
 

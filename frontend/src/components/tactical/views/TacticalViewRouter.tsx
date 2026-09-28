@@ -14,7 +14,7 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
   batteryPercent,
   isCommandPending,
   onCommand,
-  onConnectWebcam,
+  onConnectAirLink,
   onOpenFlightDeck,
   avionics,
 }) => {
@@ -26,7 +26,7 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
         <CalibrationView
           avionics={avionics}
           onOpenFlightDeck={onOpenFlightDeck}
-          onOpenWebcam={onConnectWebcam}
+          onConnectAirLink={onConnectAirLink}
         />
       );
     case "airspace":
@@ -41,7 +41,7 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
           batteryPercent={batteryPercent}
           isCommandPending={isCommandPending}
           onCommand={onCommand}
-          onConnectWebcam={onConnectWebcam}
+          onConnectAirLink={onConnectAirLink}
           onOpenFlightDeck={onOpenFlightDeck}
           avionics={avionics}
         />

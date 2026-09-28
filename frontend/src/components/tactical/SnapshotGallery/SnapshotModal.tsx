@@ -11,7 +11,20 @@ export const SnapshotModal: React.FC<SnapshotModalProps> = ({ snapshot, onClose 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
       <div className="relative glass-panel-elevated max-w-4xl w-full rounded-xl overflow-hidden border border-cyan-500/30">
         <div className="flex items-center justify-between p-3.5 px-4 bg-slate-950/80 border-b border-slate-800">
-          <h4 className="font-display font-bold text-sm text-white">Incident Frame Analysis</h4>
+          <div className="flex items-center gap-2.5">
+            <h4 className="font-display font-bold text-sm text-white">Incident Frame Analysis</h4>
+            {snapshot.view_mode && (
+              <span
+                className={`px-2 py-0.5 rounded text-[10px] font-mono-code font-bold uppercase border ${
+                  snapshot.view_mode === "ground"
+                    ? "bg-blue-500/20 text-blue-300 border-blue-500/40"
+                    : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                }`}
+              >
+                {snapshot.view_mode} Perspective
+              </span>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="p-1 text-slate-400 hover:text-white rounded"

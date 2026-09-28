@@ -9,7 +9,7 @@ import { DroneAvionicsCard } from "../DroneAvionicsCard";
 export const CalibrationView: React.FC<CalibrationViewProps> = ({
   avionics,
   onOpenFlightDeck,
-  onOpenWebcam,
+  onConnectAirLink,
 }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -19,7 +19,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({
         <DroneAvionicsCard
           avionics={avionics}
           onOpenFlightDeck={onOpenFlightDeck}
-          onOpenWebcam={onOpenWebcam}
+          onConnectAirLink={onConnectAirLink}
         />
       </div>
     </div>

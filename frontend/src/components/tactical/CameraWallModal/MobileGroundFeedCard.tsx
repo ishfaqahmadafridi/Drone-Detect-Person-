@@ -5,12 +5,10 @@ import { MobileGroundFeedCardProps } from "@/types";
 import { Camera } from "lucide-react";
 import { MobileGroundCardHeader } from "./MobileGroundCardHeader";
 import { MobilePixelQuickConnect } from "./MobilePixelQuickConnect";
-import { MobileHardwareWebcamButton } from "./MobileHardwareWebcamButton";
 import { MobileCustomStreamForm } from "./MobileCustomStreamForm";
 
 export const MobileGroundFeedCard: React.FC<MobileGroundFeedCardProps> = ({
   isActive,
-  onSelectWebcam,
   onConnectRtsp,
 }) => {
   return (
@@ -31,17 +29,14 @@ export const MobileGroundFeedCard: React.FC<MobileGroundFeedCardProps> = ({
             Ground Sensor / Mobile Phone Uplink
           </span>
           <span className="font-mono-code text-[10px] text-slate-400 block mt-0.5">
-            Mac Continuity Camera, USB webcam, or Wi-Fi IP phone stream
+            Wi-Fi IP phone stream (Google Pixel, IP Webcam) or Perimeter RTSP
           </span>
         </div>
 
         {/* 1. One-Click Quick Connect: Google Pixel 6a */}
         <MobilePixelQuickConnect onConnectRtsp={onConnectRtsp} />
 
-        {/* 2. Direct Hardware Webcam / Mac Continuity iPhone */}
-        <MobileHardwareWebcamButton onSelectWebcam={onSelectWebcam} />
-
-        {/* 3. Mobile Phone IP Stream (IP Webcam / DroidCam / RTSP) */}
+        {/* 2. Mobile Phone IP Stream (IP Webcam / DroidCam / RTSP) */}
         <MobileCustomStreamForm onConnectRtsp={onConnectRtsp} />
       </div>
     </div>

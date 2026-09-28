@@ -17,7 +17,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   batteryPercent,
   isCommandPending,
   onCommand,
-  onConnectWebcam,
+  onConnectAirLink,
   onOpenFlightDeck,
   avionics,
 }) => {
@@ -33,7 +33,6 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
           batteryPercent={batteryPercent}
           isCommandPending={isCommandPending}
           onCommand={onCommand}
-          onConnectWebcam={onConnectWebcam}
         />
 
         <SnapshotGallery />
@@ -44,7 +43,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
         <DroneAvionicsCard
           avionics={avionics}
           onOpenFlightDeck={onOpenFlightDeck}
-          onOpenWebcam={onConnectWebcam}
+          onConnectAirLink={onConnectAirLink}
         />
 
         <TelemetryCards />

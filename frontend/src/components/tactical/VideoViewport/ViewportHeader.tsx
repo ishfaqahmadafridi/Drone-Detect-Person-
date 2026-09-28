@@ -6,6 +6,7 @@ import { Maximize, Camera, Edit3 } from "lucide-react";
 
 export const ViewportHeader: React.FC<ViewportHeaderProps> = ({
   sourceType,
+  viewMode = "aerial",
   isEditingZone,
   onToggleEditZone,
   onSnapshotTrigger,
@@ -20,6 +21,15 @@ export const ViewportHeader: React.FC<ViewportHeaderProps> = ({
         </h2>
         <span className="font-mono-code text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded">
           {sourceType.toUpperCase()}
+        </span>
+        <span
+          className={`font-mono-code text-[10px] px-2 py-0.5 rounded border uppercase font-semibold ${
+            viewMode === "ground"
+              ? "bg-blue-500/15 text-blue-400 border-blue-500/40"
+              : "bg-emerald-500/15 text-emerald-400 border-emerald-500/40"
+          }`}
+        >
+          {viewMode === "ground" ? "GROUND CCTV" : "AERIAL DRONE"}
         </span>
       </div>
 
