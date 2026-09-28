@@ -5,7 +5,13 @@ Core Detection Configuration and Environment Settings.
 import os
 from dataclasses import dataclass, field
 from typing import List, Tuple
-from app.core.constants import DEFAULT_ZONE_POLYGON
+from app.core.constants import (
+    DEFAULT_ZONE_POLYGON,
+    DEFAULT_CONFIDENCE_THRESHOLD,
+    DEFAULT_MULTI_PERSON_THRESHOLD,
+    DEFAULT_PROXIMITY_ALERT_DISTANCE_PX,
+    DEFAULT_SNAPSHOT_COOLDOWN_SECONDS,
+)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -17,24 +23,45 @@ UPLOADS_DIR = os.path.join(BASE_DIR, "uploads")
 SYNTHETIC_VIDEO_PATH = os.path.join(BASE_DIR, "test_drone.mp4")
 DEFAULT_ZONE_NORMALIZED = DEFAULT_ZONE_POLYGON
 
+def _load_env_file(filepath: str):
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        key, val = line.split("=", 1)
+                        key = key.strip()
+                        val = val.strip().strip('"').strip("'")
+                        if key and key not in os.environ:
+                            os.environ[key] = val
+        except Exception as e:
+            print(f"[WARN] Failed to read env file {filepath}: {e}")
+
+_load_env_file(os.path.join(BASE_DIR, ".env"))
+_load_env_file(os.path.join(ROOT_DIR, ".env"))
+
+REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN", "")
+
 os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
 os.makedirs(UPLOADS_DIR, exist_ok=True)
+
 
 @dataclass
 class DetectionConfig:
     # Model parameters
     model_name: str = "yolov8n.pt"
-    confidence_threshold: float = 0.35
+    confidence_threshold: float = DEFAULT_CONFIDENCE_THRESHOLD
     iou_threshold: float = 0.45
     target_classes: List[int] = field(default_factory=lambda: [0])  # 0 = person
     device: str = "cpu"
     img_size: int = 640
 
     # Multi-person gathering alert rules
-    multi_person_threshold: int = 2
+    multi_person_threshold: int = DEFAULT_MULTI_PERSON_THRESHOLD
     enable_multi_person_alert: bool = True
-    proximity_alert_distance_px: int = 120
+    proximity_alert_distance_px: int = DEFAULT_PROXIMITY_ALERT_DISTANCE_PX
     enable_proximity_alert: bool = True
 
     # Zone intrusion
@@ -48,7 +75,7 @@ class DetectionConfig:
     snapshots_dir: str = SNAPSHOTS_DIR
     logs_dir: str = LOGS_DIR
     save_snapshots_on_alert: bool = True
-    snapshot_cooldown_seconds: float = 3.0
+    snapshot_cooldown_seconds: float = DEFAULT_SNAPSHOT_COOLDOWN_SECONDS
 
     # Visuals
     show_hud: bool = True

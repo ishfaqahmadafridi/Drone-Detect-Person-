@@ -1,47 +1,34 @@
 """
 Vision Pipeline Processor: Coordinates single-frame computer vision lifecycle.
-Encapsulates inference, geofence intrusion, gathering clustering, threat evaluation, and annotation.
+Encapsulates inference, geofence intrusion, gathering clustering, threat evaluation, annotation, and telemetry dispatch.
 """
 
-from dataclasses import dataclass
 import threading
 from typing import List, Dict, Tuple, Optional, Any
 import numpy as np
 
-from app.core.config import DetectionConfig, SNAPSHOTS_DIR, LOGS_DIR
+from app.core.config import DetectionConfig
+from app.core.constants import DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT, MIN_ZONE_VERTICES
 from app.services.detector_service import DronePersonDetectorService
 from app.services.zone_service import ZoneMonitorService
 from app.services.alert_service import AlertManagerService
 from app.services.streaming.drone_service import drone_avionics_service
-
-
-@dataclass
-class PipelineResult:
-    """
-    Structured outcome of a processed computer vision frame.
-    """
-    annotated_frame: np.ndarray
-    telemetry_payload: Dict[str, Any]
-    threat_level: str
-    alert_msg: str
-    detected_persons: List[Dict]
-    intruders: List[Dict]
+from app.services.streaming.pipeline_models import PipelineResult
+from app.services.streaming.telemetry_formatter import TelemetryFormatter
 
 
 class VisionPipelineProcessor:
     """
-    Thread-safe processor executing the computer vision stages for a single video frame.
+    Thread-safe processor executing modular computer vision stages for individual video frames.
     """
     def __init__(self, config: Optional[DetectionConfig] = None):
-        self.config = config or DetectionConfig(
-            snapshots_dir=SNAPSHOTS_DIR,
-            logs_dir=LOGS_DIR,
-            multi_person_threshold=2,
-            proximity_alert_distance_px=120,
-            confidence_threshold=0.35
-        )
+        self.config = config or DetectionConfig()
         self.detector = DronePersonDetectorService(self.config)
-        self.zone_monitor = ZoneMonitorService(1280, 720, self.config.default_zone_normalized)
+        self.zone_monitor = ZoneMonitorService(
+            DEFAULT_FRAME_WIDTH,
+            DEFAULT_FRAME_HEIGHT,
+            self.config.default_zone_normalized
+        )
         self.alert_manager = AlertManagerService(
             output_dir=self.config.output_dir,
             snapshots_dir=self.config.snapshots_dir,
@@ -53,6 +40,9 @@ class VisionPipelineProcessor:
         self._lock = threading.Lock()
 
     def set_view(self, view_mode: str) -> str:
+        """
+        Switches vision detection profiles between aerial drone and ground security.
+        """
         with self._lock:
             return self.detector.set_view(view_mode)
 
@@ -63,6 +53,9 @@ class VisionPipelineProcessor:
         prox_dist: Optional[int] = None,
         zone_polygon: Optional[List[Tuple[float, float]]] = None
     ):
+        """
+        Thread-safely updates live detection thresholds and restricted perimeter boundaries.
+        """
         with self._lock:
             if multi_person_thresh is not None:
                 self.config.multi_person_threshold = multi_person_thresh
@@ -71,7 +64,7 @@ class VisionPipelineProcessor:
                 self.config.confidence_threshold = conf_thresh
             if prox_dist is not None:
                 self.config.proximity_alert_distance_px = prox_dist
-            if zone_polygon is not None and len(zone_polygon) >= 3:
+            if zone_polygon is not None and len(zone_polygon) >= MIN_ZONE_VERTICES:
                 self.config.default_zone_normalized = zone_polygon
                 self.zone_monitor.zone_polygon_normalized = zone_polygon
                 self.zone_monitor._recalculate_pixel_polygon()
@@ -80,12 +73,17 @@ class VisionPipelineProcessor:
         self,
         frame: np.ndarray,
         frame_idx: int,
-        source_type: str = "synthetic"
+        source_type: str = "synthetic",
+        sim_targets: Optional[List[Dict]] = None
     ) -> PipelineResult:
         """
-        Executes complete detection, zoning, alert, and annotation pipeline.
-        Designed to execute without holding global state locks.
+        Executes complete detection, zoning, alert, HUD annotation, and telemetry pipeline.
         """
+        # Defensive check against corrupted or empty frame buffers
+        if frame is None or getattr(frame, "size", 0) == 0 or len(frame.shape) < 2:
+            active_view = getattr(self.detector, "active_view", "aerial")
+            return PipelineResult.empty_fallback(frame, source_type=source_type, view_mode=active_view)
+
         h, w = frame.shape[:2]
 
         with self._lock:
@@ -96,31 +94,145 @@ class VisionPipelineProcessor:
             zone_norm = cfg.default_zone_normalized
             active_view = self.detector.active_view
 
-        # 1. Update zone resolution
+        # 1. Update zone resolution to match dynamic frame aspect ratio
         self.zone_monitor.update_resolution(w, h)
 
-        # 2. Object detection & multi-target tracking
-        detected_persons = self.detector.process_frame(frame, use_tracking=True)
+        # 2. Object detection and multi-target tracking with procedural simulation fallback
+        detected_persons = self._detect_and_track(frame, sim_targets)
 
-        # 3. Geofence intrusion verification
-        intruders = self.zone_monitor.check_intrusions(detected_persons)
+        # 3. Spatial hazard evaluation: perimeter intrusion and gathering clustering
+        intruders, gatherings, clustered_ids = self._evaluate_spatial_hazards(detected_persons, prox_dist)
 
-        # 4. Proximity gathering clustering
-        gatherings, clustered_ids = self.zone_monitor.compute_gatherings(
-            detected_persons,
-            proximity_threshold_px=prox_dist
-        )
-
-        # 5. Threat state classification
-        threat_level, alert_msg, details = self.alert_manager.evaluate_state(
+        # 4. Threat state classification
+        threat_level, alert_msg, details = self._evaluate_threat_state(
             detected_persons=detected_persons,
             intruders=intruders,
             gatherings=gatherings,
             frame_idx=frame_idx
         )
 
-        # 6. High-visibility tactical HUD annotation
-        annotated_frame = self.detector.draw_annotations(
+        # 5. Tactical HUD annotation overlay
+        annotated_frame = self._render_tactical_hud(
+            frame=frame,
+            detected_persons=detected_persons,
+            intruders=intruders,
+            gatherings=gatherings,
+            clustered_ids=clustered_ids,
+            threat_level=threat_level,
+            alert_msg=alert_msg
+        )
+
+        # 6. Evidentiary snapshot persistence (saves annotated forensic frame)
+        self._persist_evidence(annotated_frame, threat_level, details, active_view)
+
+        # 7. Synchronize UAV avionics physics and battery consumption
+        avionics_snapshot = self._sync_avionics(detected_persons)
+
+        # 8. Serialize standardized telemetry payload
+        telemetry_payload = TelemetryFormatter.build_payload(
+            threat_level=threat_level,
+            alert_msg=alert_msg,
+            detected_persons=detected_persons,
+            intruders=intruders,
+            gatherings=gatherings,
+            fps=self.detector.fps,
+            frame_idx=frame_idx,
+            source_type=source_type,
+            view_mode=active_view,
+            multi_person_threshold=multi_thresh,
+            confidence_threshold=conf_thresh,
+            proximity_distance_px=prox_dist,
+            zone_polygon=zone_norm,
+            avionics_snapshot=avionics_snapshot
+        )
+
+        return PipelineResult(
+            annotated_frame=annotated_frame,
+            telemetry_payload=telemetry_payload,
+            threat_level=threat_level,
+            alert_msg=alert_msg,
+            detected_persons=detected_persons,
+            intruders=intruders
+        )
+
+    # -------------------------------------------------------------------------
+    # Private Atomic Pipeline Stages
+    # -------------------------------------------------------------------------
+
+    def _detect_and_track(
+        self,
+        frame: np.ndarray,
+        sim_targets: Optional[List[Dict]]
+    ) -> List[Dict]:
+        """
+        Executes inference detector and falls back to simulated coordinates if zero model detections occur in simulation mode.
+        """
+        detections = self.detector.process_frame(frame, use_tracking=True)
+        if len(detections) == 0 and sim_targets:
+            return sim_targets
+        return detections
+
+    def _evaluate_spatial_hazards(
+        self,
+        detected_persons: List[Dict],
+        proximity_distance_px: int
+    ) -> Tuple[List[Dict], List[Any], set]:
+        """
+        Calculates perimeter breaches and proximity-based clustering.
+        """
+        intruders = self.zone_monitor.check_intrusions(detected_persons)
+        gatherings, clustered_ids = self.zone_monitor.compute_gatherings(
+            detected_persons,
+            proximity_threshold_px=proximity_distance_px
+        )
+        return intruders, gatherings, clustered_ids
+
+    def _evaluate_threat_state(
+        self,
+        detected_persons: List[Dict],
+        intruders: List[Dict],
+        gatherings: List[Any],
+        frame_idx: int
+    ) -> Tuple[str, str, Dict[str, Any]]:
+        """
+        Evaluates system threat state and prepares incident event metadata.
+        """
+        threat_level, alert_msg, details = self.alert_manager.evaluate_state(
+            detected_persons=detected_persons,
+            intruders=intruders,
+            gatherings=gatherings,
+            frame_idx=frame_idx
+        )
+        return threat_level, alert_msg, (details or {})
+
+    def _persist_evidence(
+        self,
+        annotated_frame: np.ndarray,
+        threat_level: str,
+        details: Dict[str, Any],
+        active_view: str
+    ):
+        """
+        Saves annotated forensic evidence snapshot if intrusion or gathering threat condition is active.
+        """
+        evidence_details = dict(details)
+        evidence_details["view_mode"] = active_view
+        self.alert_manager.process_and_save_evidence(annotated_frame, threat_level, evidence_details)
+
+    def _render_tactical_hud(
+        self,
+        frame: np.ndarray,
+        detected_persons: List[Dict],
+        intruders: List[Dict],
+        gatherings: List[Any],
+        clustered_ids: set,
+        threat_level: str,
+        alert_msg: str
+    ) -> np.ndarray:
+        """
+        Draws high-visibility bounding boxes, tracking vectors, restricted zone, and status banners.
+        """
+        return self.detector.draw_annotations(
             frame=frame,
             detected_persons=detected_persons,
             intruders=intruders,
@@ -131,52 +243,14 @@ class VisionPipelineProcessor:
             alert_msg=alert_msg
         )
 
-        # 7. Asynchronous/Cooldown evidence persistence
-        self.alert_manager.process_and_save_evidence(annotated_frame, threat_level, details)
+    def _sync_avionics(self, detected_persons: List[Dict]) -> Dict[str, Any]:
+        """
+        Updates flight simulation metrics and returns current telemetry snapshot.
+        """
+        is_detecting = len(detected_persons) > 0
+        current_fps = self.detector.fps
+        drone_avionics_service.update_physics(is_detecting=is_detecting, fps=current_fps)
+        return drone_avionics_service.get_avionics_snapshot(fps=current_fps, detecting=is_detecting)
 
-        # 8. Drone physics & avionics telemetry synchronization
-        drone_avionics_service.update_physics(
-            is_detecting=len(detected_persons) > 0,
-            fps=self.detector.fps
-        )
-        avionics_snapshot = drone_avionics_service.get_avionics_snapshot(
-            fps=self.detector.fps,
-            detecting=len(detected_persons) > 0
-        )
 
-        # 9. Structured telemetry state payload
-        telemetry_payload = {
-            "threat_level": threat_level,
-            "alert_msg": alert_msg,
-            "total_persons": len(detected_persons),
-            "intruders_count": len(intruders),
-            "gathering_pairs": len(gatherings),
-            "fps": round(self.detector.fps, 1),
-            "frame_idx": frame_idx,
-            "detections": [
-                {
-                    "id": p["id"],
-                    "conf": round(p["conf"], 2),
-                    "bbox": p["bbox"],
-                    "speed_px_s": p.get("speed_px_s", 0.0),
-                    "trajectory_len": len(p.get("trajectory", [])),
-                    "is_intruder": p.get("is_intruder", False)
-                } for p in detected_persons
-            ],
-            "source_type": source_type,
-            "view_mode": active_view,
-            "multi_person_threshold": multi_thresh,
-            "confidence_threshold": conf_thresh,
-            "proximity_distance_px": prox_dist,
-            "zone_polygon": zone_norm,
-            "avionics": avionics_snapshot
-        }
-
-        return PipelineResult(
-            annotated_frame=annotated_frame,
-            telemetry_payload=telemetry_payload,
-            threat_level=threat_level,
-            alert_msg=alert_msg,
-            detected_persons=detected_persons,
-            intruders=intruders
-        )
+__all__ = ["VisionPipelineProcessor", "PipelineResult"]

@@ -2,6 +2,7 @@
 Streaming Subsystem: Modular Computer Vision Ingestion, Telemetry Distribution, and MJPEG Broadcast.
 """
 
+from app.services.streaming.source_factory import SourceFactory
 from app.services.streaming.source_provider import StreamSourceProvider, StreamSourceConfig
 from app.services.streaming.mjpeg_broadcaster import MjpegBroadcaster
 from app.services.streaming.telemetry_state import TelemetryStateStore
@@ -12,6 +13,7 @@ from app.services.streaming.stream_coordinator import StreamManagerService
 from app.services.streaming.drone_service import DroneAvionicsManager, drone_avionics_service
 
 __all__ = [
+    "SourceFactory",
     "StreamSourceProvider",
     "StreamSourceConfig",
     "MjpegBroadcaster",
