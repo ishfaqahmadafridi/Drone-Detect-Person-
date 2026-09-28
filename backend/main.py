@@ -30,6 +30,17 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api")
 app.include_router(api_router)
 
+@app.get("/")
+def get_root():
+    return {
+        "service": "AERO-GUARD Aerial Vision API",
+        "version": "2.0.0",
+        "status": "online",
+        "docs": "/docs",
+        "health": "/api/health"
+    }
+
+@app.get("/health")
 @app.get("/api/health")
 def get_health():
     return {
@@ -41,6 +52,7 @@ def get_health():
 # Mount static snapshots
 if os.path.exists(SNAPSHOTS_DIR):
     app.mount("/snapshots", StaticFiles(directory=SNAPSHOTS_DIR), name="snapshots")
+
 
 if __name__ == "__main__":
     import uvicorn

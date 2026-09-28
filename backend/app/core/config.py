@@ -15,6 +15,7 @@ SNAPSHOTS_DIR = os.path.join(OUTPUT_DIR, "snapshots")
 LOGS_DIR = os.path.join(OUTPUT_DIR, "logs")
 UPLOADS_DIR = os.path.join(BASE_DIR, "uploads")
 SYNTHETIC_VIDEO_PATH = os.path.join(BASE_DIR, "test_drone.mp4")
+DEFAULT_ZONE_NORMALIZED = DEFAULT_ZONE_POLYGON
 
 os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
@@ -53,6 +54,7 @@ class DetectionConfig:
     show_hud: bool = True
     show_boxes: bool = True
     show_track_trails: bool = True
+    track_trail_length: int = 30
     show_proximity_lines: bool = True
     show_restricted_zones: bool = True
     enable_audio_alert: bool = False
