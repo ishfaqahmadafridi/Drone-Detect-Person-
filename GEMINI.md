@@ -1,9 +1,24 @@
 # Gemini & AI Assistant Rules for Drone-Detect-Person
 
-## System Directives
-- **Aerial Vision Backend (`backend/`)**: Prioritize low-latency inference, multi-person gathering alerts (>= 2 persons), restricted zone polygon intrusion triggers, and WebSocket telemetry broadcasts.
-- **Tactical Frontend (`frontend/`)**: Implement Next.js App Router, TypeScript, Tailwind CSS, and shadcn-style atomic design tokens for real-time monitoring HUDs and interactive zone editors.
-- **Zero Inline Types Rule**: Component prop interfaces must never be defined inline in `.tsx` files; they must reside in `src/types/components.ts` and be imported via `@/types`.
-- **Custom Hook Encapsulation**: All queries, mutations, modals, and reactive metric state must be abstracted into dedicated hooks in `src/hooks/`.
-- **Centralized Threat Utilities**: Threat comparisons (`isThreatDanger`, `isThreatWarning`, `getThreatBadgeStyle`) must reside in `src/utils/threatUtils.ts`.
-- **Cloud Readiness**: Implement stateless container patterns compatible with AWS ECS Fargate, Cloudflare Edge, and S3/R2 storage.
+## System Directives & Non-Negotiable Engineering Standards
+
+### 1. Zero Code Duplication (Strict DRY)
+- **Frontend**: All component prop types live exclusively in `src/types/components.ts`. Threat logic in `src/utils/threatUtils.ts`. Hooks in `src/hooks/`.
+- **Backend**: Microservice layers in `backend/app/services/` are decoupled. Pydantic schemas in `app/schemas/`. Detection profiles in `app/services/inference/profiles.py`.
+
+### 2. Zero Code Inconsistency
+- **Strict Perspective Coupling**:
+  - `aerial`: Drone Flight, UAV Avionics, Overhead YOLO model, Synthetic Drone Simulation / RTSP Drone Link.
+  - `ground`: Ground Security, Perimeter CCTV, Eye-level YOLO model, Hardware Webcam / Phone RTSP Stream.
+- Standardized REST responses with typed envelopes and uniform error handling.
+
+### 3. No Bad / Fragile Logic
+- Zero unhandled promises, race conditions, or unvalidated array indexes.
+- Dynamic fallback: Any disconnected hardware or network stream must automatically fallback to simulation without crashing the pipeline.
+
+### 4. Zero Hardcoded Values
+- **Frontend**: Centralize constants, stream source lists, and UI tokens in `src/constants/tactical.ts`.
+- **Backend**: Centralize config parameters, thresholds, and paths in `app/core/config.py` loaded via `.env`.
+
+### 5. Zero Inline Types
+- Never declare `interface Props` inline inside `.tsx` files; always export from `src/types/components.ts` and import via `@/types`.

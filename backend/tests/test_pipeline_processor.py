@@ -47,6 +47,32 @@ class TestPipelineProcessor(unittest.TestCase):
         self.assertIn(b"Content-Type: image/jpeg\r\n\r\n", first_chunk)
         service.is_running = False
 
+    def test_pipeline_processor_defensive_empty_frame(self):
+        processor = VisionPipelineProcessor()
+        # Test None frame
+        result_none = processor.process_frame(None, frame_idx=0)
+        self.assertIsInstance(result_none, PipelineResult)
+        self.assertEqual(result_none.threat_level, "CLEAR")
+
+        # Test empty frame buffer
+        empty_frame = np.zeros((0,), dtype=np.uint8)
+        result_empty = processor.process_frame(empty_frame, frame_idx=0)
+        self.assertIsInstance(result_empty, PipelineResult)
+        self.assertEqual(result_empty.threat_level, "CLEAR")
+
+    def test_telemetry_formatter_sanitization(self):
+        from app.services.streaming.telemetry_formatter import TelemetryFormatter
+        raw_detections = [
+            {"id": 1, "conf": "0.854", "bbox": [10, 20, 30, 40], "speed_px_s": 5.43, "trajectory": [(10, 10)], "is_intruder": True},
+            {"id": 2, "conf": 0.92, "bbox": [50, 60, 70, 80]}
+        ]
+        sanitized = TelemetryFormatter.format_detections(raw_detections)
+        self.assertEqual(len(sanitized), 2)
+        self.assertEqual(sanitized[0]["conf"], 0.85)
+        self.assertTrue(sanitized[0]["is_intruder"])
+        self.assertEqual(sanitized[1]["speed_px_s"], 0.0)
+        self.assertFalse(sanitized[1]["is_intruder"])
+
 
 if __name__ == "__main__":
     unittest.main()
