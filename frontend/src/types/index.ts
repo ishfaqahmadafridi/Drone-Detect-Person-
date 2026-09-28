@@ -1,5 +1,6 @@
 export type ThreatLevel = "CLEAR" | "MONITORING" | "MULTI_PERSON" | "INTRUSION";
 export type StreamSourceType = "synthetic" | "webcam" | "file" | "rtsp";
+export type TacticalNavTab = "airspace" | "cameras" | "avionics" | "incidents" | "geofence" | "settings";
 
 export interface Detection {
   id: number;
@@ -8,6 +9,45 @@ export interface Detection {
   speed_px_s?: number;
   trajectory_len?: number;
   is_intruder: boolean;
+}
+
+export type DroneFlightState =
+  | "DISARMED"
+  | "STANDBY"
+  | "ARMED"
+  | "TAKEOFF"
+  | "AIRBORNE"
+  | "PATROL"
+  | "HOVER"
+  | "RTL"
+  | "LANDED";
+
+export interface DroneAvionics {
+  flight_state: DroneFlightState | string;
+  battery_percent: number;
+  battery_voltage: number;
+  battery_health_percent: number;
+  battery_temp_c: number;
+  flight_time_remaining_min: number;
+  altitude_m: number;
+  ground_speed_ms: number;
+  gps_sats: number;
+  gps_fix: string;
+  compass_heading_deg: number;
+  link_quality_percent: number;
+  camera_online: boolean;
+  camera_resolution: string;
+  camera_fps: number;
+  camera_sensor_temp_c: number;
+  camera_detecting: boolean;
+}
+
+export interface DroneCommandResponse {
+  success: boolean;
+  message: string;
+  flight_state: string;
+  altitude_m: number;
+  battery_percent: number;
 }
 
 export interface TelemetryData {
@@ -26,6 +66,7 @@ export interface TelemetryData {
   confidence_threshold: number;
   proximity_distance_px: number;
   zone_polygon: [number, number][];
+  avionics?: DroneAvionics;
 }
 
 export interface SurveillanceConfig {
