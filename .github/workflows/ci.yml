@@ -37,12 +37,13 @@ jobs:
       - name: Test Synthetic Flight Generator (app.simulator)
         run: |
           cd backend
-          python generate_test_video.py --output test_drone.mp4 --duration 2 --num-people 3
+          python scripts/generate_test_video.py --output test_drone.mp4 --duration 2 --num-people 3
 
       - name: Test Drone Person & Intrusion Pipeline (Headless)
         run: |
           cd backend
-          python detect.py --source test_drone.mp4 --headless --max-frames 10
+          python scripts/detect.py --source test_drone.mp4 --headless --max-frames 10
+
 
       - name: Verify FastAPI Microservice Endpoints
         run: |

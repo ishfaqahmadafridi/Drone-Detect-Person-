@@ -8,12 +8,14 @@ const chakraPetch = Chakra_Petch({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
+  fallback: ["sans-serif"],
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -21,7 +23,9 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   display: "swap",
+  fallback: ["ui-monospace", "monospace"],
 });
+
 
 export const metadata: Metadata = {
   title: "AERO-GUARD | Drone Aerial Surveillance & Multi-Person Intrusion HUD",
