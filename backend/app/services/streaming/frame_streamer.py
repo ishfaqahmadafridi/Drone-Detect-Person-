@@ -47,10 +47,16 @@ class FrameStreamer:
             frame_idx += 1
 
             # 1. Process frame through vision pipeline
+            sim_targets = (
+                self.source_provider.get_simulated_targets()
+                if self.source_provider.source_type == "synthetic"
+                else []
+            )
             result = self.pipeline_processor.process_frame(
                 frame=frame,
                 frame_idx=frame_idx,
-                source_type=self.source_provider.source_type
+                source_type=self.source_provider.source_type,
+                sim_targets=sim_targets
             )
 
             # 2. Update real-time telemetry state store

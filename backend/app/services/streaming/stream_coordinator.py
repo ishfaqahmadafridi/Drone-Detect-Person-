@@ -89,6 +89,7 @@ class StreamManagerService:
         Switches AI inference model perspective between aerial drone and ground-level CCTV.
         """
         active_view = self.pipeline_processor.set_view(view_mode)
+        self.source_provider.set_view_mode(active_view)
         self.telemetry_store.update(view_mode=active_view)
         print(f"[COORDINATOR] Switched perspective view to: {active_view}")
         return active_view
