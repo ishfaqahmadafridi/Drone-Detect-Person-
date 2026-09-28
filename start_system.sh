@@ -22,13 +22,16 @@ trap cleanup EXIT INT TERM
 # 1. Start FastAPI Backend Microservice
 echo "[1/2] Starting FastAPI Backend on http://localhost:8000..."
 cd "$ROOT_DIR/backend"
-if [ ! -d "venv" ] && command -v python3 &>/dev/null; then
-    echo "[INFO] Ensure backend dependencies are installed: pip install -r requirements.txt"
+PYTHON_BIN="python3"
+if [ -f "$ROOT_DIR/backend/.venv/bin/python" ]; then
+    PYTHON_BIN="$ROOT_DIR/backend/.venv/bin/python"
+elif [ -f "$ROOT_DIR/.venv/bin/python" ]; then
+    PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
 fi
 
-python3 -m uvicorn main:app --host 0.0.0.0 --port 8000 &
+$PYTHON_BIN -m uvicorn main:app --host 0.0.0.0 --port 8000 &
 BACKEND_PID=$!
-echo "[INFO] Backend running with PID $BACKEND_PID"
+echo "[INFO] Backend running with PID $BACKEND_PID using $PYTHON_BIN"
 
 # 2. Start Next.js Frontend Dashboard
 if [ -d "$ROOT_DIR/frontend" ]; then

@@ -59,6 +59,35 @@ class SyntheticVideoGenerator:
         print(f"[SUCCESS] Synthetic drone test video saved to: {cfg.output_path}")
         return cfg.output_path
 
+class LiveSimulationStream:
+    """
+    Direct in-memory simulation frame generator. Produces real-time synthetic frames
+    with zero disk dependency and zero video codec requirements.
+    """
+    def __init__(self, width: int = 1280, height: int = 720, num_people: int = 4):
+        self.config = SimulationConfig(width=width, height=height, num_people=num_people)
+        self.terrain_renderer = TerrainRenderer(self.config)
+        self.people = []
+        for i in range(num_people):
+            person = SimulatedPerson(
+                x=random.uniform(150, width - 150),
+                y=random.uniform(150, height - 150),
+                color=self.config.shirt_colors[i % len(self.config.shirt_colors)],
+                size=random.randint(18, 24)
+            )
+            self.people.append(person)
+        self.frame_idx = 0
+
+    def read_frame(self):
+        cfg = self.config
+        frame, drift_x, drift_y = self.terrain_renderer.render(self.frame_idx)
+        for idx, person in enumerate(self.people):
+            person.update_physics(self.frame_idx, idx, cfg.width, cfg.height)
+            person.render(frame, drift_x, drift_y)
+        TelemetryOsdRenderer.render(frame, self.frame_idx, 1000000)
+        self.frame_idx += 1
+        return True, frame
+
 def create_synthetic_drone_video(
     output_path: str = "test_drone.mp4",
     width: int = 1280,

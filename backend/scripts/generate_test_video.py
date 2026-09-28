@@ -3,8 +3,17 @@ Synthetic Drone Flight Test Video Generator CLI.
 Delegates to the modular simulation generator in app.simulator.
 """
 
+import sys
 import argparse
+from pathlib import Path
+
+# Add backend root to sys.path
+backend_root = Path(__file__).resolve().parent.parent
+if str(backend_root) not in sys.path:
+    sys.path.insert(0, str(backend_root))
+
 from app.simulator.generator import create_synthetic_drone_video
+
 
 def main():
     parser = argparse.ArgumentParser(description="Generate synthetic drone aerial video for testing")
