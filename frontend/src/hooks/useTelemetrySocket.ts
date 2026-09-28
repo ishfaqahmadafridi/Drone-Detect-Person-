@@ -15,12 +15,23 @@ export function useTelemetrySocket() {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastThreatRef = useRef<string>("CLEAR");
   const connectRef = useRef<() => void>(() => {});
+  const sirenRef = useRef(playIntrusionSiren);
+  const beepRef = useRef(playWarningBeep);
+
+  useEffect(() => {
+    sirenRef.current = playIntrusionSiren;
+    beepRef.current = playWarningBeep;
+  }, [playIntrusionSiren, playWarningBeep]);
 
   const connect = useCallback(() => {
     if (typeof window === "undefined") return;
 
     if (wsRef.current) {
-      wsRef.current.close();
+      try {
+        wsRef.current.close();
+      } catch {
+        // ignore
+      }
     }
 
     const wsUrl = getWebSocketTelemetryUrl();
@@ -39,12 +50,12 @@ export function useTelemetrySocket() {
         dispatch(setTelemetryData(data));
 
         if (isThreatDanger(data.threat_level)) {
-          playIntrusionSiren();
+          sirenRef.current?.();
         } else if (
           isThreatWarning(data.threat_level) &&
           lastThreatRef.current !== data.threat_level
         ) {
-          playWarningBeep();
+          beepRef.current?.();
         }
         lastThreatRef.current = data.threat_level;
       } catch (e) {
@@ -60,9 +71,13 @@ export function useTelemetrySocket() {
     };
 
     ws.onerror = () => {
-      ws.close();
+      try {
+        ws.close();
+      } catch {
+        // ignore
+      }
     };
-  }, [dispatch, playIntrusionSiren, playWarningBeep]);
+  }, [dispatch]);
 
   useEffect(() => {
     connectRef.current = connect;

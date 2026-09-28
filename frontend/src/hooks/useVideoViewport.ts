@@ -19,7 +19,7 @@ export function useVideoViewport() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [streamKey, setStreamKey] = useState<number>(0);
-  const [rtspInput, setRtspInput] = useState("");
+  const [rtspInput, setRtspInput] = useState("http://10.10.20.117:8080");
   const [showRtspField, setShowRtspField] = useState(false);
   const [showUploadField, setShowUploadField] = useState(false);
 
@@ -79,6 +79,8 @@ export function useVideoViewport() {
     e.preventDefault();
     if (!rtspInput.trim()) return;
     await switchSource.mutateAsync({ sourceType: "rtsp", sourcePath: rtspInput.trim() });
+    await switchView.mutateAsync("ground");
+    setStreamKey((prev) => prev + 1);
     setShowRtspField(false);
   };
 
@@ -93,6 +95,7 @@ export function useVideoViewport() {
       setShowUploadField(false);
       setShowRtspField(false);
       await switchSource.mutateAsync({ sourceType: type });
+      setStreamKey((prev) => prev + 1);
     }
   };
 

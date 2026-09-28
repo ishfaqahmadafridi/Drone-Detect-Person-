@@ -1,11 +1,13 @@
 import { RefObject, ChangeEvent, FormEvent, ReactNode } from "react";
-import { ThreatLevel, StreamSourceType, IncidentAlert, SnapshotItem } from "./index";
+import { ThreatLevel, StreamSourceType, IncidentAlert, SnapshotItem, DroneAvionics, TacticalNavTab } from "./index";
 
 // ==========================================
 // 1. Header Component Props
 // ==========================================
 export interface HeaderProps {
   onRefresh: () => void;
+  onOpenWall?: () => void;
+  avionics?: DroneAvionics;
 }
 
 export interface BrandClusterProps {
@@ -18,6 +20,29 @@ export interface ThreatRibbonProps {
 }
 
 export interface HeaderActionsProps {
+  onRefresh: () => void;
+  onOpenWall?: () => void;
+  avionics?: DroneAvionics;
+}
+
+export interface AvionicsQuickPillsProps {
+  avionics?: DroneAvionics;
+}
+
+export interface HeaderClockProps {
+  utcTime?: string;
+}
+
+export interface CameraWallTriggerProps {
+  onOpenWall: () => void;
+}
+
+export interface AudioAlertToggleProps {
+  isMuted: boolean;
+  onToggleMute: () => void;
+}
+
+export interface HeaderRefreshButtonProps {
   onRefresh: () => void;
 }
 
@@ -51,6 +76,44 @@ export interface ViewportScreenProps {
   onCancelZone: () => void;
 }
 
+export interface ViewportStandbyLoaderProps {
+  isLoaded: boolean;
+}
+
+export interface ViewportStreamFeedProps {
+  streamKey: number;
+  isLoaded: boolean;
+  onLoad: () => void;
+  onError: () => void;
+}
+
+export interface ViewportCanvasLayerProps {
+  canvasRef: RefObject<HTMLCanvasElement | null>;
+  isEditingZone: boolean;
+  onCanvasMouseDown: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  onCanvasMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  onCanvasMouseUp: () => void;
+}
+
+export interface ViewportHudReticleProps {
+  className?: string;
+}
+
+export interface ViewportTelemetryBadgesProps {
+  fps: number;
+  latencyMs?: number;
+  resolution?: string;
+  engine?: string;
+}
+
+export interface ViewportHudOverlayProps {
+  fps: number;
+  isEditingZone: boolean;
+  onSaveZone: () => void;
+  onResetZone: () => void;
+  onCancelZone: () => void;
+}
+
 export interface ZoneBannerProps {
   onSave: () => void;
   onReset: () => void;
@@ -69,6 +132,31 @@ export interface StreamToolbarProps {
   onSourceSelect: (type: StreamSourceType) => void;
   onViewSelect?: (view: "aerial" | "ground") => void;
   onFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
+  onRtspInputChange: (val: string) => void;
+  onRtspSubmit: (e: FormEvent) => void;
+}
+
+export interface StreamSourceSelectorProps {
+  sourceType: string;
+  onSourceSelect: (type: StreamSourceType) => void;
+}
+
+export interface PerspectiveToggleProps {
+  viewMode?: "aerial" | "ground";
+  onViewSelect: (view: "aerial" | "ground") => void;
+}
+
+export interface StreamUploadFormProps {
+  show: boolean;
+  isUploading: boolean;
+  fileInputRef: RefObject<HTMLInputElement | null>;
+  onFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+export interface StreamRtspFormProps {
+  show: boolean;
+  isConnectingRtsp: boolean;
+  rtspInput: string;
   onRtspInputChange: (val: string) => void;
   onRtspSubmit: (e: FormEvent) => void;
 }
@@ -176,3 +264,236 @@ export interface WebSocketContextType {
 export interface WebSocketProviderProps {
   children: ReactNode;
 }
+
+// ==========================================
+// 8. Drone Flight & Avionics Component Props
+// ==========================================
+export interface DroneAvionicsCardProps {
+  avionics?: DroneAvionics;
+  onOpenFlightDeck?: () => void;
+  onOpenWebcam?: () => void;
+}
+
+export interface AvionicsCardHeaderProps {
+  flightState: string;
+}
+
+export interface BatteryHealthGaugeProps {
+  battery: number;
+  voltage: number;
+  health: number;
+  flightTime: number;
+}
+
+export interface FlightPhysicsGridProps {
+  altitude: number;
+  speed: number;
+  sats: number;
+}
+
+export interface OpticalSensorStatusProps {
+  camOnline: boolean;
+  camDetecting: boolean;
+}
+
+export interface AvionicsActionButtonsProps {
+  onOpenFlightDeck?: () => void;
+  onOpenWebcam?: () => void;
+}
+
+
+export interface FlightControlDeckProps {
+  flightState: string;
+  altitude: number;
+  batteryPercent: number;
+  isCommandPending: boolean;
+  onCommand: (action: string) => void;
+  onConnectWebcam: () => void;
+}
+
+export interface FlightDeckHeaderProps {
+  className?: string;
+}
+
+export interface FlightTelemetryBarProps {
+  altitude: number;
+  batteryPercent: number;
+  flightState: string;
+}
+
+export interface FlightActionGridProps {
+  flightState: string;
+  isCommandPending: boolean;
+  onCommand: (action: string) => void;
+}
+
+export interface GroundConnectButtonProps {
+  onConnectWebcam: () => void;
+  isCommandPending: boolean;
+}
+
+
+export interface CameraWallModalProps {
+  isOpen: boolean;
+  activeSource: string;
+  onClose: () => void;
+  onSelectFeed: (feedType: StreamSourceType, viewMode: "aerial" | "ground") => void;
+  onConnectRtsp?: (url: string) => void;
+}
+
+export interface CameraWallHeaderProps {
+  onClose: () => void;
+}
+
+export interface AerialFeedCardProps {
+  isActive: boolean;
+  onSelect: () => void;
+}
+
+export interface MobileGroundFeedCardProps {
+  isActive: boolean;
+  onSelectWebcam: () => void;
+  onConnectRtsp?: (url: string) => void;
+}
+
+export interface MobileGroundCardHeaderProps {
+  isActive: boolean;
+}
+
+export interface MobilePixelQuickConnectProps {
+  onConnectRtsp?: (url: string) => void;
+}
+
+export interface MobileHardwareWebcamButtonProps {
+  onSelectWebcam: () => void;
+}
+
+export interface MobileCustomStreamFormProps {
+  onConnectRtsp?: (url: string) => void;
+}
+
+export interface ThermalFeedCardProps {
+  isActive: boolean;
+  onSelect: () => void;
+}
+
+export interface SatelliteFeedCardProps {
+  isActive: boolean;
+  onSelect: () => void;
+}
+
+// ==========================================
+// 9. Tactical Sidebar Component Props
+// ==========================================
+export interface TacticalSidebarProps {
+  activeTab: TacticalNavTab;
+  onTabChange: (tab: TacticalNavTab) => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+  onOpenWall: () => void;
+  avionics?: DroneAvionics;
+  isMuted: boolean;
+  onToggleMute: () => void;
+  threatLevel: ThreatLevel;
+}
+
+export interface SidebarHeaderProps {
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+  flightState: string;
+  isAirborne: boolean;
+}
+
+export interface SidebarNavListProps {
+  activeTab: TacticalNavTab;
+  onTabChange: (tab: TacticalNavTab) => void;
+  isCollapsed: boolean;
+  onOpenWall: () => void;
+  threatLevel: ThreatLevel;
+}
+
+export interface NavItemConfig {
+  id: TacticalNavTab;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+export interface SidebarNavItemProps {
+  item: NavItemConfig;
+  isActive: boolean;
+  isCollapsed: boolean;
+  threatLevel: ThreatLevel;
+  onSelect: (id: TacticalNavTab) => void;
+}
+
+export interface SidebarCameraWallTriggerProps {
+  isCollapsed: boolean;
+  onOpenWall: () => void;
+}
+
+export interface SidebarTelemetryWidgetProps {
+  batteryPct: number;
+  isBatteryLow: boolean;
+  altitude: number;
+  speed: number;
+}
+
+export interface SidebarFooterProps {
+  isMuted: boolean;
+  onToggleMute: () => void;
+  isCollapsed: boolean;
+}
+
+
+// ==========================================
+// 10. Dashboard View Component Props
+// ==========================================
+export interface AirspaceCommandViewProps {
+  onSnapshotTrigger: () => void;
+  flightState: string;
+  altitude: number;
+  batteryPercent: number;
+  isCommandPending: boolean;
+  onCommand: (action: string) => void;
+  onConnectWebcam: () => void;
+  onOpenFlightDeck: () => void;
+  avionics?: DroneAvionics;
+}
+
+export interface IncidentAuditViewProps {
+  className?: string;
+}
+
+export interface CalibrationViewProps {
+  avionics?: DroneAvionics;
+  onOpenFlightDeck: () => void;
+  onOpenWebcam: () => void;
+}
+
+export interface TacticalViewRouterProps {
+  activeTab: TacticalNavTab;
+  onSnapshotTrigger: () => void;
+  flightState: string;
+  altitude: number;
+  batteryPercent: number;
+  isCommandPending: boolean;
+  onCommand: (action: string) => void;
+  onConnectWebcam: () => void;
+  onOpenFlightDeck: () => void;
+  avionics?: DroneAvionics;
+}
+
+export interface MissionCommandViewportProps {
+  activeTab: TacticalNavTab;
+  avionics?: DroneAvionics;
+  flightState: string;
+  altitude: number;
+  batteryPercent: number;
+  isCommandPending: boolean;
+  onCommand: (action: string) => void;
+  onConnectWebcam: () => void;
+  onOpenFlightDeck: () => void;
+  onRefresh: () => void;
+  onOpenWall: () => void;
+}
+

@@ -2,45 +2,64 @@
 
 import React from "react";
 import {
-  Header,
-  VideoViewport,
-  TelemetryCards,
-  TuningPanel,
-  IncidentLogs,
-  SnapshotGallery,
+  TacticalSidebar,
+  MissionCommandViewport,
+  CameraWallModal,
 } from "@/components/tactical";
-import { useQueryClient } from "@tanstack/react-query";
-import { ALERTS_QUERY_KEY } from "@/services/queries/useAlertsQuery";
-import { SNAPSHOTS_QUERY_KEY } from "@/services/queries/useSnapshotsQuery";
+import { useDashboardOrchestrator } from "@/hooks";
 
 export default function DroneDashboardPage() {
-  const queryClient = useQueryClient();
-
-  const handleManualRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ALERTS_QUERY_KEY });
-    queryClient.invalidateQueries({ queryKey: SNAPSHOTS_QUERY_KEY });
-  };
+  const {
+    activeTab,
+    setActiveTab,
+    isSidebarCollapsed,
+    toggleSidebar,
+    handleManualRefresh,
+    threatLevel,
+    isMuted,
+    toggleMute,
+    flight,
+    wall,
+  } = useDashboardOrchestrator();
 
   return (
-    <div className="flex flex-col min-h-screen p-4 md:p-6 gap-5 max-w-[1700px] mx-auto">
-      {/* 1. TOP TACTICAL HEADER */}
-      <Header onRefresh={handleManualRefresh} />
+    <div className="flex h-screen w-screen overflow-hidden bg-[#030712] text-slate-100">
+      {/* 1. Tactical Navigation Sidebar */}
+      <TacticalSidebar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebar}
+        onOpenWall={wall.openWall}
+        avionics={flight.avionics}
+        isMuted={isMuted}
+        onToggleMute={toggleMute}
+        threatLevel={threatLevel}
+      />
 
-      {/* 2. MAIN DASHBOARD GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_390px] gap-5">
-        {/* Left Column: Primary Video Viewport & Evidence Captures */}
-        <div className="flex flex-col gap-4">
-          <VideoViewport onSnapshotTrigger={handleManualRefresh} />
-          <SnapshotGallery />
-        </div>
+      {/* 2. Main Mission Command Viewport */}
+      <MissionCommandViewport
+        activeTab={activeTab}
+        avionics={flight.avionics}
+        flightState={flight.flightState}
+        altitude={flight.altitude}
+        batteryPercent={flight.batteryPercent}
+        isCommandPending={flight.isCommandPending}
+        onCommand={flight.handleCommand}
+        onConnectWebcam={flight.handleConnectWebcam}
+        onOpenFlightDeck={flight.handleLaunchDroneFlight}
+        onRefresh={handleManualRefresh}
+        onOpenWall={wall.openWall}
+      />
 
-        {/* Right Column: Telemetry Cards, Parameter Tuning, Incident Feed */}
-        <div className="flex flex-col gap-4">
-          <TelemetryCards />
-          <TuningPanel />
-          <IncidentLogs />
-        </div>
-      </div>
+      {/* 3. Multi-Sensor Camera Wall Modal */}
+      <CameraWallModal
+        isOpen={wall.isWallOpen}
+        activeSource={wall.activeSource}
+        onClose={wall.closeWall}
+        onSelectFeed={wall.selectFeed}
+        onConnectRtsp={wall.connectRtsp}
+      />
     </div>
   );
 }

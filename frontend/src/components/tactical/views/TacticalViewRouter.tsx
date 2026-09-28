@@ -1,0 +1,50 @@
+"use client";
+
+import React from "react";
+import { TacticalViewRouterProps } from "@/types";
+import { AirspaceCommandView } from "./AirspaceCommandView";
+import { IncidentAuditView } from "./IncidentAuditView";
+import { CalibrationView } from "./CalibrationView";
+
+export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
+  activeTab,
+  onSnapshotTrigger,
+  flightState,
+  altitude,
+  batteryPercent,
+  isCommandPending,
+  onCommand,
+  onConnectWebcam,
+  onOpenFlightDeck,
+  avionics,
+}) => {
+  switch (activeTab) {
+    case "incidents":
+      return <IncidentAuditView />;
+    case "settings":
+      return (
+        <CalibrationView
+          avionics={avionics}
+          onOpenFlightDeck={onOpenFlightDeck}
+          onOpenWebcam={onConnectWebcam}
+        />
+      );
+    case "airspace":
+    case "avionics":
+    case "geofence":
+    default:
+      return (
+        <AirspaceCommandView
+          onSnapshotTrigger={onSnapshotTrigger}
+          flightState={flightState}
+          altitude={altitude}
+          batteryPercent={batteryPercent}
+          isCommandPending={isCommandPending}
+          onCommand={onCommand}
+          onConnectWebcam={onConnectWebcam}
+          onOpenFlightDeck={onOpenFlightDeck}
+          avionics={avionics}
+        />
+      );
+  }
+};
