@@ -14,9 +14,18 @@ export const DEFAULT_RESTRICTED_ZONE: [number, number][] = [
   [0.25, 0.75],
 ];
 
+export const AERIAL_STREAM_SOURCES = [
+  { label: "Synthetic Drone", value: "synthetic" },
+  { label: "Drone RTSP Link", value: "rtsp" },
+] as const;
+
+export const GROUND_STREAM_SOURCES = [
+  { label: "Synthetic CCTV", value: "synthetic" },
+  { label: "Phone Camera (IP Stream)", value: "rtsp" },
+] as const;
+
 export const STREAM_SOURCE_OPTIONS = [
   { label: "Synthetic Drone", value: "synthetic" },
-  { label: "Webcam", value: "webcam" },
-  { label: "Upload Video", value: "file" },
-  { label: "RTSP Feed", value: "rtsp" },
+  { label: "Phone Camera (IP / RTSP)", value: "rtsp" },
+  { label: "Synthetic CCTV", value: "synthetic" },
 ] as const;

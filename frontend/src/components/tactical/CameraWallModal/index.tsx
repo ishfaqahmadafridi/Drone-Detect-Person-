@@ -31,10 +31,9 @@ export const CameraWallModal: React.FC<CameraWallModalProps> = ({
             onSelect={() => onSelectFeed("synthetic", "aerial")}
           />
 
-          {/* Channel 02: Mobile Phone / Ground CCTV / Local Webcam */}
+          {/* Channel 02: Mobile Phone / Ground CCTV */}
           <MobileGroundFeedCard
-            isActive={activeSource === "webcam" || activeSource === "rtsp"}
-            onSelectWebcam={() => onSelectFeed("webcam", "ground")}
+            isActive={activeSource === "rtsp"}
             onConnectRtsp={onConnectRtsp}
           />
 
@@ -61,7 +60,6 @@ export * from "./AerialFeedCard";
 export * from "./MobileGroundFeedCard";
 export * from "./MobileGroundCardHeader";
 export * from "./MobilePixelQuickConnect";
-export * from "./MobileHardwareWebcamButton";
 export * from "./MobileCustomStreamForm";
 export * from "./ThermalFeedCard";
 export * from "./SatelliteFeedCard";

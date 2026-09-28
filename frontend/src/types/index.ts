@@ -93,6 +93,7 @@ export interface SnapshotItem {
   url: string;
   created_at: string;
   size_kb: number;
+  view_mode?: "aerial" | "ground";
 }
 
 export interface ModelProfileInfo {

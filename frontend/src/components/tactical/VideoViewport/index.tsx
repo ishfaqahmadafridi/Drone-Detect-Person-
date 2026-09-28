@@ -14,13 +14,10 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
     isEditingZone,
     containerRef,
     canvasRef,
-    fileInputRef,
     streamKey,
     rtspInput,
     setRtspInput,
     showRtspField,
-    showUploadField,
-    isUploading,
     isConnectingRtsp,
     toggleFullscreen,
     handleMouseDown,
@@ -30,7 +27,6 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
     handleSaveAndClose,
     handleResetAndClose,
     handleCancel,
-    handleFileUpload,
     handleRtspSubmit,
     handleSourceSelect,
     handleViewSelect,
@@ -42,6 +38,7 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
     <div className="glass-panel rounded-xl overflow-hidden flex flex-col border border-slate-800">
       <ViewportHeader
         sourceType={sourceType}
+        viewMode={viewMode}
         isEditingZone={isEditingZone}
         onToggleEditZone={handleStartEditing}
         onSnapshotTrigger={onSnapshotTrigger}
@@ -66,15 +63,11 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
       <StreamToolbar
         sourceType={sourceType}
         viewMode={viewMode}
-        showUploadField={showUploadField}
         showRtspField={showRtspField}
-        isUploading={isUploading}
         isConnectingRtsp={isConnectingRtsp}
         rtspInput={rtspInput}
-        fileInputRef={fileInputRef}
         onSourceSelect={handleSourceSelect}
         onViewSelect={handleViewSelect}
-        onFileUpload={handleFileUpload}
         onRtspInputChange={setRtspInput}
         onRtspSubmit={handleRtspSubmit}
       />
@@ -94,6 +87,5 @@ export * from "./ViewportHudOverlay";
 export * from "./StreamToolbar";
 export * from "./StreamSourceSelector";
 export * from "./PerspectiveToggle";
-export * from "./StreamUploadForm";
 export * from "./StreamRtspForm";
 export * from "./ZoneBanner";
