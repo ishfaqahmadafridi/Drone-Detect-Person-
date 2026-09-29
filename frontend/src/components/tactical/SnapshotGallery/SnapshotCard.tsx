@@ -1,34 +1,43 @@
-"use client";
-
 import React from "react";
+import { Clock } from "lucide-react";
 import { SnapshotCardProps } from "@/types";
+import { parseEvidenceTimestamp, getPerspectiveLabel, getPerspectiveBadgeClass } from "@/utils";
 
 export const SnapshotCard: React.FC<SnapshotCardProps> = ({ snapshot, onClick }) => {
+  const { datePart, timePart } = parseEvidenceTimestamp(snapshot.created_at);
+  const perspectiveLabel = getPerspectiveLabel(snapshot.view_mode);
+  const perspectiveBadgeClass = getPerspectiveBadgeClass(snapshot.view_mode);
+
   return (
     <div
       onClick={onClick}
-      className="relative shrink-0 w-40 h-24 rounded-lg overflow-hidden border border-slate-800 hover:border-cyan-400 transition-all cursor-pointer group shadow-lg"
+      className="relative shrink-0 w-52 h-32 rounded-xl overflow-hidden border border-slate-800 hover:border-cyan-400/80 transition-all cursor-pointer group shadow-xl bg-slate-950"
     >
+      {/* Thumbnail */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={snapshot.url}
         alt={snapshot.filename}
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
       />
-      {snapshot.view_mode && (
-        <span
-          className={`absolute top-1 right-1 px-1.5 py-0.5 rounded text-[8px] font-mono-code font-bold uppercase shadow ${
-            snapshot.view_mode === "ground"
-              ? "bg-blue-600/90 text-white border border-blue-400/40"
-              : "bg-emerald-600/90 text-white border border-emerald-400/40"
-          }`}
-        >
-          {snapshot.view_mode}
+
+      {/* Perspective Badge Top-Right */}
+      <span
+        className={`absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-mono-code font-bold uppercase shadow-md border ${perspectiveBadgeClass}`}
+      >
+        {perspectiveLabel}
+      </span>
+
+      {/* Clear Time & Info Bottom Bar */}
+      <div className="absolute inset-x-0 bottom-0 bg-slate-950/90 backdrop-blur-md px-2.5 py-1.5 flex flex-col border-t border-slate-800/60">
+        <div className="flex items-center gap-1.5 text-cyan-300 font-mono-code text-[11px] font-bold">
+          <Clock className="w-3 h-3 text-cyan-400 shrink-0" />
+          <span>{timePart}</span>
+          <span className="text-slate-400 text-[9px] font-normal">{datePart}</span>
+        </div>
+        <span className="font-mono-code text-[9px] text-slate-400 truncate mt-0.5">
+          {snapshot.filename}
         </span>
-      )}
-      <div className="absolute inset-x-0 bottom-0 bg-slate-950/90 backdrop-blur-sm px-2 py-1 flex flex-col">
-        <span className="font-mono-code text-[9px] text-cyan-400 truncate">{snapshot.filename}</span>
-        <span className="font-mono-code text-[8px] text-slate-400">{snapshot.created_at}</span>
       </div>
     </div>
   );

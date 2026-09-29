@@ -6,7 +6,6 @@ import { ThreatLevel, StreamSourceType, IncidentAlert, SnapshotItem, DroneAvioni
 // ==========================================
 export interface HeaderProps {
   onRefresh: () => void;
-  onOpenWall?: () => void;
   avionics?: DroneAvionics;
 }
 
@@ -21,7 +20,6 @@ export interface ThreatRibbonProps {
 
 export interface HeaderActionsProps {
   onRefresh: () => void;
-  onOpenWall?: () => void;
   avionics?: DroneAvionics;
 }
 
@@ -488,7 +486,122 @@ export interface MissionCommandViewportProps {
   onConnectAirLink?: () => void;
   onOpenFlightDeck: () => void;
   onRefresh: () => void;
-  onOpenWall: () => void;
   onSnapshotTrigger?: () => void;
 }
 
+export type RecordingsFilterMode = "all" | "aerial" | "ground";
+
+export interface EvidenceRecordRowProps {
+  snap: SnapshotItem;
+  isExpanded: boolean;
+  onToggle: () => void;
+}
+
+export interface RecordingsViewProps {
+  className?: string;
+}
+
+export interface RecordingsHeaderProps {
+  totalCount: number;
+  filteredCount: number;
+  isLoading: boolean;
+  onRefresh: () => void;
+}
+
+export interface RecordingsFilterTabsProps {
+  activeFilter: RecordingsFilterMode;
+  onFilterChange: (mode: RecordingsFilterMode) => void;
+}
+
+export interface RecordDetailPanelProps {
+  snap: SnapshotItem;
+}
+
+export interface RecordingsEmptyStateProps {
+  isLoading: boolean;
+}
+
+export interface RecordingsFooterProps {
+  totalCount: number;
+}
+
+export interface RecordingsListItemProps {
+  snap: SnapshotItem;
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
+export interface ListItemThumbnailProps {
+  url?: string;
+  filename: string;
+}
+
+export interface ListItemBadgesProps {
+  viewMode?: string;
+  filename: string;
+}
+
+export interface ListItemTimestampProps {
+  createdAt?: string;
+}
+
+export interface ListItemFooterProps {
+  sizeKb: number;
+  filename: string;
+}
+
+export interface RecordingsListPaneProps {
+  snapshots: SnapshotItem[];
+  totalCount: number;
+  filteredCount: number;
+  isLoading: boolean;
+  filterMode: RecordingsFilterMode;
+  selectedSnapshot: SnapshotItem | null;
+  onSelectSnapshot: (snap: SnapshotItem) => void;
+  onFilterChange: (mode: RecordingsFilterMode) => void;
+  onRefresh: () => void;
+}
+
+export interface RecordingsPreviewPaneProps {
+  selectedSnapshot: SnapshotItem | null;
+  onOpenModal: () => void;
+}
+
+export interface RecordingsFullscreenModalProps {
+  snapshot: SnapshotItem | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface ModalHeaderProps {
+  snapshot: SnapshotItem;
+  onClose: () => void;
+}
+
+export interface ModalImageStageProps {
+  url?: string;
+  filename: string;
+}
+
+export interface ModalFooterProps {
+  snapshot: SnapshotItem;
+  onClose: () => void;
+}
+
+export interface EmptyPreviewStateProps {
+  className?: string;
+}
+
+export interface PreviewTopToolbarProps {
+  selectedSnapshot: SnapshotItem;
+  onOpenModal: () => void;
+}
+
+export interface PreviewViewportProps {
+  selectedSnapshot: SnapshotItem;
+  onOpenModal: () => void;
+}
+
+export interface PreviewTelemetryAuditProps {
+  selectedSnapshot: SnapshotItem;
+}

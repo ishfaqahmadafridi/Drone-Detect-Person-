@@ -16,7 +16,6 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
   onConnectAirLink,
   onOpenFlightDeck,
   onRefresh,
-  onOpenWall,
   onSnapshotTrigger,
 }) => {
   return (
@@ -24,7 +23,6 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
       {/* Top Tactical Header */}
       <Header
         onRefresh={onRefresh}
-        onOpenWall={onOpenWall}
         avionics={avionics}
       />
 

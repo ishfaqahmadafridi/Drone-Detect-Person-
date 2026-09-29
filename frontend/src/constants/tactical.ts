@@ -29,3 +29,19 @@ export const STREAM_SOURCE_OPTIONS = [
   { label: "Phone Camera (IP / RTSP)", value: "rtsp" },
   { label: "Synthetic CCTV", value: "synthetic" },
 ] as const;
+
+export const RECORDINGS_PERSPECTIVE_LABELS: Record<string, string> = {
+  aerial: "AERIAL",
+  ground: "GROUND",
+};
+
+export const RECORDINGS_PERSPECTIVE_COLORS: Record<string, string> = {
+  aerial: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+  ground: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+};
+
+export const RECORDINGS_FILTER_OPTIONS: readonly { value: "all" | "aerial" | "ground"; label: string }[] = [
+  { value: "all", label: "ALL" },
+  { value: "aerial", label: "AERIAL" },
+  { value: "ground", label: "GROUND" },
+] as const;

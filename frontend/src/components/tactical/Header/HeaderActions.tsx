@@ -5,13 +5,11 @@ import { HeaderActionsProps } from "@/types";
 import { useAudioAlert, useSystemClock } from "@/hooks";
 import { AvionicsQuickPills } from "./AvionicsQuickPills";
 import { HeaderClock } from "./HeaderClock";
-import { CameraWallTrigger } from "./CameraWallTrigger";
 import { AudioAlertToggle } from "./AudioAlertToggle";
 import { HeaderRefreshButton } from "./HeaderRefreshButton";
 
 export const HeaderActions: React.FC<HeaderActionsProps> = ({
   onRefresh,
-  onOpenWall,
   avionics,
 }) => {
   const { isMuted, toggleMute } = useAudioAlert();
@@ -25,13 +23,10 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({
       {/* 2. Tactical System Clock */}
       <HeaderClock utcTime={utcTime} />
 
-      {/* 3. Multi-Sensor Camera Wall Trigger */}
-      {onOpenWall && <CameraWallTrigger onOpenWall={onOpenWall} />}
-
-      {/* 4. Audio Siren Mute Alert Control */}
+      {/* 3. Audio Siren Mute Alert Control */}
       <AudioAlertToggle isMuted={isMuted} onToggleMute={toggleMute} />
 
-      {/* 5. Telemetry & Alerts Refresh */}
+      {/* 4. Telemetry & Alerts Refresh */}
       <HeaderRefreshButton onRefresh={onRefresh} />
     </div>
   );
@@ -40,6 +35,5 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({
 export default HeaderActions;
 export * from "./AvionicsQuickPills";
 export * from "./HeaderClock";
-export * from "./CameraWallTrigger";
 export * from "./AudioAlertToggle";
 export * from "./HeaderRefreshButton";

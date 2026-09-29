@@ -7,14 +7,14 @@ import { BrandCluster } from "./BrandCluster";
 import { ThreatRibbon } from "./ThreatRibbon";
 import { HeaderActions } from "./HeaderActions";
 
-export const Header: React.FC<HeaderProps> = ({ onRefresh, onOpenWall, avionics }) => {
+export const Header: React.FC<HeaderProps> = ({ onRefresh, avionics }) => {
   const { threatLevel, alertMsg, isConnected } = useTelemetryMetrics();
 
   return (
     <header className="glass-panel-elevated rounded-xl p-3 px-5 flex flex-wrap items-center justify-between gap-4 border border-cyan-500/20">
       <BrandCluster isConnected={isConnected} />
       <ThreatRibbon threatLevel={threatLevel} alertMsg={alertMsg} />
-      <HeaderActions onRefresh={onRefresh} onOpenWall={onOpenWall} avionics={avionics} />
+      <HeaderActions onRefresh={onRefresh} avionics={avionics} />
     </header>
   );
 };

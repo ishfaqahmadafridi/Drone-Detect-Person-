@@ -58,7 +58,6 @@ export default function DroneDashboardPage() {
         onOpenFlightDeck={flight.handleLaunchDroneFlight}
         onRefresh={handleManualRefresh}
         onSnapshotTrigger={handleCaptureSnapshot}
-        onOpenWall={wall.openWall}
       />
 
       {/* 3. Multi-Sensor Camera Wall Modal */}

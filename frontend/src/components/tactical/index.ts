@@ -9,4 +9,5 @@ export * from "./FlightControlDeck";
 export * from "./CameraWallModal";
 export * from "./TacticalSidebar";
 export * from "./MissionCommandViewport";
+export * from "./RecordingsView";
 export * from "./views";

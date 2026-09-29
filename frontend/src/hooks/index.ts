@@ -12,3 +12,5 @@ export * from "./useTelemetrySocket";
 export * from "./useDroneFlight";
 export * from "./useCameraWall";
 export * from "./useDashboardOrchestrator";
+export * from "./useRecordings";
+export * from "./useEscapeKey";
