@@ -62,12 +62,15 @@ export interface TelemetryData {
   detections: Detection[];
   source_type: StreamSourceType;
   view_mode?: "aerial" | "ground";
+  model_name?: string;
+  engine?: string;
   multi_person_threshold: number;
   confidence_threshold: number;
   proximity_distance_px: number;
   zone_polygon: [number, number][];
   avionics?: DroneAvionics;
 }
+
 
 export interface SurveillanceConfig {
   model_name: string;
