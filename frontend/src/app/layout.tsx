@@ -26,11 +26,12 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "AERO-GUARD | Drone Aerial Surveillance & Multi-Person Intrusion HUD",
   description:
-    "Real-time aerial drone person detection, restricted zone intrusion tracking, and multi-person gathering analytics powered by YOLOv8, ByteTrack, Next.js, Redux, and TanStack Query.",
+    "Aerial and ground person detection, restricted zone intrusion tracking, and gathering analytics powered by YOLO11n, YOLO26s, BoT-SORT, ByteTrack, and Next.js.",
   keywords: [
     "drone surveillance",
     "aerial computer vision",
-    "YOLOv8 person detection",
+    "YOLO11n VisDrone person detection",
+    "YOLO26s MOT20 pedestrian detection",
     "intrusion detection",
     "tactical HUD",
     "ByteTrack",

@@ -1,70 +1,61 @@
 #!/usr/bin/env python3
-"""
-Automated Model Weights Downloader for Drone-Detect-Person
-Downloads YOLO model weights into models/ directory safely.
-"""
+"""Download the exact checkpoints pinned in models/registry.json."""
 
-import os
-import sys
+import argparse
+import hashlib
 import json
 import urllib.request
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-MODELS_DIR = ROOT / "models"
+MODELS_DIR = Path(__file__).resolve().parent.parent / "models"
 REGISTRY_FILE = MODELS_DIR / "registry.json"
 
-DEFAULT_URLS = {
-    "yolov8n.pt": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8n.pt",
-    "yolov8s.pt": "https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov8s.pt",
-    "yolo11n.pt": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt",
-}
 
-def download_file(url: str, dest: Path):
+def verify_file(path: Path, profile: dict) -> bool:
+    if not path.is_file() or path.stat().st_size != profile["size_bytes"]:
+        return False
+    with path.open("rb") as checkpoint:
+        return hashlib.file_digest(checkpoint, "sha256").hexdigest() == profile["sha256"]
+
+
+def download_file(profile: dict, dest: Path):
     dest.parent.mkdir(parents=True, exist_ok=True)
-    temp_dest = dest.with_suffix(".download")
-    print(f"[INFO] Downloading {dest.name} from {url}...")
+    temporary = dest.with_suffix(".download")
+    request = urllib.request.Request(
+        profile["download_url"], headers={"User-Agent": "Drone-Detect-Person/model-setup"}
+    )
+    print(f"[INFO] Downloading {dest.name}...")
     try:
-        def report(count, block_size, total_size):
-            if total_size > 0:
-                percent = int(count * block_size * 100 / total_size)
-                sys.stdout.write(f"\r[INFO] Progress: {min(100, percent)}%")
-                sys.stdout.flush()
+        with urllib.request.urlopen(request, timeout=90) as response, temporary.open("wb") as output:
+            while chunk := response.read(1024 * 1024):
+                output.write(chunk)
+        if not verify_file(temporary, profile):
+            raise ValueError(f"Downloaded checkpoint failed verification: {dest.name}")
+        temporary.replace(dest)
+        print(f"[OK] Downloaded and verified: {dest.name}")
+    finally:
+        temporary.unlink(missing_ok=True)
 
-        urllib.request.urlretrieve(url, temp_dest, reporthook=report)
-        print()
-        if temp_dest.stat().st_size < 1000:
-            temp_dest.unlink(missing_ok=True)
-            raise ValueError("Downloaded file is suspiciously small or corrupted.")
-        temp_dest.replace(dest)
-        print(f"[SUCCESS] Downloaded and verified: {dest.name} ({dest.stat().st_size / (1024*1024):.2f} MB)")
-    except Exception as e:
-        temp_dest.unlink(missing_ok=True)
-        print(f"[ERROR] Failed to download {dest.name}: {e}")
-        raise
 
 def main():
-    MODELS_DIR.mkdir(parents=True, exist_ok=True)
-    targets = ["yolov8n.pt"]
-    
-    if REGISTRY_FILE.exists():
-        try:
-            with open(REGISTRY_FILE, "r") as f:
-                data = json.load(f)
-            targets = list({p["filename"] for p in data.get("profiles", {}).values()})
-        except Exception as e:
-            print(f"[WARN] Could not parse registry.json: {e}")
-
-    for filename in targets:
-        dest = MODELS_DIR / filename
-        if dest.exists() and dest.stat().st_size > 10000:
-            print(f"[OK] Weights already present: {filename} ({dest.stat().st_size / (1024*1024):.2f} MB)")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--view", choices=("ground", "aerial"), help="Download only this view")
+    parser.add_argument("--verify-only", action="store_true", help="Check files without downloading")
+    args = parser.parse_args()
+    profiles = json.loads(REGISTRY_FILE.read_text(encoding="utf-8"))["profiles"]
+    for view, profile in profiles.items():
+        if args.view and view != args.view:
             continue
-        url = DEFAULT_URLS.get(filename)
-        if url:
-            download_file(url, dest)
+        dest = MODELS_DIR / profile["filename"]
+        if dest.resolve().parent != MODELS_DIR.resolve():
+            raise ValueError(f"Invalid model filename for {view}")
+        if verify_file(dest, profile):
+            print(f"[OK] Verified {view}: {dest.name}")
+        elif args.verify_only:
+            raise ValueError(f"Missing or invalid {view} checkpoint: {dest.name}")
         else:
-            print(f"[WARN] No URL mapped for {filename}, skipping auto-download.")
+            download_file(profile, dest)
+
 
 if __name__ == "__main__":
     main()

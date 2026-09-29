@@ -19,7 +19,7 @@ const initialState: TelemetryState = {
   source_type: "synthetic",
   view_mode: "aerial",
   multi_person_threshold: 2,
-  confidence_threshold: 0.35,
+  confidence_threshold: 0.25,
   proximity_distance_px: 120,
   zone_polygon: [
     [0.25, 0.25],

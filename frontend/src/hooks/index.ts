@@ -4,6 +4,7 @@ export * from "./useZoneCanvas";
 export * from "./useIncidentLogs";
 export * from "./useSnapshotGallery";
 export * from "./useTuningForm";
+export * from "./useInferenceModel";
 export * from "./useTelemetryMetrics";
 export * from "./useVideoViewport";
 export * from "./useAudioAlert";

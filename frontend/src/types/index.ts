@@ -62,6 +62,8 @@ export interface TelemetryData {
   detections: Detection[];
   source_type: StreamSourceType;
   view_mode?: "aerial" | "ground";
+  model_name?: string;
+  engine?: string;
   multi_person_threshold: number;
   confidence_threshold: number;
   proximity_distance_px: number;
@@ -71,6 +73,10 @@ export interface TelemetryData {
 
 export interface SurveillanceConfig {
   model_name: string;
+  view_mode: "aerial" | "ground";
+  engine: string;
+  img_size: number;
+  iou_threshold: number;
   confidence_threshold: number;
   multi_person_threshold: number;
   proximity_alert_distance_px: number;
@@ -97,6 +103,12 @@ export interface SnapshotItem {
 
 export interface ModelProfileInfo {
   name: string;
+  architecture: string;
+  dataset: string;
+  recommended_imgsz: number;
+  tracker: string;
+  engine: string;
+  source_url: string;
   filename: string;
   available: boolean;
   loaded: boolean;
@@ -110,6 +122,12 @@ export interface ModelsStatusResponse {
   active_view: "aerial" | "ground";
   device: string;
   profiles: Record<string, ModelProfileInfo>;
+}
+
+export interface SwitchViewResponse {
+  message: string;
+  active_view: "aerial" | "ground";
+  config: SurveillanceConfig;
 }
 
 export * from "./components";

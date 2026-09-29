@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import { StreamSourceType, ModelsStatusResponse } from "@/types";
+import { StreamSourceType, ModelsStatusResponse, SwitchViewResponse } from "@/types";
 
 export const streamApi = {
   switchSource: async (sourceType: StreamSourceType, sourcePath?: string): Promise<{ message: string }> => {
@@ -22,8 +22,8 @@ export const streamApi = {
     );
     return data;
   },
-  switchView: async (view: "aerial" | "ground"): Promise<{ message: string; active_view: string }> => {
-    const { data } = await apiClient.post<{ message: string; active_view: string }>(`/stream/view?view=${view}`);
+  switchView: async (view: "aerial" | "ground"): Promise<SwitchViewResponse> => {
+    const { data } = await apiClient.post<SwitchViewResponse>(`/stream/view?view=${view}`);
     return data;
   },
 

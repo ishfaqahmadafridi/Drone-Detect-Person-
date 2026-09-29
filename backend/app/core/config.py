@@ -4,7 +4,7 @@ Core Detection Configuration and Environment Settings.
 
 import os
 from dataclasses import dataclass, field
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from app.core.constants import DEFAULT_ZONE_POLYGON
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -23,12 +23,14 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 @dataclass
 class DetectionConfig:
     # Model parameters
-    model_name: str = "yolov8n.pt"
-    confidence_threshold: float = 0.35
-    iou_threshold: float = 0.45
+    view_mode: str = "aerial"
+    model_name: str = ""  # Populated from the selected model profile.
+    model_path_override: Optional[str] = None  # Explicit local CLI override only.
+    confidence_threshold: Optional[float] = None  # None uses the profile default.
+    iou_threshold: Optional[float] = None
     target_classes: List[int] = field(default_factory=lambda: [0])  # 0 = person
     device: str = "cpu"
-    img_size: int = 640
+    img_size: Optional[int] = None
 
     # Multi-person gathering alert rules
     multi_person_threshold: int = 2

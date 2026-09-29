@@ -11,7 +11,8 @@ export function useTuningForm() {
   const configMutation = useConfigMutation();
 
   const [multiThresh, setMultiThresh] = useState<number>(multi_person_threshold || 2);
-  const [conf, setConf] = useState<number>(confidence_threshold || 0.35);
+  const [confOverride, setConf] = useState<number | null>(null);
+  const conf = confOverride ?? confidence_threshold ?? 0.25;
   const [proxDist, setProxDist] = useState<number>(proximity_distance_px || 120);
   const [showSavedToast, setShowSavedToast] = useState(false);
 
@@ -22,6 +23,7 @@ export function useTuningForm() {
       confidence_threshold: Number(conf),
       proximity_alert_distance_px: Number(proxDist),
     });
+    setConf(null);
     setShowSavedToast(true);
     setTimeout(() => setShowSavedToast(false), 2000);
   };

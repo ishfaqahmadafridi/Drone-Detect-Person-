@@ -6,6 +6,7 @@ import argparse
 import os
 import sys
 import time
+from typing import Optional
 import cv2
 
 from app.core.config import DetectionConfig, SYNTHETIC_VIDEO_PATH
@@ -16,20 +17,21 @@ from app.utils.video_utils import create_synthetic_drone_video
 
 def run_cli_detection(
     source: str = "synthetic",
-    model_name: str = "yolov8n.pt",
-    confidence: float = 0.35,
+    model_name: Optional[str] = None,
+    confidence: Optional[float] = None,
     multi_person_threshold: int = 2,
     proximity_dist_px: int = 120,
     save_video: bool = False,
     output_video_path: str = "runs/output/annotated_output.mp4",
     headless: bool = False,
-    max_frames: int = 0
+    max_frames: int = 0,
+    view: str = "aerial",
+    img_size: Optional[int] = None
 ):
     print("=" * 70)
     print("🚁 AERO-GUARD: DRONE PERSON & MULTI-PERSON INTRUSION DETECTION 🚁")
     print("=" * 70)
     print(f"[CONFIG] Source: {source}")
-    print(f"[CONFIG] Model: {model_name} (Confidence: {confidence:.2f})")
     print(f"[CONFIG] Multi-Person Threshold: >= {multi_person_threshold} People")
     print(f"[CONFIG] Proximity Gathering Distance: {proximity_dist_px} px")
     print(f"[CONFIG] Headless Mode: {headless}")
@@ -59,13 +61,16 @@ def run_cli_detection(
 
     # Initialize Components
     config = DetectionConfig(
-        model_name=model_name,
+        view_mode=view,
+        model_path_override=model_name,
+        img_size=img_size,
         confidence_threshold=confidence,
         multi_person_threshold=multi_person_threshold,
         proximity_alert_distance_px=proximity_dist_px
     )
 
     pipeline = DetectionPipeline(config)
+    print(f"[CONFIG] {view}: {config.model_name} (Confidence: {config.confidence_threshold:.2f}, image size: {config.img_size})")
     display = StreamDisplayManager(headless=headless)
     recorder = VideoRecorder(output_video_path, fps=fps, frame_size=(width, height)) if save_video else None
 
@@ -123,8 +128,10 @@ def run_cli_detection(
 def main():
     parser = argparse.ArgumentParser(description="Drone Person & Multi-Person Intrusion Detection CLI")
     parser.add_argument("--source", "-s", type=str, default="synthetic", help="Video path, RTSP stream URL, or webcam index (0)")
-    parser.add_argument("--model", "-m", type=str, default="yolov8n.pt", help="YOLO model path or name")
-    parser.add_argument("--conf", "-c", type=float, default=0.35, help="Detection confidence threshold")
+    parser.add_argument("--view", choices=("aerial", "ground"), default="aerial", help="Registered detector to use (default: aerial)")
+    parser.add_argument("--model", "-m", type=str, default=None, help="Optional explicit local checkpoint override")
+    parser.add_argument("--conf", "-c", type=float, default=None, help="Override the selected model's confidence threshold")
+    parser.add_argument("--imgsz", type=int, default=None, help="Override inference image size (profile default: 1280)")
     parser.add_argument("--multi-thresh", "-t", type=int, default=2, help="Multi-person alert trigger threshold (default: 2)")
     parser.add_argument("--proximity-dist", "-p", type=int, default=120, help="Proximity threshold in pixels")
     parser.add_argument("--save-video", action="store_true", help="Save annotated output video to disk")
@@ -143,5 +150,7 @@ def main():
         save_video=args.save_video,
         output_video_path=args.output_video,
         headless=args.headless,
-        max_frames=args.max_frames
+        max_frames=args.max_frames,
+        view=args.view,
+        img_size=args.imgsz
     )

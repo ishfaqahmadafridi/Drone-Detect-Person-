@@ -1,8 +1,9 @@
 """
-Detector Service: YOLOv8 / YOLOv11 Computer Vision & Target Tracking Engine.
+Detector Service: VisDrone YOLO11n / MOT20 YOLO26s person detection and tracking.
 """
 
 import time
+from pathlib import Path
 from typing import List, Dict, Tuple, Optional
 from collections import defaultdict, deque
 import numpy as np
@@ -13,26 +14,62 @@ except ImportError:
     cv2 = None
 
 from app.core.config import DetectionConfig
-from app.services.inference_service import inference_service
+from app.services.inference_service import inference_service, MODELS_DIR
 from app.services.tracking_service import tracking_service
 
 class DronePersonDetectorService:
     def __init__(self, config: Optional[DetectionConfig] = None):
         self.config = config or DetectionConfig()
-        self.active_view = "aerial"
+        self.active_view = self.config.view_mode
         
-        # Pre-warm default view model
-        self.model = inference_service.get_model(self.active_view)
+        self._apply_profile(preserve_overrides=True)
+        if self.config.model_path_override:
+            # CLI overrides are explicit local files, never automatic model substitutions.
+            path = Path(self.config.model_path_override)
+            if not path.is_file():
+                path = MODELS_DIR / path
+            if not path.is_file():
+                raise FileNotFoundError(f"Custom model does not exist: {self.config.model_path_override}")
+            from ultralytics import YOLO
+            self.model = YOLO(str(path))
+            self.config.model_name = path.name
+        else:
+            self.model = inference_service.get_model(self.active_view)
+        inference_service.set_active_view(self.active_view)
         
         self.last_fps_time = time.time()
         self.fps = 0.0
         self.frame_count = 0
         self.track_history = defaultdict(lambda: deque(maxlen=30))
 
-    def set_view(self, view: str):
-        self.active_view = inference_service.set_active_view(view)
-        self.model = inference_service.get_model(self.active_view)
+    def _apply_profile(self, preserve_overrides: bool = False):
+        profile = inference_service.get_profile(self.active_view)
+        self.config.view_mode = self.active_view
+        self.config.model_name = profile["filename"]
+        self.config.target_classes = list(profile["person_classes"])
+        fields = (("confidence_threshold", "confidence"), ("iou_threshold", "iou"), ("img_size", "recommended_imgsz"))
+        for field, key in fields:
+            if not preserve_overrides or getattr(self.config, field) is None:
+                setattr(self.config, field, profile[key])
+
+    @property
+    def engine(self) -> str:
+        return inference_service.get_profile(self.active_view)["engine"]
+
+    def reset_tracking(self):
+        inference_service.reset_tracking()
         tracking_service.reset()
+        self.track_history.clear()
+
+    def set_view(self, view: str):
+        if view == self.active_view:
+            return
+        inference_service.set_active_view(view, preload=True)
+        self.active_view = view
+        self.model = inference_service.get_model(view)
+        self.config.model_path_override = None
+        self._apply_profile()
+        self.reset_tracking()
 
     def process_frame(self, frame: np.ndarray, use_tracking: bool = True, view: Optional[str] = None) -> List[Dict]:
         self.frame_count += 1
@@ -43,12 +80,14 @@ class DronePersonDetectorService:
             self.frame_count = 0
             self.last_fps_time = now
 
-        current_view = view or self.active_view
-        model = inference_service.get_model(current_view)
+        if view is not None and view != self.active_view:
+            self.set_view(view)
+        current_view = self.active_view
+        model = self.model
 
         profile = inference_service.get_profile(current_view)
-        conf_thresh = self.config.confidence_threshold if self.config.confidence_threshold > 0 else profile.get("confidence", 0.3)
-        iou_thresh = self.config.iou_threshold if self.config.iou_threshold > 0 else profile.get("iou", 0.45)
+        conf_thresh = self.config.confidence_threshold
+        iou_thresh = self.config.iou_threshold
 
         if use_tracking:
             results = model.track(
@@ -57,6 +96,8 @@ class DronePersonDetectorService:
                 iou=iou_thresh,
                 classes=profile.get("person_classes", [0]),
                 device=self.config.device,
+                imgsz=self.config.img_size,
+                tracker=profile["tracker"],
                 persist=True,
                 verbose=False
             )
@@ -67,6 +108,7 @@ class DronePersonDetectorService:
                 iou=iou_thresh,
                 classes=profile.get("person_classes", [0]),
                 device=self.config.device,
+                imgsz=self.config.img_size,
                 verbose=False
             )
 

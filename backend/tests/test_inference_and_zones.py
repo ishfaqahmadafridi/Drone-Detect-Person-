@@ -1,4 +1,7 @@
 import unittest
+import tempfile
+import json
+from pathlib import Path
 import numpy as np
 from app.services.inference_service import MultiViewInferenceService
 from app.services.zone_service import ZoneMonitorService
@@ -21,7 +24,15 @@ class TestInferenceAndZones(unittest.TestCase):
         # 1000x1000 zone polygon from (200, 200) to (800, 800)
         norm_zone = [(0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8)]
         zone = ZoneMonitorService(1000, 1000, norm_zone)
-        alert_mgr = AlertManagerService(multi_person_threshold=2)
+        storage = tempfile.TemporaryDirectory()
+        self.addCleanup(storage.cleanup)
+        output = Path(storage.name) / "new-output"
+        alert_mgr = AlertManagerService(
+            output_dir=str(output),
+            snapshots_dir=str(output / "snapshots"),
+            logs_dir=str(output / "logs"),
+            multi_person_threshold=2,
+        )
 
         # Person 1 inside zone (foot at 500, 500)
         p1 = {"id": 1, "center": (500, 450), "foot": (500, 500), "bbox": [480, 400, 520, 500]}
@@ -42,6 +53,15 @@ class TestInferenceAndZones(unittest.TestCase):
 
         threat, msg, details = alert_mgr.evaluate_state(persons, intruders, gatherings)
         self.assertEqual(threat, AlertLevel.INTRUSION)
+
+        # A fresh installation must create its storage before logging evidence.
+        snapshot = alert_mgr.process_and_save_evidence(
+            np.zeros((64, 64, 3), dtype=np.uint8), threat, details
+        )
+        self.assertTrue(Path(snapshot).is_file())
+        self.assertTrue(Path(alert_mgr.log_file_csv).is_file())
+        history = json.loads(Path(alert_mgr.log_file_json).read_text())
+        self.assertEqual(history[0]["threat_level"], AlertLevel.INTRUSION)
 
 if __name__ == "__main__":
     unittest.main()

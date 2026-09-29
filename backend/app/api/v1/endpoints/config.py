@@ -13,6 +13,10 @@ def get_config():
     cfg = stream_service.config
     return {
         "model_name": cfg.model_name,
+        "view_mode": stream_service.detector.active_view,
+        "engine": stream_service.detector.engine,
+        "img_size": cfg.img_size,
+        "iou_threshold": cfg.iou_threshold,
         "confidence_threshold": cfg.confidence_threshold,
         "multi_person_threshold": cfg.multi_person_threshold,
         "proximity_alert_distance_px": cfg.proximity_alert_distance_px,

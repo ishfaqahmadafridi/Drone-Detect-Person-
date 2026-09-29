@@ -30,6 +30,9 @@ class AlertManagerService:
         self.multi_person_threshold = multi_person_threshold
         self.snapshot_cooldown = snapshot_cooldown
         self.enable_audio = enable_audio
+
+        for directory in (self.output_dir, self.snapshots_dir, self.logs_dir):
+            os.makedirs(directory, exist_ok=True)
         
         self.last_snapshot_time = 0.0
         self.current_threat_level = AlertLevel.CLEAR

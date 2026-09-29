@@ -9,6 +9,7 @@ from fastapi.responses import StreamingResponse
 from app.services.stream_service import stream_service
 from app.schemas.config import StreamSourceRequest
 from app.core.config import UPLOADS_DIR
+from app.api.v1.endpoints.config import get_config
 
 router = APIRouter()
 
@@ -43,10 +44,14 @@ def switch_view(view: str):
     if view not in valid_views:
         raise HTTPException(status_code=400, detail=f"Invalid view '{view}'. Must be one of {valid_views}")
     
-    active = stream_service.set_view_mode(view)
+    try:
+        active = stream_service.set_view_mode(view)
+    except (OSError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     return {
         "message": f"Perspective view switched to {active}",
-        "active_view": active
+        "active_view": active,
+        "config": get_config()
     }
 
 @router.post("/video/upload")

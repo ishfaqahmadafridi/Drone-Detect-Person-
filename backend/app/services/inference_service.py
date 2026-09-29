@@ -1,109 +1,93 @@
 """
-Inference Service: Dual-View Model Management & Lightweight YOLO Dispatcher.
-Supports Ground (CCTV) vs. Aerial (Drone/UAV) Viewpoints.
+Registry-backed models for ground (MOT20) and aerial (VisDrone) detection.
 """
 
-import os
+import hashlib
 import json
 import threading
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
-from app.core.config import ROOT_DIR
+from app.core.config import BASE_DIR
 
-MODELS_DIR = Path(ROOT_DIR) / "models"
+MODELS_DIR = Path(BASE_DIR) / "models"
 REGISTRY_FILE = MODELS_DIR / "registry.json"
 
-DEFAULT_PROFILES = {
-    "ground": {
-        "name": "Ground View (YOLOv8n CCTV)",
-        "filename": "yolov8n.pt",
-        "recommended_imgsz": 640,
-        "confidence": 0.25,
-        "iou": 0.45,
-        "person_classes": [0],
-        "description": "Optimized for horizontal CCTV camera perspectives."
-    },
-    "aerial": {
-        "name": "Aerial Drone View (YOLOv8n VisDrone)",
-        "filename": "yolov8n.pt",
-        "recommended_imgsz": 640,
-        "confidence": 0.35,
-        "iou": 0.50,
-        "person_classes": [0],
-        "description": "Optimized for overhead UAV/Drone flight perspectives."
-    }
-}
 
 class MultiViewInferenceService:
     def __init__(self, device: str = "cpu"):
         self.device = device
         self.models: Dict[str, Any] = {}
-        self.profiles: Dict[str, Any] = self._load_profiles()
+        self.profiles = self._load_profiles()
         self.lock = threading.RLock()
-        self.active_view: str = "aerial"
+        self.active_view = "aerial"
 
     def _load_profiles(self) -> Dict[str, Any]:
-        if REGISTRY_FILE.exists():
-            try:
-                with open(REGISTRY_FILE, "r") as f:
-                    data = json.load(f)
-                    return data.get("profiles", DEFAULT_PROFILES)
-            except Exception as e:
-                print(f"[WARN] Failed to read {REGISTRY_FILE}: {e}")
-        return DEFAULT_PROFILES
+        profiles = json.loads(REGISTRY_FILE.read_text(encoding="utf-8"))["profiles"]
+        for view in ("ground", "aerial"):
+            filename = profiles[view]["filename"]
+            if Path(filename).name != filename or not filename.endswith(".pt"):
+                raise ValueError(f"Invalid model filename for {view}: {filename}")
+        return profiles
 
     def get_profile(self, view: str) -> Dict[str, Any]:
-        return self.profiles.get(view, self.profiles["aerial"])
+        if view not in self.profiles:
+            raise ValueError(f"Unknown view: '{view}'. Expected ground or aerial.")
+        return self.profiles[view]
 
     def get_status(self) -> Dict[str, Any]:
-        status_info = {}
-        for view, profile in self.profiles.items():
-            model_path = MODELS_DIR / profile["filename"]
-            status_info[view] = {
-                "name": profile["name"],
-                "filename": profile["filename"],
-                "available": model_path.exists(),
-                "loaded": view in self.models,
-                "is_active": view == self.active_view,
-                "confidence": profile["confidence"],
-                "iou": profile["iou"],
-                "description": profile.get("description", "")
-            }
-        return {
-            "active_view": self.active_view,
-            "device": self.device,
-            "profiles": status_info
-        }
+        with self.lock:
+            status = {}
+            for view, profile in self.profiles.items():
+                path = MODELS_DIR / profile["filename"]
+                status[view] = {
+                    **profile,
+                    "available": path.is_file() and path.stat().st_size == profile["size_bytes"],
+                    "loaded": view in self.models,
+                    "is_active": view == self.active_view,
+                }
+            return {"active_view": self.active_view, "device": self.device, "profiles": status}
 
     def set_active_view(self, view: str, preload: bool = False) -> str:
-        if view not in self.profiles:
-            raise ValueError(f"Unknown view: '{view}'. Must be one of {list(self.profiles.keys())}")
+        self.get_profile(view)
         with self.lock:
-            self.active_view = view
+            # Load successfully before changing the active selection.
             if preload:
-                try:
-                    self.get_model(view)
-                except Exception as e:
-                    print(f"[WARN] Lazy-loading model for {view}: {e}")
-        return self.active_view
+                self.get_model(view)
+            self.active_view = view
+            return self.active_view
 
     def get_model(self, view: Optional[str] = None) -> Any:
         view = view or self.active_view
         with self.lock:
             if view in self.models:
                 return self.models[view]
-            
             profile = self.get_profile(view)
-            model_path = MODELS_DIR / profile["filename"]
-            
+            path = MODELS_DIR / profile["filename"]
+            setup = f"Run python scripts/download_models.py --view {view} from backend/."
+            if not path.is_file():
+                raise FileNotFoundError(f"Missing {view} model: {path.name}. {setup}")
+            with path.open("rb") as checkpoint:
+                digest = hashlib.file_digest(checkpoint, "sha256").hexdigest()
+            if digest != profile["sha256"]:
+                raise ValueError(f"Checksum mismatch for {path.name}. {setup}")
+
             from ultralytics import YOLO
-            # If local model exists use it, otherwise ultralytics automatically downloads
-            target = str(model_path) if model_path.exists() else profile["filename"]
-            print(f"[INFO] Loading YOLO model for view '{view}': {target}")
-            model = YOLO(target)
+
+            print(f"[INFO] Loading {view} detector: {path.name}")
+            model = YOLO(str(path))
+            for class_id, label in zip(profile["person_classes"], profile["person_labels"]):
+                if model.names.get(class_id) != label:
+                    raise ValueError(f"Unexpected person class mapping in {path.name}")
             self.models[view] = model
             return model
 
-# Global singleton
+    def reset_tracking(self):
+        with self.lock:
+            for model in self.models.values():
+                predictor = getattr(model, "predictor", None)
+                for tracker in getattr(predictor, "trackers", []):
+                    tracker.reset()
+
+
 inference_service = MultiViewInferenceService()

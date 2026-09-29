@@ -25,8 +25,7 @@ class StreamManagerService:
             snapshots_dir=SNAPSHOTS_DIR,
             logs_dir=LOGS_DIR,
             multi_person_threshold=2,
-            proximity_alert_distance_px=120,
-            confidence_threshold=0.35
+            proximity_alert_distance_px=120
         )
         self.detector = DronePersonDetectorService(self.config)
         self.zone_monitor = ZoneMonitorService(1280, 720, self.config.default_zone_normalized)
@@ -60,6 +59,8 @@ class StreamManagerService:
             "detections": [],
             "source_type": self.source_type,
             "view_mode": self.detector.active_view,
+            "model_name": self.config.model_name,
+            "engine": self.detector.engine,
             "multi_person_threshold": self.config.multi_person_threshold,
             "confidence_threshold": self.config.confidence_threshold,
             "proximity_distance_px": self.config.proximity_alert_distance_px,
@@ -71,7 +72,18 @@ class StreamManagerService:
     def set_view_mode(self, view_mode: str) -> str:
         with self.lock:
             self.detector.set_view(view_mode)
-            self.latest_telemetry["view_mode"] = self.detector.active_view
+            self.latest_telemetry.update({
+                "view_mode": self.detector.active_view,
+                "model_name": self.config.model_name,
+                "engine": self.detector.engine,
+                "confidence_threshold": self.config.confidence_threshold,
+                "detections": [],
+                "total_persons": 0,
+                "intruders_count": 0,
+                "gathering_pairs": 0,
+                "threat_level": "CLEAR",
+                "alert_msg": "MODEL READY - AWAITING FRAME",
+            })
             print(f"[STREAM] Switched perspective view to: {self.detector.active_view}")
             return self.detector.active_view
 
@@ -86,6 +98,7 @@ class StreamManagerService:
                 self.source_path = "0"
             elif source_type in ["file", "rtsp"] and source_path:
                 self.source_path = source_path
+            self.detector.reset_tracking()
             print(f"[STREAM] Switched source to: {self.source_type} ({self.source_path})")
 
     def update_config(
@@ -101,6 +114,7 @@ class StreamManagerService:
                 self.alert_manager.multi_person_threshold = multi_person_thresh
             if conf_thresh is not None:
                 self.config.confidence_threshold = conf_thresh
+                self.latest_telemetry["confidence_threshold"] = conf_thresh
             if prox_dist is not None:
                 self.config.proximity_alert_distance_px = prox_dist
             if zone_polygon is not None and len(zone_polygon) >= 3:
@@ -121,6 +135,9 @@ class StreamManagerService:
             frame_idx = 0
 
             while self.is_running:
+                with self.lock:
+                    if src != self.source_path:
+                        break
                 ret, frame = cap.read()
                 if not ret:
                     if isinstance(cap_src, str) and not cap_src.startswith("rtsp://"):
@@ -134,6 +151,8 @@ class StreamManagerService:
                 h, w = frame.shape[:2]
 
                 with self.lock:
+                    if src != self.source_path:
+                        break
                     cfg = self.config
                     detector = self.detector
                     zone_monitor = self.zone_monitor
@@ -185,6 +204,8 @@ class StreamManagerService:
                         ],
                         "source_type": self.source_type,
                         "view_mode": detector.active_view,
+                        "model_name": cfg.model_name,
+                        "engine": detector.engine,
                         "multi_person_threshold": cfg.multi_person_threshold,
                         "confidence_threshold": cfg.confidence_threshold,
                         "proximity_distance_px": cfg.proximity_alert_distance_px,

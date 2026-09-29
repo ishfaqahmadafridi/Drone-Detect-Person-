@@ -2,6 +2,7 @@
 
 import React from "react";
 import { SidebarFooterProps } from "@/types";
+import { useInferenceModel } from "@/hooks/useInferenceModel";
 import { Volume2, VolumeX, Zap } from "lucide-react";
 
 export const SidebarFooter: React.FC<SidebarFooterProps> = ({
@@ -9,6 +10,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   onToggleMute,
   isCollapsed,
 }) => {
+  const engine = useInferenceModel();
   return (
     <div className="p-2.5 border-t border-slate-800/80 flex flex-col gap-2 bg-slate-950/80">
       {/* Siren Alert Toggle */}
@@ -35,7 +37,7 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
         <div className="flex items-center justify-between text-[10px] font-mono-code text-slate-400 px-1 pt-1">
           <span className="flex items-center gap-1 truncate">
             <Zap className="w-3.5 h-3.5 text-cyan-400" />
-            YOLOv8 + ByteTrack
+            {engine}
           </span>
           <span className="text-emerald-400 font-bold">ONLINE</span>
         </div>

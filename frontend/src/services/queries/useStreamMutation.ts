@@ -39,7 +39,14 @@ export const useStreamMutation = () => {
       return await streamApi.switchView(view);
     },
     onSuccess: (data) => {
-      dispatch(setTelemetryData({ view_mode: data.active_view as "aerial" | "ground" }));
+      dispatch(setTelemetryData({
+        view_mode: data.active_view,
+        model_name: data.config.model_name,
+        engine: data.config.engine,
+        confidence_threshold: data.config.confidence_threshold,
+      }));
+      queryClient.invalidateQueries({ queryKey: ["config"] });
+      queryClient.invalidateQueries({ queryKey: ["modelsStatus"] });
     },
   });
 

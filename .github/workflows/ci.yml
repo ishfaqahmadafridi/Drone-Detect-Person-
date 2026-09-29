@@ -8,7 +8,7 @@ on:
 
 jobs:
   backend-ci:
-    name: Backend CI (FastAPI, YOLOv8 & Vision Pipeline)
+    name: Backend CI (FastAPI, YOLO11n / YOLO26s & Vision Pipeline)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -39,10 +39,14 @@ jobs:
           cd backend
           python generate_test_video.py --output test_drone.mp4 --duration 2 --num-people 3
 
-      - name: Test Drone Person & Intrusion Pipeline (Headless)
+      - name: Download and verify registered model checkpoints
+        run: python backend/scripts/download_models.py
+
+      - name: Test Aerial and Ground Person Pipelines (Headless)
         run: |
           cd backend
-          python detect.py --source test_drone.mp4 --headless --max-frames 10
+          python detect.py --view aerial --source test_drone.mp4 --headless --max-frames 2
+          python detect.py --view ground --source test_drone.mp4 --headless --max-frames 2
 
       - name: Verify FastAPI Microservice Endpoints
         run: |

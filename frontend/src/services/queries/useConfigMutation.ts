@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { configApi, UpdateConfigPayload } from "../api/configApi";
 import { useAppDispatch } from "@/store";
 import { updateConfigState, setIsSaving } from "@/store/slices/configSlice";
+import { setTelemetryData } from "@/store/slices/telemetrySlice";
 
 export const useConfigMutation = () => {
   const queryClient = useQueryClient();
@@ -14,6 +15,7 @@ export const useConfigMutation = () => {
       return response;
     },
     onSuccess: (data) => {
+      dispatch(setTelemetryData({ confidence_threshold: data.config.confidence_threshold }));
       dispatch(
         updateConfigState({
           multi_person_threshold: data.config.multi_person_threshold,
