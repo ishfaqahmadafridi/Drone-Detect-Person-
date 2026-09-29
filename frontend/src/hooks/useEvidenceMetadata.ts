@@ -9,10 +9,6 @@ import { getEvidenceMetadata } from "@/utils";
 export function useEvidenceMetadata(
   snapshot?: Partial<SnapshotItem> | null
 ): EvidenceMetadata {
-  return useMemo(() => getEvidenceMetadata(snapshot), [
-    snapshot?.created_at,
-    snapshot?.view_mode,
-    snapshot?.filename,
-    snapshot?.threat_type,
-  ]);
+  return useMemo(() => getEvidenceMetadata(snapshot), [snapshot]);
+
 }

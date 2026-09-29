@@ -19,11 +19,13 @@ export function useTacticalVideoPlayer(url?: string) {
   const [playbackRate, setPlaybackRate] = useState<number>(1);
   const [hasError, setHasError] = useState<boolean>(false);
 
-  useEffect(() => {
+  const [prevUrl, setPrevUrl] = useState<string | undefined>(url);
+  if (prevUrl !== url) {
+    setPrevUrl(url);
     setHasError(false);
     setCurrentTime(0);
     setIsPlaying(false);
-  }, [url]);
+  }
 
   const handleError = useCallback(() => {
     setHasError(true);

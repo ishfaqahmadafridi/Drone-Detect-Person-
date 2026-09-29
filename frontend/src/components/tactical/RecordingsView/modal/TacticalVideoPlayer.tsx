@@ -1,20 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { TacticalVideoPlayerProps } from "@/types";
 import { useTacticalVideoPlayer } from "@/hooks";
 import { PlayerPlaybackRibbon, PlayerViewport, PlayerControlsBar } from "./player";
 
 export const TacticalVideoPlayer: React.FC<TacticalVideoPlayerProps> = ({ url }) => {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   const player = useTacticalVideoPlayer(url);
 
   return (
-    <div
-      className="relative flex flex-col items-center justify-center w-full h-full bg-black select-none group"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="relative flex flex-col items-center justify-center w-full h-full bg-black select-none group">
       {/* 1. Tactical Playback Ribbon */}
       <PlayerPlaybackRibbon />
 
