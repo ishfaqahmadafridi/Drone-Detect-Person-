@@ -1,25 +1,23 @@
 "use client";
 
 import React from "react";
-import { Clock, Download, Maximize2 } from "lucide-react";
+import { Clock, Download, Maximize2, X } from "lucide-react";
 import { PreviewTopToolbarProps } from "@/types";
-import {
-  parseEvidenceTimestamp,
-  getPerspectiveLabel,
-  getPerspectiveBadgeClass,
-  parseThreatType,
-  getThreatBadgeClass,
-} from "@/utils";
+import { useEvidenceMetadata } from "@/hooks";
 
 export const PreviewTopToolbar: React.FC<PreviewTopToolbarProps> = ({
   selectedSnapshot,
   onOpenModal,
+  onClosePreview,
 }) => {
-  const { datePart, timePart } = parseEvidenceTimestamp(selectedSnapshot.created_at);
-  const perspectiveLabel = getPerspectiveLabel(selectedSnapshot.view_mode);
-  const perspectiveBadgeClass = getPerspectiveBadgeClass(selectedSnapshot.view_mode);
-  const threatType = parseThreatType(selectedSnapshot.filename);
-  const threatBadgeClass = getThreatBadgeClass(threatType);
+  const {
+    datePart,
+    timePart,
+    perspectiveLabel,
+    perspectiveBadgeClass,
+    threatType,
+    threatBadgeClass,
+  } = useEvidenceMetadata(selectedSnapshot);
 
   return (
     <div className="flex items-center justify-between gap-3 px-4 py-3 bg-slate-900/80 border-b border-slate-800/80 flex-wrap">
@@ -62,6 +60,16 @@ export const PreviewTopToolbar: React.FC<PreviewTopToolbarProps> = ({
           <Maximize2 className="w-3.5 h-3.5" />
           <span>OPEN FULL FRAME</span>
         </button>
+
+        {onClosePreview && (
+          <button
+            onClick={onClosePreview}
+            className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:border-rose-500/40 border border-slate-700 text-slate-400 hover:text-rose-300 transition-colors"
+            title="Close Preview Pane"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
     </div>
   );

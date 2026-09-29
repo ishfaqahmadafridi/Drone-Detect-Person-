@@ -3,12 +3,11 @@
 import React from "react";
 import { Clock, Camera, HardDrive } from "lucide-react";
 import { RecordDetailPanelProps } from "@/types";
-import { parseEvidenceTimestamp, getPerspectiveLabel, getPerspectiveBadgeClass } from "@/utils";
+import { useEvidenceMetadata } from "@/hooks";
 
 export const RecordDetailPanel: React.FC<RecordDetailPanelProps> = ({ snap }) => {
-  const { datePart, timePart } = parseEvidenceTimestamp(snap.created_at);
-  const perspectiveLabel = getPerspectiveLabel(snap.view_mode);
-  const perspectiveColor = getPerspectiveBadgeClass(snap.view_mode);
+  const { datePart, timePart, perspectiveLabel, perspectiveBadgeClass: perspectiveColor } =
+    useEvidenceMetadata(snap);
 
   return (
     <div className="px-3 py-3 bg-slate-950/60 border-t border-slate-800/60 space-y-3">

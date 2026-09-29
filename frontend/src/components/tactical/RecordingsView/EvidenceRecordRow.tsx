@@ -3,7 +3,7 @@
 import React from "react";
 import { Film, Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { EvidenceRecordRowProps } from "@/types";
-import { parseEvidenceTimestamp, getPerspectiveLabel, getPerspectiveBadgeClass } from "@/utils";
+import { useEvidenceMetadata } from "@/hooks";
 import { RecordDetailPanel } from "./RecordDetailPanel";
 
 export const EvidenceRecordRow: React.FC<EvidenceRecordRowProps> = ({
@@ -11,9 +11,8 @@ export const EvidenceRecordRow: React.FC<EvidenceRecordRowProps> = ({
   isExpanded,
   onToggle,
 }) => {
-  const { datePart, timePart } = parseEvidenceTimestamp(snap.created_at);
-  const perspectiveLabel = getPerspectiveLabel(snap.view_mode);
-  const perspectiveColor = getPerspectiveBadgeClass(snap.view_mode);
+  const { datePart, timePart, perspectiveLabel, perspectiveBadgeClass: perspectiveColor } =
+    useEvidenceMetadata(snap);
 
   return (
     <div className="border border-slate-800/60 rounded-lg overflow-hidden transition-all">

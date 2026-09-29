@@ -1,20 +1,27 @@
 """
-Database Module: SQLite persistent storage layer for evidentiary records.
+Database Subsystem: SQLite Connection Management, Schema Definition, Syncer, and Repository.
 """
 
-from app.db.models import (
-    EvidenceRecord,
+from app.db.connection import db_manager, DatabaseManager
+from app.db.schema import initialize_schema
+from app.db.syncer import FilesystemSyncer
+from app.db.repository import evidence_repository, EvidenceRepository
+from app.schemas.evidence import (
+    EvidenceRecordBase,
     EvidenceRecordCreate,
+    EvidenceRecord,
     EvidenceListResponse,
 )
-from app.db.connection import db_manager
-from app.db.repository import EvidenceRepository, evidence_repository
 
 __all__ = [
-    "EvidenceRecord",
-    "EvidenceRecordCreate",
-    "EvidenceListResponse",
     "db_manager",
-    "EvidenceRepository",
+    "DatabaseManager",
+    "initialize_schema",
+    "FilesystemSyncer",
     "evidence_repository",
+    "EvidenceRepository",
+    "EvidenceRecordBase",
+    "EvidenceRecordCreate",
+    "EvidenceRecord",
+    "EvidenceListResponse",
 ]

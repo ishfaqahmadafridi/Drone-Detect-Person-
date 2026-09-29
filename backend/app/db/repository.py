@@ -4,58 +4,21 @@ Evidence Repository: Persistent SQLite storage operations for tactical recording
 
 import os
 import json
-from datetime import datetime
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Any
 
-from app.core.config import SNAPSHOTS_DIR, RECORDINGS_DIR
 from app.db.connection import db_manager
-from app.db.models import EvidenceRecord, EvidenceRecordCreate
+from app.db.schema import initialize_schema
+from app.db.syncer import FilesystemSyncer
+from app.schemas.evidence import EvidenceRecord, EvidenceRecordCreate
 
 
 class EvidenceRepository:
     """Handles all SQL CRUD operations for evidentiary media recordings."""
 
-    def __init__(self):
-        self.init_db()
-        self.sync_filesystem_records()
-
-    def init_db(self) -> None:
-        """Create tables and perform index optimization if not present."""
-        with db_manager.session() as conn:
-            conn.execute(
-                """
-                CREATE TABLE IF NOT EXISTS evidence_records (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    media_type TEXT NOT NULL,
-                    filename TEXT NOT NULL UNIQUE,
-                    file_path TEXT NOT NULL,
-                    url TEXT NOT NULL,
-                    thumbnail_url TEXT,
-                    view_mode TEXT NOT NULL,
-                    threat_level TEXT NOT NULL,
-                    threat_type TEXT NOT NULL,
-                    duration_seconds REAL DEFAULT 0.0,
-                    file_size_kb REAL DEFAULT 0.0,
-                    width INTEGER DEFAULT 1280,
-                    height INTEGER DEFAULT 720,
-                    fps REAL DEFAULT 25.0,
-                    created_at TEXT NOT NULL,
-                    metadata_json TEXT DEFAULT '{}'
-                );
-                """
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_evidence_created ON evidence_records(created_at DESC);"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_evidence_view ON evidence_records(view_mode);"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_evidence_type ON evidence_records(media_type);"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_evidence_threat ON evidence_records(threat_level);"
-            )
+    def __init__(self, auto_sync: bool = True):
+        initialize_schema()
+        if auto_sync:
+            FilesystemSyncer.sync(self)
 
     def insert(self, record: EvidenceRecordCreate) -> EvidenceRecord:
         """Persist a new evidence record into SQLite."""
@@ -122,7 +85,7 @@ class EvidenceRepository:
         query = f"""
             SELECT * FROM evidence_records
             {where_sql}
-            ORDER BY created_at DESC, id DESC
+            ORDER BY CASE WHEN media_type = 'video' THEN 0 ELSE 1 END, created_at DESC, id DESC
             LIMIT ? OFFSET ?;
         """
         params.extend([limit, offset])
@@ -178,7 +141,7 @@ class EvidenceRepository:
         return self._row_to_model(row) if row else None
 
     def delete(self, record_id: int) -> bool:
-        """Remove record from database and delete underlying file if present."""
+        """Remove a record by ID and unlink its underlying file from storage."""
         record = self.get_by_id(record_id)
         if not record:
             return False
@@ -186,75 +149,17 @@ class EvidenceRepository:
         with db_manager.session() as conn:
             conn.execute("DELETE FROM evidence_records WHERE id = ?;", (record_id,))
 
-        if os.path.exists(record.file_path):
+        if record.file_path and os.path.exists(record.file_path):
             try:
                 os.remove(record.file_path)
-            except OSError:
-                pass
+            except OSError as err:
+                print(f"[REPOSITORY] Failed to delete file {record.file_path}: {err}")
+
         return True
 
     def sync_filesystem_records(self) -> int:
-        """
-        Scan physical directories on disk (snapshots + recordings) and populate
-        any unindexed files into SQLite database.
-        """
-        synced_count = 0
-
-        # 1. Sync snapshots directory
-        if os.path.exists(SNAPSHOTS_DIR):
-            for fname in os.listdir(SNAPSHOTS_DIR):
-                if fname.lower().endswith((".jpg", ".jpeg", ".png")):
-                    full_p = os.path.join(SNAPSHOTS_DIR, fname)
-                    stat = os.stat(full_p)
-                    view_mode = "ground" if "_ground_" in fname else ("aerial" if "_aerial_" in fname else "ground")
-                    threat_level = "INTRUSION" if "intrusion" in fname.lower() else ("MULTI_PERSON" if "multi" in fname.lower() else "CLEAR")
-                    threat_type = "ZONE INTRUSION" if threat_level == "INTRUSION" else ("MULTI-PERSON GATHERING" if threat_level == "MULTI_PERSON" else "SECURITY ALERT")
-                    created_at = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
-
-                    create_dto = EvidenceRecordCreate(
-                        media_type="image",
-                        filename=fname,
-                        file_path=full_p,
-                        url=f"/snapshots/{fname}",
-                        thumbnail_url=f"/snapshots/{fname}",
-                        view_mode=view_mode,
-                        threat_level=threat_level,
-                        threat_type=threat_type,
-                        duration_seconds=0.0,
-                        file_size_kb=round(stat.st_size / 1024, 1),
-                        created_at=created_at,
-                    )
-                    self.insert(create_dto)
-                    synced_count += 1
-
-        # 2. Sync recordings directory
-        if os.path.exists(RECORDINGS_DIR):
-            for fname in os.listdir(RECORDINGS_DIR):
-                if fname.lower().endswith((".mp4", ".avi", ".mkv", ".webm")):
-                    full_p = os.path.join(RECORDINGS_DIR, fname)
-                    stat = os.stat(full_p)
-                    view_mode = "ground" if "_ground_" in fname else ("aerial" if "_aerial_" in fname else "ground")
-                    threat_level = "INTRUSION" if "intrusion" in fname.lower() else ("MULTI_PERSON" if "multi" in fname.lower() else "MONITORING")
-                    threat_type = "EVIDENTIARY VIDEO RECORDING"
-                    created_at = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
-
-                    create_dto = EvidenceRecordCreate(
-                        media_type="video",
-                        filename=fname,
-                        file_path=full_p,
-                        url=f"/recordings/{fname}",
-                        thumbnail_url=None,
-                        view_mode=view_mode,
-                        threat_level=threat_level,
-                        threat_type=threat_type,
-                        duration_seconds=0.0,
-                        file_size_kb=round(stat.st_size / 1024, 1),
-                        created_at=created_at,
-                    )
-                    self.insert(create_dto)
-                    synced_count += 1
-
-        return synced_count
+        """Manual trigger to synchronize filesystem files into SQLite."""
+        return FilesystemSyncer.sync(self)
 
     def _row_to_model(self, row: Any) -> EvidenceRecord:
         """Convert a sqlite3.Row to an EvidenceRecord model."""

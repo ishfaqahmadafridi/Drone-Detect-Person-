@@ -33,7 +33,6 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
         />
       );
     case "airspace":
-    case "avionics":
     case "geofence":
     default:
       return (

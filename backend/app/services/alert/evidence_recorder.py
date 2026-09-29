@@ -13,7 +13,8 @@ try:
 except ImportError:
     cv2 = None
 from app.core.constants import AlertLevel
-from app.db import evidence_repository, EvidenceRecordCreate
+from app.schemas.evidence import EvidenceRecordCreate
+from app.db import evidence_repository
 
 
 class EvidenceRecorder:
@@ -22,12 +23,14 @@ class EvidenceRecorder:
         output_dir: str = "runs/output",
         snapshots_dir: str = "runs/output/snapshots",
         logs_dir: str = "runs/output/logs",
-        snapshot_cooldown: float = 3.0
+        snapshot_cooldown: float = 3.0,
+        auto_record_clips: bool = False,
     ):
         self.output_dir = output_dir
         self.snapshots_dir = snapshots_dir
         self.logs_dir = logs_dir
         self.snapshot_cooldown = snapshot_cooldown
+        self.auto_record_clips = auto_record_clips
         
         self.last_snapshot_time = 0.0
         self.alert_history: List[Dict] = []
@@ -97,6 +100,19 @@ class EvidenceRecorder:
             details_copy = dict(details)
             details_copy['snapshot_path'] = filepath
             self.alert_history.append(details_copy)
+
+            # Auto-record an evidentiary video clip on threat alert
+            if self.auto_record_clips:
+                try:
+                    from app.services.recording import video_recorder
+                    if not video_recorder.is_recording:
+                        video_recorder.record_clip(
+                            view_mode=view_mode,
+                            threat_level=threat_level,
+                            duration_seconds=5.0,
+                        )
+                except Exception as clip_err:
+                    print(f"[WARN] Failed to trigger auto-clip: {clip_err}")
             
             with open(self.log_file_csv, mode='a', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)

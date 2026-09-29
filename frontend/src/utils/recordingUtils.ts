@@ -1,4 +1,5 @@
 import { RECORDINGS_PERSPECTIVE_LABELS, RECORDINGS_PERSPECTIVE_COLORS } from "@/constants/tactical";
+import { EvidenceMetadata, SnapshotItem } from "@/types";
 
 export interface ParsedTimestamp {
   datePart: string;
@@ -43,4 +44,23 @@ export function getThreatBadgeClass(threatType: string = ""): string {
     return "bg-amber-500/20 text-amber-300 border-amber-500/40";
   }
   return "bg-cyan-500/20 text-cyan-300 border-cyan-500/40";
+}
+
+export function getEvidenceMetadata(
+  snapshot?: Partial<SnapshotItem> | null
+): EvidenceMetadata {
+  const { datePart, timePart } = parseEvidenceTimestamp(snapshot?.created_at);
+  const perspectiveLabel = getPerspectiveLabel(snapshot?.view_mode);
+  const perspectiveBadgeClass = getPerspectiveBadgeClass(snapshot?.view_mode);
+  const threatType = snapshot?.threat_type || parseThreatType(snapshot?.filename || "");
+  const threatBadgeClass = getThreatBadgeClass(threatType);
+
+  return {
+    datePart,
+    timePart,
+    perspectiveLabel,
+    perspectiveBadgeClass,
+    threatType,
+    threatBadgeClass,
+  };
 }

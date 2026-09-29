@@ -27,15 +27,11 @@ export function useRecordings() {
     });
   }, [snapshots, filterMode]);
 
-  // Keep active selection in sync with the filtered list
+  // Only deselect if the user's currently selected record is filtered out.
+  // Never select a record automatically by default on page load.
   useEffect(() => {
-    if (filteredSnapshots.length === 0) {
+    if (selectedSnapshot && !filteredSnapshots.some((s) => s.filename === selectedSnapshot.filename)) {
       setSelectedSnapshot(null);
-      return;
-    }
-
-    if (!selectedSnapshot || !filteredSnapshots.some((s) => s.filename === selectedSnapshot.filename)) {
-      setSelectedSnapshot(filteredSnapshots[0]);
     }
   }, [filteredSnapshots, selectedSnapshot]);
 
@@ -81,6 +77,23 @@ export function useRecordings() {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const toggleRecording = useCallback(() => {
+    if (isRecording) {
+      return stopRecording();
+    } else {
+      return startRecording();
+    }
+  }, [isRecording, startRecording, stopRecording]);
+
+  const selectRecordAndInspect = useCallback((snap: SnapshotItem) => {
+    setSelectedSnapshot(snap);
+    setIsModalOpen(true);
+  }, []);
+
+  const closePreview = useCallback(() => {
+    setSelectedSnapshot(null);
+  }, []);
+
   return {
     snapshots: filteredSnapshots,
     allSnapshots: snapshots,
@@ -95,9 +108,12 @@ export function useRecordings() {
     isModalOpen,
     openModal,
     closeModal,
+    closePreview,
     isRecording,
     isActionLoading,
     startRecording,
     stopRecording,
+    toggleRecording,
+    selectRecordAndInspect,
   };
 }

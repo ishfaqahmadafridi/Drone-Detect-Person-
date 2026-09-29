@@ -571,6 +571,7 @@ export interface RecordingsListPaneProps {
 export interface RecordingsPreviewPaneProps {
   selectedSnapshot: SnapshotItem | null;
   onOpenModal: () => void;
+  onClosePreview?: () => void;
 }
 
 export interface RecordingsFullscreenModalProps {
@@ -589,6 +590,64 @@ export interface ModalImageStageProps {
   filename: string;
 }
 
+export interface TacticalVideoPlayerProps {
+  url: string;
+  filename: string;
+}
+
+export interface PlayerPlaybackRibbonProps {
+  label?: string;
+}
+
+export interface PlayerViewportProps {
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+  url: string;
+  isLooping: boolean;
+  hasError?: boolean;
+  onPlay: () => void;
+  onPause: () => void;
+  onTimeUpdate: () => void;
+  onLoadedMetadata: () => void;
+  onError?: () => void;
+  onTogglePlay: () => void;
+}
+
+export interface PlayerTimelineScrubberProps {
+  currentTime: number;
+  duration: number;
+  progressPercent: number;
+  onSeek: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  formattedCurrent: string;
+  formattedDuration: string;
+  isDisabled?: boolean;
+}
+
+export interface PlayerTransportControlsProps {
+  isPlaying: boolean;
+  isDisabled?: boolean;
+  onTogglePlay: () => void;
+  onStop: () => void;
+  onSkip: (seconds: number) => void;
+}
+
+export interface PlayerActionControlsProps {
+  playbackRate: number;
+  isLooping: boolean;
+  isMuted: boolean;
+  isDisabled?: boolean;
+  onCycleSpeed: () => void;
+  onToggleLoop: () => void;
+  onToggleMute: () => void;
+  onToggleFullscreen: () => void;
+}
+
+export interface PlayerControlsBarProps {
+  scrubberProps: PlayerTimelineScrubberProps;
+  transportProps: PlayerTransportControlsProps;
+  actionProps: PlayerActionControlsProps;
+  isDisabled?: boolean;
+}
+
 export interface ModalFooterProps {
   snapshot: SnapshotItem;
   onClose: () => void;
@@ -601,6 +660,7 @@ export interface EmptyPreviewStateProps {
 export interface PreviewTopToolbarProps {
   selectedSnapshot: SnapshotItem;
   onOpenModal: () => void;
+  onClosePreview?: () => void;
 }
 
 export interface PreviewViewportProps {

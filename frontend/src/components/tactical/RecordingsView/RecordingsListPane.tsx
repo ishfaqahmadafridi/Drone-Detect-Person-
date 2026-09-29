@@ -40,8 +40,8 @@ export const RecordingsListPane: React.FC<RecordingsListPaneProps> = ({
         onFilterChange={onFilterChange}
       />
 
-      {/* 3. Scrollable List of Records */}
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+      {/* 3. Tactical List: Exactly one recording per row */}
+      <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin min-h-0 space-y-2">
         {isLoading || snapshots.length === 0 ? (
           <RecordingsEmptyState isLoading={isLoading} />
         ) : (

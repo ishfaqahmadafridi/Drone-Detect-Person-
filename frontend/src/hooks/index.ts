@@ -14,3 +14,5 @@ export * from "./useCameraWall";
 export * from "./useDashboardOrchestrator";
 export * from "./useRecordings";
 export * from "./useEscapeKey";
+export * from "./useEvidenceMetadata";
+export * from "./useTacticalVideoPlayer";
