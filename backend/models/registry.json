@@ -1,22 +1,42 @@
 {
   "profiles": {
     "ground": {
-      "name": "Ground View (YOLOv8n CCTV)",
-      "filename": "yolov8n.pt",
-      "recommended_imgsz": 640,
+      "name": "Ground View (YOLO26s MOT20 Pedestrian)",
+      "architecture": "YOLO26s",
+      "dataset": "MOT20",
+      "filename": "mot20_yolo26s_pedestrian.pt",
+      "recommended_imgsz": 1280,
+      "confidence": 0.25,
+      "iou": 0.50,
+      "person_classes": [0],
+      "person_labels": ["person"],
+      "tracker": "bytetrack.yaml",
+      "engine": "YOLO26s + ByteTrack",
+      "source_url": "https://huggingface.co/Halftom/mot20-yolo26s-pedestrian",
+      "revision": "dbb13e25874f73927640165f7ae4079fb738129b",
+      "download_url": "https://huggingface.co/Halftom/mot20-yolo26s-pedestrian/resolve/dbb13e25874f73927640165f7ae4079fb738129b/best.pt",
+      "sha256": "f24d5aa4af4948f2d0357baef34d8dcea03e4b0caef4fee5c0471de9297d30e4",
+      "size_bytes": 20371909,
+      "description": "Halftom's YOLO26s checkpoint fine-tuned for pedestrian detection in dense ground-level MOT20 scenes."
+    },
+    "aerial": {
+      "name": "Aerial Drone View (YOLO11n VisDrone Person)",
+      "architecture": "YOLO11n",
+      "dataset": "VisDrone",
+      "filename": "visdrone_person_best.pt",
+      "recommended_imgsz": 1280,
       "confidence": 0.25,
       "iou": 0.45,
       "person_classes": [0],
-      "description": "Optimized for horizontal CCTV camera perspectives with standard pedestrian aspect ratios."
-    },
-    "aerial": {
-      "name": "Aerial Drone View (YOLOv8n VisDrone)",
-      "filename": "yolov8n.pt",
-      "recommended_imgsz": 640,
-      "confidence": 0.35,
-      "iou": 0.50,
-      "person_classes": [0],
-      "description": "Optimized for overhead UAV/Drone flight perspectives with high altitude and variable tilt angles."
+      "person_labels": ["person"],
+      "tracker": "botsort.yaml",
+      "engine": "YOLO11n + BoT-SORT",
+      "source_url": "https://github.com/pratap424/visdrone_mot",
+      "revision": "47b5f4df43d93ec22c7a4ad86ffa417af19494ed",
+      "download_url": "https://raw.githubusercontent.com/pratap424/visdrone_mot/47b5f4df43d93ec22c7a4ad86ffa417af19494ed/models/visdrone_person_best.pt",
+      "sha256": "e3ada842a2bf94dd420c45ab34669c874a180160fa302bab3a2d6e7a44e263a2",
+      "size_bytes": 5534611,
+      "description": "pratap424's YOLO11n checkpoint fine-tuned on VisDrone, merging pedestrian and people into a single person class."
     }
   }
 }

@@ -28,10 +28,11 @@ class DronePersonDetectorService:
         annotator: Optional[TacticalFrameAnnotator] = None
     ):
         self.config = config or DetectionConfig()
-        self.active_view = "aerial"
+        self.active_view = getattr(self.config, "view_mode", "aerial") or "aerial"
         
         # Pre-warm default view model
         self.model = inference_service.get_model(self.active_view)
+        self._apply_profile(preserve_overrides=True)
         
         # FPS Profiler
         self._profiler = FPSProfiler(window_seconds=0.5)
@@ -51,10 +52,32 @@ class DronePersonDetectorService:
     def fps(self, val: float):
         self._profiler.current_fps = val
 
-    def set_view(self, view: str) -> str:
-        self.active_view = inference_service.set_active_view(view)
-        self.model = inference_service.get_model(self.active_view)
+    def _apply_profile(self, preserve_overrides: bool = False):
+        profile = inference_service.get_profile(self.active_view)
+        self.config.view_mode = self.active_view
+        self.config.model_name = profile.get("filename", "")
+        self.config.target_classes = list(profile.get("person_classes", [0]))
+        self.engine = profile.get("engine", "YOLO + ByteTrack")
+        fields = (("confidence_threshold", "confidence"), ("iou_threshold", "iou"), ("img_size", "recommended_imgsz"))
+        for field, key in fields:
+            if not preserve_overrides or getattr(self.config, field) is None:
+                if key in profile:
+                    setattr(self.config, field, profile[key])
+
+    def reset_tracking(self):
+        self.track_history.clear()
         tracking_service.reset()
+        if hasattr(inference_service, "reset_tracking"):
+            inference_service.reset_tracking()
+
+    def set_view(self, view: str) -> str:
+        if view == self.active_view:
+            return self.active_view
+        inference_service.set_active_view(view, preload=True)
+        self.active_view = view
+        self.model = inference_service.get_model(self.active_view)
+        self._apply_profile(preserve_overrides=False)
+        self.reset_tracking()
         return self.active_view
 
     def process_frame(
@@ -68,8 +91,10 @@ class DronePersonDetectorService:
         """
         self._profiler.tick()
 
-        current_view = view or self.active_view
-        model = inference_service.get_model(current_view)
+        if view is not None and view != self.active_view:
+            self.set_view(view)
+        current_view = self.active_view
+        model = self.model
         profile = inference_service.get_profile(current_view)
 
         conf_thresh = (
@@ -83,6 +108,7 @@ class DronePersonDetectorService:
             else profile.get("iou", 0.45)
         )
         target_classes = profile.get("person_classes", [0])
+        tracker_file = profile.get("tracker", "bytetrack.yaml")
 
         if use_tracking:
             results = model.track(
@@ -91,6 +117,8 @@ class DronePersonDetectorService:
                 iou=iou_thresh,
                 classes=target_classes,
                 device=self.config.device,
+                imgsz=self.config.img_size,
+                tracker=tracker_file,
                 persist=True,
                 verbose=False
             )
@@ -101,6 +129,7 @@ class DronePersonDetectorService:
                 iou=iou_thresh,
                 classes=target_classes,
                 device=self.config.device,
+                imgsz=self.config.img_size,
                 verbose=False
             )
 
