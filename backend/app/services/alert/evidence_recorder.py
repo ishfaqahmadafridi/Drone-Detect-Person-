@@ -13,6 +13,8 @@ try:
 except ImportError:
     cv2 = None
 from app.core.constants import AlertLevel
+from app.schemas.evidence import EvidenceRecordCreate
+from app.db import evidence_repository
 
 
 class EvidenceRecorder:
@@ -21,12 +23,14 @@ class EvidenceRecorder:
         output_dir: str = "runs/output",
         snapshots_dir: str = "runs/output/snapshots",
         logs_dir: str = "runs/output/logs",
-        snapshot_cooldown: float = 3.0
+        snapshot_cooldown: float = 3.0,
+        auto_record_clips: bool = False,
     ):
         self.output_dir = output_dir
         self.snapshots_dir = snapshots_dir
         self.logs_dir = logs_dir
         self.snapshot_cooldown = snapshot_cooldown
+        self.auto_record_clips = auto_record_clips
         
         self.last_snapshot_time = 0.0
         self.alert_history: List[Dict] = []
@@ -71,10 +75,44 @@ class EvidenceRecorder:
             if cv2 is not None and frame is not None:
                 cv2.imwrite(filepath, frame)
             snapshot_saved_path = filepath
+            file_size_kb = round(os.path.getsize(filepath) / 1024, 1) if os.path.exists(filepath) else 0.0
+
+            # Commit to SQLite persistent database
+            try:
+                db_dto = EvidenceRecordCreate(
+                    media_type="image",
+                    filename=filename,
+                    file_path=filepath,
+                    url=f"/snapshots/{filename}",
+                    thumbnail_url=f"/snapshots/{filename}",
+                    view_mode=view_mode,
+                    threat_level=threat_level,
+                    threat_type="ZONE INTRUSION" if threat_level == AlertLevel.INTRUSION else "MULTI-PERSON GATHERING",
+                    duration_seconds=0.0,
+                    file_size_kb=file_size_kb,
+                    created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    metadata_json=details,
+                )
+                evidence_repository.insert(db_dto)
+            except Exception as db_err:
+                print(f"[WARN] Failed to insert snapshot into database: {db_err}")
             
             details_copy = dict(details)
             details_copy['snapshot_path'] = filepath
             self.alert_history.append(details_copy)
+
+            # Auto-record an evidentiary video clip on threat alert
+            if self.auto_record_clips:
+                try:
+                    from app.services.recording import video_recorder
+                    if not video_recorder.is_recording:
+                        video_recorder.record_clip(
+                            view_mode=view_mode,
+                            threat_level=threat_level,
+                            duration_seconds=5.0,
+                        )
+                except Exception as clip_err:
+                    print(f"[WARN] Failed to trigger auto-clip: {clip_err}")
             
             with open(self.log_file_csv, mode='a', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
@@ -98,7 +136,8 @@ class EvidenceRecorder:
 
     def capture_manual_snapshot(self, frame: Any, view_mode: str = "aerial") -> str:
         """
-        Instantly saves unthrottled manual evidence snapshot requested by operator.
+        Instantly saves unthrottled manual evidence snapshot requested by operator,
+        and indexes it into the SQLite database.
         """
         timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:19]
         clean_view = str(view_mode).lower().strip()
@@ -106,4 +145,26 @@ class EvidenceRecorder:
         filepath = os.path.join(self.snapshots_dir, filename)
         if cv2 is not None and frame is not None:
             cv2.imwrite(filepath, frame)
+
+        file_size_kb = round(os.path.getsize(filepath) / 1024, 1) if os.path.exists(filepath) else 0.0
+
+        try:
+            db_dto = EvidenceRecordCreate(
+                media_type="image",
+                filename=filename,
+                file_path=filepath,
+                url=f"/snapshots/{filename}",
+                thumbnail_url=f"/snapshots/{filename}",
+                view_mode=clean_view,
+                threat_level="CLEAR",
+                threat_type="MANUAL SNAPSHOT",
+                duration_seconds=0.0,
+                file_size_kb=file_size_kb,
+                created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                metadata_json={"manual": True},
+            )
+            evidence_repository.insert(db_dto)
+        except Exception as db_err:
+            print(f"[WARN] Failed to insert manual snapshot into database: {db_err}")
+
         return filename

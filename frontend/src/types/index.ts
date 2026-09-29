@@ -1,6 +1,6 @@
 export type ThreatLevel = "CLEAR" | "MONITORING" | "MULTI_PERSON" | "INTRUSION";
 export type StreamSourceType = "synthetic" | "webcam" | "file" | "rtsp";
-export type TacticalNavTab = "airspace" | "cameras" | "avionics" | "incidents" | "geofence" | "settings" | "recordings";
+export type TacticalNavTab = "airspace" | "cameras" | "incidents" | "geofence" | "settings" | "recordings";
 
 export interface Detection {
   id: number;
@@ -89,11 +89,26 @@ export interface IncidentAlert {
 }
 
 export interface SnapshotItem {
+  id?: number;
   filename: string;
   url: string;
+  thumbnail_url?: string;
   created_at: string;
   size_kb: number;
-  view_mode?: "aerial" | "ground";
+  view_mode?: "aerial" | "ground" | string;
+  media_type?: "image" | "video";
+  threat_level?: string;
+  threat_type?: string;
+  duration_seconds?: number;
+}
+
+export interface EvidenceMetadata {
+  datePart: string;
+  timePart: string;
+  perspectiveLabel: string;
+  perspectiveBadgeClass: string;
+  threatType: string;
+  threatBadgeClass: string;
 }
 
 export interface ModelProfileInfo {

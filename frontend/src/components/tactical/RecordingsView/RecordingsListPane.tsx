@@ -17,15 +17,21 @@ export const RecordingsListPane: React.FC<RecordingsListPaneProps> = ({
   onSelectSnapshot,
   onFilterChange,
   onRefresh,
+  isRecording,
+  onToggleRecording,
+  isActionLoading,
 }) => {
   return (
     <div className="flex flex-col h-full gap-3 min-w-0">
-      {/* 1. Header with Refresh */}
+      {/* 1. Header with Refresh & REC Toggle */}
       <RecordingsHeader
         totalCount={totalCount}
         filteredCount={filteredCount}
         isLoading={isLoading}
         onRefresh={onRefresh}
+        isRecording={isRecording}
+        onToggleRecording={onToggleRecording}
+        isActionLoading={isActionLoading}
       />
 
       {/* 2. Perspective Filter Tabs (ALL / AERIAL / GROUND) */}
@@ -34,8 +40,8 @@ export const RecordingsListPane: React.FC<RecordingsListPaneProps> = ({
         onFilterChange={onFilterChange}
       />
 
-      {/* 3. Scrollable List of Records */}
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+      {/* 3. Tactical List: Exactly one recording per row */}
+      <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin min-h-0 space-y-2">
         {isLoading || snapshots.length === 0 ? (
           <RecordingsEmptyState isLoading={isLoading} />
         ) : (

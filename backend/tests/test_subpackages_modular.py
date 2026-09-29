@@ -92,6 +92,28 @@ class TestModularSubpackages(unittest.TestCase):
         )
         self.assertEqual(annotated.shape, (200, 200, 3))
 
+    def test_recording_subpackage(self):
+        from app.services.recording import (
+            PreRollBuffer,
+            VideoCodecNegotiator,
+            CompanionThumbnailGenerator,
+            VideoContainerWriter,
+            RecordingSession,
+            ClipCaptureWorker,
+            RecordingFinalizer,
+            RecorderPipeline,
+            VideoClipRecorder,
+            video_recorder,
+        )
+        self.assertTrue(callable(VideoCodecNegotiator.create_writer))
+        self.assertTrue(callable(CompanionThumbnailGenerator.generate))
+        self.assertTrue(hasattr(RecordingSession, "start"))
+        self.assertTrue(hasattr(ClipCaptureWorker, "spawn_clip_task"))
+        self.assertTrue(hasattr(RecordingFinalizer, "commit_evidence_record"))
+        self.assertTrue(hasattr(RecorderPipeline, "dispatch_frame"))
+        self.assertTrue(hasattr(VideoClipRecorder, "push_frame"))
+        self.assertIsNotNone(video_recorder)
+
     def test_root_legacy_aliases(self):
         self.assertTrue(hasattr(alert_manager, "AlertManager"))
         self.assertTrue(hasattr(config, "DetectionConfig"))
@@ -101,3 +123,4 @@ class TestModularSubpackages(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

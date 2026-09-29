@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         destination: "http://127.0.0.1:8000/snapshots/:path*",
       },
       {
+        source: "/recordings/:path*",
+        destination: "http://127.0.0.1:8000/recordings/:path*",
+      },
+      {
         source: "/ws/:path*",
         destination: "http://127.0.0.1:8000/ws/:path*",
       },

@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.router import api_router
-from app.core.config import SNAPSHOTS_DIR
+from app.core.config import SNAPSHOTS_DIR, RECORDINGS_DIR
 
 app = FastAPI(
     title="AERO-GUARD Aerial Vision API",
@@ -49,9 +49,12 @@ def get_health():
         "timestamp": datetime.now().isoformat()
     }
 
-# Mount static snapshots
+# Mount static snapshots & recordings
 if os.path.exists(SNAPSHOTS_DIR):
     app.mount("/snapshots", StaticFiles(directory=SNAPSHOTS_DIR), name="snapshots")
+
+if os.path.exists(RECORDINGS_DIR):
+    app.mount("/recordings", StaticFiles(directory=RECORDINGS_DIR), name="recordings")
 
 
 if __name__ == "__main__":

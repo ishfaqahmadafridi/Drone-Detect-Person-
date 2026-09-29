@@ -1,12 +1,11 @@
 import React from "react";
 import { Clock } from "lucide-react";
 import { SnapshotCardProps } from "@/types";
-import { parseEvidenceTimestamp, getPerspectiveLabel, getPerspectiveBadgeClass } from "@/utils";
+import { useEvidenceMetadata } from "@/hooks";
 
 export const SnapshotCard: React.FC<SnapshotCardProps> = ({ snapshot, onClick }) => {
-  const { datePart, timePart } = parseEvidenceTimestamp(snapshot.created_at);
-  const perspectiveLabel = getPerspectiveLabel(snapshot.view_mode);
-  const perspectiveBadgeClass = getPerspectiveBadgeClass(snapshot.view_mode);
+  const { datePart, timePart, perspectiveLabel, perspectiveBadgeClass } =
+    useEvidenceMetadata(snapshot);
 
   return (
     <div

@@ -19,6 +19,8 @@ RUNS_DIR = os.path.join(ROOT_DIR, "runs")
 OUTPUT_DIR = os.path.join(RUNS_DIR, "output")
 SNAPSHOTS_DIR = os.path.join(OUTPUT_DIR, "snapshots")
 LOGS_DIR = os.path.join(OUTPUT_DIR, "logs")
+RECORDINGS_DIR = os.path.join(OUTPUT_DIR, "recordings")
+DATABASE_PATH = os.path.join(OUTPUT_DIR, "evidence.db")
 UPLOADS_DIR = os.path.join(BASE_DIR, "uploads")
 SYNTHETIC_VIDEO_PATH = os.path.join(BASE_DIR, "test_drone.mp4")
 DEFAULT_ZONE_NORMALIZED = DEFAULT_ZONE_POLYGON
@@ -44,6 +46,7 @@ _load_env_file(os.path.join(ROOT_DIR, ".env"))
 REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN", "")
 
 os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
+os.makedirs(RECORDINGS_DIR, exist_ok=True)
 os.makedirs(LOGS_DIR, exist_ok=True)
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 

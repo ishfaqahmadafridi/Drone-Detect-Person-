@@ -3,18 +3,13 @@
 import React from "react";
 import { Camera, Clock, ShieldAlert, HardDrive } from "lucide-react";
 import { PreviewTelemetryAuditProps } from "@/types";
-import {
-  parseEvidenceTimestamp,
-  getPerspectiveLabel,
-  parseThreatType,
-} from "@/utils";
+import { useEvidenceMetadata } from "@/hooks";
 
 export const PreviewTelemetryAudit: React.FC<PreviewTelemetryAuditProps> = ({
   selectedSnapshot,
 }) => {
-  const { datePart, timePart } = parseEvidenceTimestamp(selectedSnapshot.created_at);
-  const perspectiveLabel = getPerspectiveLabel(selectedSnapshot.view_mode);
-  const threatType = parseThreatType(selectedSnapshot.filename);
+  const { datePart, timePart, perspectiveLabel, threatType } =
+    useEvidenceMetadata(selectedSnapshot);
 
   return (
     <div className="p-4 bg-slate-900/70 border-t border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono-code">

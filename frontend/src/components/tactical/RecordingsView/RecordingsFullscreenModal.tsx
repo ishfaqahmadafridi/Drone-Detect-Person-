@@ -16,8 +16,14 @@ export const RecordingsFullscreenModal: React.FC<RecordingsFullscreenModalProps>
   if (!isOpen || !snapshot) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-6xl max-h-[92vh] flex flex-col rounded-2xl bg-slate-950 border border-slate-700/80 shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/90 backdrop-blur-xl animate-in fade-in duration-200 cursor-pointer"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-6xl h-[88vh] min-h-[540px] flex flex-col rounded-2xl bg-slate-950 border border-slate-700/80 shadow-[0_0_80px_rgba(0,0,0,0.95)] overflow-hidden cursor-default"
+      >
         {/* 1. Modal Top Bar */}
         <ModalHeader snapshot={snapshot} onClose={onClose} />
 

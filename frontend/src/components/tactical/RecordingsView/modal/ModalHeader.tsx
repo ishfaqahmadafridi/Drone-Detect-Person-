@@ -3,20 +3,17 @@
 import React from "react";
 import { Clock, Download, ExternalLink, X } from "lucide-react";
 import { ModalHeaderProps } from "@/types";
-import {
-  parseEvidenceTimestamp,
-  getPerspectiveLabel,
-  getPerspectiveBadgeClass,
-  parseThreatType,
-  getThreatBadgeClass,
-} from "@/utils";
+import { useEvidenceMetadata } from "@/hooks";
 
 export const ModalHeader: React.FC<ModalHeaderProps> = ({ snapshot, onClose }) => {
-  const { datePart, timePart } = parseEvidenceTimestamp(snapshot.created_at);
-  const perspectiveLabel = getPerspectiveLabel(snapshot.view_mode);
-  const perspectiveBadgeClass = getPerspectiveBadgeClass(snapshot.view_mode);
-  const threatType = parseThreatType(snapshot.filename);
-  const threatBadgeClass = getThreatBadgeClass(threatType);
+  const {
+    datePart,
+    timePart,
+    perspectiveLabel,
+    perspectiveBadgeClass,
+    threatType,
+    threatBadgeClass,
+  } = useEvidenceMetadata(snapshot);
 
   return (
     <div className="flex items-center justify-between px-5 py-3.5 bg-slate-900 border-b border-slate-800">

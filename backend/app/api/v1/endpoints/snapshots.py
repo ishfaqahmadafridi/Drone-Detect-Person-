@@ -7,6 +7,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from app.core.config import SNAPSHOTS_DIR
+from app.db import evidence_repository
 
 from typing import Optional
 from app.services.stream_service import stream_service
@@ -15,24 +16,28 @@ router = APIRouter()
 
 @router.get("/snapshots")
 def get_snapshots(view: Optional[str] = None):
-    files = []
-    if os.path.exists(SNAPSHOTS_DIR):
-        for f in os.listdir(SNAPSHOTS_DIR):
-            if f.endswith(('.jpg', '.jpeg', '.png')):
-                full_p = os.path.join(SNAPSHOTS_DIR, f)
-                stat = os.stat(full_p)
-                view_mode = "ground" if "_ground_" in f else ("aerial" if "_aerial_" in f else "ground")
-                if view and view.lower() != "all" and view_mode != view.lower():
-                    continue
-                files.append({
-                    "filename": f,
-                    "url": f"/snapshots/{f}",
-                    "view_mode": view_mode,
-                    "created_at": datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
-                    "size_kb": round(stat.st_size / 1024, 1)
-                })
-    files.sort(key=lambda x: x["created_at"], reverse=True)
-    return {"snapshots": files[:60]}
+    records = evidence_repository.list_records(
+        view_mode=view,
+        limit=100,
+    )
+    return {
+        "snapshots": [
+            {
+                "id": r.id,
+                "media_type": r.media_type,
+                "filename": r.filename,
+                "url": r.url,
+                "thumbnail_url": r.thumbnail_url or r.url,
+                "view_mode": r.view_mode,
+                "threat_level": r.threat_level,
+                "threat_type": r.threat_type,
+                "created_at": r.created_at,
+                "size_kb": r.file_size_kb,
+                "duration_seconds": r.duration_seconds,
+            }
+            for r in records
+        ]
+    }
 
 @router.post("/snapshots/capture")
 def capture_snapshot():

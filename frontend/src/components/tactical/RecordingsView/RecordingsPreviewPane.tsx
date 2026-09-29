@@ -12,6 +12,7 @@ import {
 export const RecordingsPreviewPane: React.FC<RecordingsPreviewPaneProps> = ({
   selectedSnapshot,
   onOpenModal,
+  onClosePreview,
 }) => {
   if (!selectedSnapshot) {
     return <EmptyPreviewState />;
@@ -23,6 +24,7 @@ export const RecordingsPreviewPane: React.FC<RecordingsPreviewPaneProps> = ({
       <PreviewTopToolbar
         selectedSnapshot={selectedSnapshot}
         onOpenModal={onOpenModal}
+        onClosePreview={onClosePreview}
       />
 
       {/* ── 2. Primary Media Player / Viewport ── */}
