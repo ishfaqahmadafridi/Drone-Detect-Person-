@@ -1,33 +1,46 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useSnapshotsQuery } from "@/services/queries/useSnapshotsQuery";
 import { SnapshotItem, RecordingsFilterMode } from "@/types";
 
 export function useRecordings() {
   const { data: snapshots = [], isLoading, refetch } = useSnapshotsQuery();
-  const [filterMode, setFilterMode] = useState<RecordingsFilterMode>("all");
-  const [selectedSnapshot, setSelectedSnapshot] = useState<SnapshotItem | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const [filterMode, setFilterMode] =
+    useState<RecordingsFilterMode>("all");
+
+  const [selectedSnapshotState, setSelectedSnapshot] =
+    useState<SnapshotItem | null>(null);
+
+  const [isModalOpen, setIsModalOpen] =
+    useState<boolean>(false);
 
   const filteredSnapshots = useMemo(() => {
     return snapshots.filter((snap: SnapshotItem) => {
       if (filterMode === "all") return true;
+
       return (snap.view_mode ?? "aerial") === filterMode;
     });
   }, [snapshots, filterMode]);
 
-  // Keep active selection in sync with the filtered list
-  useEffect(() => {
+  // Derive the active selection instead of updating state inside an effect
+  const selectedSnapshot = useMemo(() => {
     if (filteredSnapshots.length === 0) {
-      setSelectedSnapshot(null);
-      return;
+      return null;
     }
 
-    if (!selectedSnapshot || !filteredSnapshots.some((s) => s.filename === selectedSnapshot.filename)) {
-      setSelectedSnapshot(filteredSnapshots[0]);
+    if (
+      selectedSnapshotState &&
+      filteredSnapshots.some(
+        (snap) => snap.filename === selectedSnapshotState.filename
+      )
+    ) {
+      return selectedSnapshotState;
     }
-  }, [filteredSnapshots, selectedSnapshot]);
+
+    return filteredSnapshots[0];
+  }, [filteredSnapshots, selectedSnapshotState]);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
