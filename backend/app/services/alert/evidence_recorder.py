@@ -13,6 +13,7 @@ try:
 except ImportError:
     cv2 = None
 from app.core.constants import AlertLevel
+from app.db import evidence_repository, EvidenceRecordCreate
 
 
 class EvidenceRecorder:
@@ -71,6 +72,27 @@ class EvidenceRecorder:
             if cv2 is not None and frame is not None:
                 cv2.imwrite(filepath, frame)
             snapshot_saved_path = filepath
+            file_size_kb = round(os.path.getsize(filepath) / 1024, 1) if os.path.exists(filepath) else 0.0
+
+            # Commit to SQLite persistent database
+            try:
+                db_dto = EvidenceRecordCreate(
+                    media_type="image",
+                    filename=filename,
+                    file_path=filepath,
+                    url=f"/snapshots/{filename}",
+                    thumbnail_url=f"/snapshots/{filename}",
+                    view_mode=view_mode,
+                    threat_level=threat_level,
+                    threat_type="ZONE INTRUSION" if threat_level == AlertLevel.INTRUSION else "MULTI-PERSON GATHERING",
+                    duration_seconds=0.0,
+                    file_size_kb=file_size_kb,
+                    created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    metadata_json=details,
+                )
+                evidence_repository.insert(db_dto)
+            except Exception as db_err:
+                print(f"[WARN] Failed to insert snapshot into database: {db_err}")
             
             details_copy = dict(details)
             details_copy['snapshot_path'] = filepath
@@ -98,7 +120,8 @@ class EvidenceRecorder:
 
     def capture_manual_snapshot(self, frame: Any, view_mode: str = "aerial") -> str:
         """
-        Instantly saves unthrottled manual evidence snapshot requested by operator.
+        Instantly saves unthrottled manual evidence snapshot requested by operator,
+        and indexes it into the SQLite database.
         """
         timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:19]
         clean_view = str(view_mode).lower().strip()
@@ -106,4 +129,26 @@ class EvidenceRecorder:
         filepath = os.path.join(self.snapshots_dir, filename)
         if cv2 is not None and frame is not None:
             cv2.imwrite(filepath, frame)
+
+        file_size_kb = round(os.path.getsize(filepath) / 1024, 1) if os.path.exists(filepath) else 0.0
+
+        try:
+            db_dto = EvidenceRecordCreate(
+                media_type="image",
+                filename=filename,
+                file_path=filepath,
+                url=f"/snapshots/{filename}",
+                thumbnail_url=f"/snapshots/{filename}",
+                view_mode=clean_view,
+                threat_level="CLEAR",
+                threat_type="MANUAL SNAPSHOT",
+                duration_seconds=0.0,
+                file_size_kb=file_size_kb,
+                created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                metadata_json={"manual": True},
+            )
+            evidence_repository.insert(db_dto)
+        except Exception as db_err:
+            print(f"[WARN] Failed to insert manual snapshot into database: {db_err}")
+
         return filename

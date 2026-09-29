@@ -40,8 +40,10 @@ export const RECORDINGS_PERSPECTIVE_COLORS: Record<string, string> = {
   ground: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
 };
 
-export const RECORDINGS_FILTER_OPTIONS: readonly { value: "all" | "aerial" | "ground"; label: string }[] = [
+export const RECORDINGS_FILTER_OPTIONS: readonly { value: "all" | "aerial" | "ground" | "video" | "image"; label: string }[] = [
   { value: "all", label: "ALL" },
   { value: "aerial", label: "AERIAL" },
   { value: "ground", label: "GROUND" },
+  { value: "video", label: "VIDEOS" },
+  { value: "image", label: "IMAGES" },
 ] as const;

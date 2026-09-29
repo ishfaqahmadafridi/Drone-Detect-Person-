@@ -10,6 +10,7 @@ from app.services.streaming.source_provider import StreamSourceProvider
 from app.services.streaming.pipeline_processor import VisionPipelineProcessor
 from app.services.streaming.telemetry_state import TelemetryStateStore
 from app.services.streaming.mjpeg_broadcaster import MjpegBroadcaster
+from app.services.recording import video_recorder
 
 
 class FrameStreamer:
@@ -59,8 +60,10 @@ class FrameStreamer:
                 sim_targets=sim_targets
             )
 
-            # 2. Update real-time telemetry state store
+            # 2. Update real-time telemetry state store & feed video recorder
             self.telemetry_store.update(**result.telemetry_payload)
+            active_view = result.telemetry_payload.get("view_mode", "aerial")
+            video_recorder.push_frame(result.annotated_frame, active_view)
 
             # 3. Encode annotated frame to JPEG and stream chunk
             jpeg_bytes = self.broadcaster.encode_frame(result.annotated_frame)

@@ -17,15 +17,21 @@ export const RecordingsListPane: React.FC<RecordingsListPaneProps> = ({
   onSelectSnapshot,
   onFilterChange,
   onRefresh,
+  isRecording,
+  onToggleRecording,
+  isActionLoading,
 }) => {
   return (
     <div className="flex flex-col h-full gap-3 min-w-0">
-      {/* 1. Header with Refresh */}
+      {/* 1. Header with Refresh & REC Toggle */}
       <RecordingsHeader
         totalCount={totalCount}
         filteredCount={filteredCount}
         isLoading={isLoading}
         onRefresh={onRefresh}
+        isRecording={isRecording}
+        onToggleRecording={onToggleRecording}
+        isActionLoading={isActionLoading}
       />
 
       {/* 2. Perspective Filter Tabs (ALL / AERIAL / GROUND) */}

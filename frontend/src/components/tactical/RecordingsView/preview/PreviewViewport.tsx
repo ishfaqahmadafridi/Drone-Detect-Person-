@@ -11,23 +11,37 @@ export const PreviewViewport: React.FC<PreviewViewportProps> = ({
 }) => {
   const perspectiveLabel = getPerspectiveLabel(selectedSnapshot.view_mode);
 
-  return (
-    <div
-      onClick={onOpenModal}
-      className="relative flex-1 bg-black flex items-center justify-center overflow-hidden cursor-pointer group"
-    >
-      {selectedSnapshot.url ? (
-        <img
-          src={selectedSnapshot.url}
-          alt={selectedSnapshot.filename}
-          className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-[1.01]"
-        />
-      ) : (
-        <div className="text-slate-600 text-xs font-mono-code flex flex-col items-center gap-2">
-          <Film className="w-10 h-10 text-slate-700" />
-          <span>IMAGE FEED UNAVAILABLE</span>
-        </div>
-      )}
+    const isVideo = selectedSnapshot.media_type === "video" || selectedSnapshot.filename.endsWith(".mp4");
+
+    return (
+      <div
+        onClick={onOpenModal}
+        className="relative flex-1 bg-black flex items-center justify-center overflow-hidden cursor-pointer group"
+      >
+        {selectedSnapshot.url ? (
+          isVideo ? (
+            <video
+              src={selectedSnapshot.url}
+              controls
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="max-h-full max-w-full object-contain"
+            />
+          ) : (
+            <img
+              src={selectedSnapshot.url}
+              alt={selectedSnapshot.filename}
+              className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-[1.01]"
+            />
+          )
+        ) : (
+          <div className="text-slate-600 text-xs font-mono-code flex flex-col items-center gap-2">
+            <Film className="w-10 h-10 text-slate-700" />
+            <span>IMAGE / VIDEO FEED UNAVAILABLE</span>
+          </div>
+        )}
 
       {/* Corner HUD Reticles */}
       <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-cyan-400/60 pointer-events-none" />

@@ -89,11 +89,17 @@ export interface IncidentAlert {
 }
 
 export interface SnapshotItem {
+  id?: number;
   filename: string;
   url: string;
+  thumbnail_url?: string;
   created_at: string;
   size_kb: number;
   view_mode?: "aerial" | "ground";
+  media_type?: "image" | "video";
+  threat_level?: string;
+  threat_type?: string;
+  duration_seconds?: number;
 }
 
 export interface ModelProfileInfo {

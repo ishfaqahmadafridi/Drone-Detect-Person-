@@ -489,7 +489,7 @@ export interface MissionCommandViewportProps {
   onSnapshotTrigger?: () => void;
 }
 
-export type RecordingsFilterMode = "all" | "aerial" | "ground";
+export type RecordingsFilterMode = "all" | "aerial" | "ground" | "video" | "image";
 
 export interface EvidenceRecordRowProps {
   snap: SnapshotItem;
@@ -506,6 +506,9 @@ export interface RecordingsHeaderProps {
   filteredCount: number;
   isLoading: boolean;
   onRefresh: () => void;
+  isRecording?: boolean;
+  onToggleRecording?: () => void;
+  isActionLoading?: boolean;
 }
 
 export interface RecordingsFilterTabsProps {
@@ -560,6 +563,9 @@ export interface RecordingsListPaneProps {
   onSelectSnapshot: (snap: SnapshotItem) => void;
   onFilterChange: (mode: RecordingsFilterMode) => void;
   onRefresh: () => void;
+  isRecording?: boolean;
+  onToggleRecording?: () => void;
+  isActionLoading?: boolean;
 }
 
 export interface RecordingsPreviewPaneProps {

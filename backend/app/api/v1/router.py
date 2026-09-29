@@ -3,7 +3,7 @@ V1 API Router Aggregator.
 """
 
 from fastapi import APIRouter
-from app.api.v1.endpoints import stream, ws, config, alerts, snapshots, drone
+from app.api.v1.endpoints import stream, ws, config, alerts, snapshots, drone, recordings
 
 api_router = APIRouter()
 
@@ -13,3 +13,4 @@ api_router.include_router(ws.router, tags=["WebSocket Telemetry"])
 api_router.include_router(config.router, tags=["Surveillance Config"])
 api_router.include_router(alerts.router, tags=["Incident Alerts"])
 api_router.include_router(snapshots.router, tags=["Evidence Snapshots"])
+api_router.include_router(recordings.router, tags=["Evidence Recordings & Clips"])

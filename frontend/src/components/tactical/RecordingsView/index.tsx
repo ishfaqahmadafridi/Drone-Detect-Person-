@@ -22,7 +22,19 @@ export const RecordingsView: React.FC<RecordingsViewProps> = ({ className = "" }
     isModalOpen,
     openModal,
     closeModal,
+    isRecording,
+    isActionLoading,
+    startRecording,
+    stopRecording,
   } = useRecordings();
+
+  const handleToggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
 
   return (
     <div className={`flex flex-col h-full gap-4 p-3 md:p-5 ${className}`}>
@@ -40,6 +52,9 @@ export const RecordingsView: React.FC<RecordingsViewProps> = ({ className = "" }
             onSelectSnapshot={setSelectedSnapshot}
             onFilterChange={setFilterMode}
             onRefresh={() => refetch()}
+            isRecording={isRecording}
+            onToggleRecording={handleToggleRecording}
+            isActionLoading={isActionLoading}
           />
         </div>
 
