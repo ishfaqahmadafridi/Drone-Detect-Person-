@@ -7,8 +7,9 @@ import { recordingsApi } from "@/services/api/recordingsApi";
 
 export function useRecordings() {
   const { data: snapshots = [], isLoading, refetch } = useSnapshotsQuery();
+
   const [filterMode, setFilterMode] = useState<RecordingsFilterMode>("all");
-  const [selectedSnapshot, setSelectedSnapshot] = useState<SnapshotItem | null>(null);
+  const [selectedSnapshotState, setSelectedSnapshot] = useState<SnapshotItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isActionLoading, setIsActionLoading] = useState<boolean>(false);
@@ -27,13 +28,12 @@ export function useRecordings() {
     });
   }, [snapshots, filterMode]);
 
-  // Only deselect if the user's currently selected record is filtered out.
-  // Never select a record automatically by default on page load.
-  useEffect(() => {
-    if (selectedSnapshot && !filteredSnapshots.some((s) => s.filename === selectedSnapshot.filename)) {
-      setSelectedSnapshot(null);
-    }
-  }, [filteredSnapshots, selectedSnapshot]);
+  // Derive the active selection safely without triggering state update cascading
+  const selectedSnapshot = useMemo(() => {
+    if (!selectedSnapshotState) return null;
+    const exists = filteredSnapshots.some((s) => s.filename === selectedSnapshotState.filename);
+    return exists ? selectedSnapshotState : null;
+  }, [filteredSnapshots, selectedSnapshotState]);
 
   // Check initial recording status
   useEffect(() => {
