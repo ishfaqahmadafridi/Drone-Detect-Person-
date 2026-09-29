@@ -18,6 +18,8 @@ const initialState: TelemetryState = {
   detections: [],
   source_type: "synthetic",
   view_mode: "aerial",
+  model_name: "visdrone_person_best.pt",
+  engine: "YOLO11n + BoT-SORT",
   multi_person_threshold: 2,
   confidence_threshold: 0.35,
   proximity_distance_px: 120,

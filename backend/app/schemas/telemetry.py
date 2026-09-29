@@ -22,6 +22,9 @@ class TelemetryPayload(BaseModel):
     timestamp: str
     detections: List[DetectionItem]
     source_type: str
+    view_mode: str = "aerial"
+    model_name: str = ""
+    engine: str = ""
     multi_person_threshold: int
     confidence_threshold: float
     proximity_distance_px: int

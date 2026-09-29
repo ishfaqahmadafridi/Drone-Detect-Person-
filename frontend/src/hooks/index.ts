@@ -16,3 +16,4 @@ export * from "./useRecordings";
 export * from "./useEscapeKey";
 export * from "./useEvidenceMetadata";
 export * from "./useTacticalVideoPlayer";
+export * from "./useInferenceModel";
