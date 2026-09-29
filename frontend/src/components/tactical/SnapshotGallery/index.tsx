@@ -12,6 +12,8 @@ export const SnapshotGallery: React.FC = () => {
     snapshots,
     isLoading,
     refetch,
+    filterMode,
+    setFilterMode,
     selectedSnapshot,
     openSnapshot,
     closeSnapshot,
@@ -23,6 +25,8 @@ export const SnapshotGallery: React.FC = () => {
         count={snapshots.length}
         isLoading={isLoading}
         onRefresh={() => refetch()}
+        filterMode={filterMode}
+        onFilterChange={setFilterMode}
       />
 
       <div className="flex items-center gap-3 overflow-x-auto py-1 scrollbar-thin">

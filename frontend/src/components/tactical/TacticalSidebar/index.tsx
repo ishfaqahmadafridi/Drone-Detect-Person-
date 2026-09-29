@@ -4,6 +4,7 @@ import React from "react";
 import { TacticalSidebarProps } from "@/types";
 import { normalizeAvionicsMetrics } from "@/utils";
 import { SidebarHeader } from "./SidebarHeader";
+import { SidebarPerspectiveToggle } from "./SidebarPerspectiveToggle";
 import { SidebarNavList } from "./SidebarNavList";
 import { SidebarTelemetryWidget } from "./SidebarTelemetryWidget";
 import { SidebarFooter } from "./SidebarFooter";
@@ -18,6 +19,8 @@ export const TacticalSidebar: React.FC<TacticalSidebarProps> = ({
   isMuted,
   onToggleMute,
   threatLevel,
+  viewMode = "aerial",
+  onViewSelect,
 }) => {
   const { flightState, battery, isAirborne, isBatteryLow, altitude, speed } =
     normalizeAvionicsMetrics(avionics);
@@ -36,7 +39,18 @@ export const TacticalSidebar: React.FC<TacticalSidebarProps> = ({
         isAirborne={isAirborne}
       />
 
-      {/* 2. Navigation Modes List */}
+      {/* 2. Surveillance Vision Perspective Switcher */}
+      {onViewSelect && (
+        <div className="px-2 pt-1 pb-2 border-b border-slate-800/80">
+          <SidebarPerspectiveToggle
+            viewMode={viewMode}
+            onViewSelect={onViewSelect}
+            isCollapsed={isCollapsed}
+          />
+        </div>
+      )}
+
+      {/* 3. Navigation Modes List */}
       <SidebarNavList
         activeTab={activeTab}
         onTabChange={onTabChange}
@@ -44,6 +58,7 @@ export const TacticalSidebar: React.FC<TacticalSidebarProps> = ({
         onOpenWall={onOpenWall}
         threatLevel={threatLevel}
       />
+
 
       {/* 3. Real-Time Telemetry Mini-Card */}
       {!isCollapsed && (
@@ -67,8 +82,10 @@ export const TacticalSidebar: React.FC<TacticalSidebarProps> = ({
 
 export default TacticalSidebar;
 export * from "./SidebarHeader";
+export * from "./SidebarPerspectiveToggle";
 export * from "./SidebarNavList";
 export * from "./SidebarNavItem";
 export * from "./SidebarCameraWallTrigger";
 export * from "./SidebarTelemetryWidget";
 export * from "./SidebarFooter";
+

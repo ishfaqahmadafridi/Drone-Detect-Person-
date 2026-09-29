@@ -52,7 +52,8 @@ class ZoneMonitorService:
             return intruders
 
         for person in detected_persons:
-            foot_pt = person['foot']
+            bbox = person.get('bbox', [0, 0, 0, 0])
+            foot_pt = person.get('foot', (int((bbox[0] + bbox[2]) / 2), int(bbox[3])))
             if self.is_point_inside(foot_pt):
                 person['is_intruder'] = True
                 intruders.append(person)

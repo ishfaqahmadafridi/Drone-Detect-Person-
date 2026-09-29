@@ -4,21 +4,16 @@ import React from "react";
 import { StreamToolbarProps } from "@/types";
 import { StreamSourceSelector } from "./StreamSourceSelector";
 import { PerspectiveToggle } from "./PerspectiveToggle";
-import { StreamUploadForm } from "./StreamUploadForm";
 import { StreamRtspForm } from "./StreamRtspForm";
 
 export const StreamToolbar: React.FC<StreamToolbarProps> = ({
   sourceType,
   viewMode = "aerial",
-  showUploadField,
   showRtspField,
-  isUploading,
   isConnectingRtsp,
   rtspInput,
-  fileInputRef,
   onSourceSelect,
   onViewSelect,
-  onFileUpload,
   onRtspInputChange,
   onRtspSubmit,
 }) => {
@@ -28,6 +23,7 @@ export const StreamToolbar: React.FC<StreamToolbarProps> = ({
         {/* Stream Source Selector */}
         <StreamSourceSelector
           sourceType={sourceType}
+          viewMode={viewMode}
           onSourceSelect={onSourceSelect}
         />
 
@@ -40,21 +36,19 @@ export const StreamToolbar: React.FC<StreamToolbarProps> = ({
         )}
       </div>
 
-      {/* Video Upload Field */}
-      <StreamUploadForm
-        show={showUploadField}
-        isUploading={isUploading}
-        fileInputRef={fileInputRef}
-        onFileUpload={onFileUpload}
-      />
-
-      {/* Custom RTSP Stream Field */}
+      {/* Custom RTSP / Phone Stream Field */}
       <StreamRtspForm
         show={showRtspField}
         isConnectingRtsp={isConnectingRtsp}
         rtspInput={rtspInput}
         onRtspInputChange={onRtspInputChange}
         onRtspSubmit={onRtspSubmit}
+        placeholder={
+          viewMode === "ground"
+            ? "http://10.10.20.117:8080 (Phone IP)"
+            : "rtsp://drone-ip:8554/live"
+        }
+        buttonLabel={viewMode === "ground" ? "Connect Phone" : "Connect Drone"}
       />
     </div>
   );

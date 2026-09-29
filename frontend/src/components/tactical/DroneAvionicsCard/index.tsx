@@ -12,7 +12,7 @@ import { AvionicsActionButtons } from "./AvionicsActionButtons";
 export const DroneAvionicsCard: React.FC<DroneAvionicsCardProps> = ({
   avionics,
   onOpenFlightDeck,
-  onOpenWebcam,
+  onConnectAirLink,
 }) => {
   const {
     flightState,
@@ -49,7 +49,7 @@ export const DroneAvionicsCard: React.FC<DroneAvionicsCardProps> = ({
       {/* 5. Quick Avionics Action Buttons */}
       <AvionicsActionButtons
         onOpenFlightDeck={onOpenFlightDeck}
-        onOpenWebcam={onOpenWebcam}
+        onConnectAirLink={onConnectAirLink}
       />
     </div>
   );

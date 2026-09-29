@@ -1,4 +1,4 @@
-import { RefObject, ChangeEvent, FormEvent, ReactNode } from "react";
+import { RefObject, FormEvent, ReactNode } from "react";
 import { ThreatLevel, StreamSourceType, IncidentAlert, SnapshotItem, DroneAvionics, TacticalNavTab } from "./index";
 
 // ==========================================
@@ -6,7 +6,6 @@ import { ThreatLevel, StreamSourceType, IncidentAlert, SnapshotItem, DroneAvioni
 // ==========================================
 export interface HeaderProps {
   onRefresh: () => void;
-  onOpenWall?: () => void;
   avionics?: DroneAvionics;
 }
 
@@ -21,7 +20,6 @@ export interface ThreatRibbonProps {
 
 export interface HeaderActionsProps {
   onRefresh: () => void;
-  onOpenWall?: () => void;
   avionics?: DroneAvionics;
 }
 
@@ -55,6 +53,7 @@ export interface VideoViewportProps {
 
 export interface ViewportHeaderProps {
   sourceType: string;
+  viewMode?: "aerial" | "ground";
   isEditingZone: boolean;
   onToggleEditZone: () => void;
   onSnapshotTrigger?: () => void;
@@ -123,21 +122,18 @@ export interface ZoneBannerProps {
 export interface StreamToolbarProps {
   sourceType: string;
   viewMode?: "aerial" | "ground";
-  showUploadField: boolean;
   showRtspField: boolean;
-  isUploading: boolean;
   isConnectingRtsp: boolean;
   rtspInput: string;
-  fileInputRef: RefObject<HTMLInputElement | null>;
   onSourceSelect: (type: StreamSourceType) => void;
   onViewSelect?: (view: "aerial" | "ground") => void;
-  onFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
   onRtspInputChange: (val: string) => void;
   onRtspSubmit: (e: FormEvent) => void;
 }
 
 export interface StreamSourceSelectorProps {
   sourceType: string;
+  viewMode?: "aerial" | "ground";
   onSourceSelect: (type: StreamSourceType) => void;
 }
 
@@ -146,19 +142,14 @@ export interface PerspectiveToggleProps {
   onViewSelect: (view: "aerial" | "ground") => void;
 }
 
-export interface StreamUploadFormProps {
-  show: boolean;
-  isUploading: boolean;
-  fileInputRef: RefObject<HTMLInputElement | null>;
-  onFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
-}
-
 export interface StreamRtspFormProps {
   show: boolean;
   isConnectingRtsp: boolean;
   rtspInput: string;
   onRtspInputChange: (val: string) => void;
   onRtspSubmit: (e: FormEvent) => void;
+  placeholder?: string;
+  buttonLabel?: string;
 }
 
 // ==========================================
@@ -231,6 +222,8 @@ export interface SnapshotHeaderProps {
   count: number;
   isLoading: boolean;
   onRefresh: () => void;
+  filterMode?: "all" | "aerial" | "ground";
+  onFilterChange?: (filter: "all" | "aerial" | "ground") => void;
 }
 
 export interface SnapshotCardProps {
@@ -271,7 +264,7 @@ export interface WebSocketProviderProps {
 export interface DroneAvionicsCardProps {
   avionics?: DroneAvionics;
   onOpenFlightDeck?: () => void;
-  onOpenWebcam?: () => void;
+  onConnectAirLink?: () => void;
 }
 
 export interface AvionicsCardHeaderProps {
@@ -298,7 +291,7 @@ export interface OpticalSensorStatusProps {
 
 export interface AvionicsActionButtonsProps {
   onOpenFlightDeck?: () => void;
-  onOpenWebcam?: () => void;
+  onConnectAirLink?: () => void;
 }
 
 
@@ -308,7 +301,6 @@ export interface FlightControlDeckProps {
   batteryPercent: number;
   isCommandPending: boolean;
   onCommand: (action: string) => void;
-  onConnectWebcam: () => void;
 }
 
 export interface FlightDeckHeaderProps {
@@ -325,11 +317,6 @@ export interface FlightActionGridProps {
   flightState: string;
   isCommandPending: boolean;
   onCommand: (action: string) => void;
-}
-
-export interface GroundConnectButtonProps {
-  onConnectWebcam: () => void;
-  isCommandPending: boolean;
 }
 
 
@@ -352,7 +339,6 @@ export interface AerialFeedCardProps {
 
 export interface MobileGroundFeedCardProps {
   isActive: boolean;
-  onSelectWebcam: () => void;
   onConnectRtsp?: (url: string) => void;
 }
 
@@ -362,10 +348,6 @@ export interface MobileGroundCardHeaderProps {
 
 export interface MobilePixelQuickConnectProps {
   onConnectRtsp?: (url: string) => void;
-}
-
-export interface MobileHardwareWebcamButtonProps {
-  onSelectWebcam: () => void;
 }
 
 export interface MobileCustomStreamFormProps {
@@ -390,11 +372,19 @@ export interface TacticalSidebarProps {
   onTabChange: (tab: TacticalNavTab) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
-  onOpenWall: () => void;
+  onOpenWall?: () => void;
   avionics?: DroneAvionics;
   isMuted: boolean;
   onToggleMute: () => void;
   threatLevel: ThreatLevel;
+  viewMode?: "aerial" | "ground";
+  onViewSelect?: (view: "aerial" | "ground") => void;
+}
+
+export interface SidebarPerspectiveToggleProps {
+  viewMode: "aerial" | "ground";
+  onViewSelect: (view: "aerial" | "ground") => void;
+  isCollapsed: boolean;
 }
 
 export interface SidebarHeaderProps {
@@ -404,13 +394,15 @@ export interface SidebarHeaderProps {
   isAirborne: boolean;
 }
 
+
 export interface SidebarNavListProps {
   activeTab: TacticalNavTab;
   onTabChange: (tab: TacticalNavTab) => void;
   isCollapsed: boolean;
-  onOpenWall: () => void;
   threatLevel: ThreatLevel;
+  onOpenWall?: () => void;
 }
+
 
 export interface NavItemConfig {
   id: TacticalNavTab;
@@ -455,7 +447,7 @@ export interface AirspaceCommandViewProps {
   batteryPercent: number;
   isCommandPending: boolean;
   onCommand: (action: string) => void;
-  onConnectWebcam: () => void;
+  onConnectAirLink?: () => void;
   onOpenFlightDeck: () => void;
   avionics?: DroneAvionics;
 }
@@ -467,7 +459,7 @@ export interface IncidentAuditViewProps {
 export interface CalibrationViewProps {
   avionics?: DroneAvionics;
   onOpenFlightDeck: () => void;
-  onOpenWebcam: () => void;
+  onConnectAirLink?: () => void;
 }
 
 export interface TacticalViewRouterProps {
@@ -478,7 +470,7 @@ export interface TacticalViewRouterProps {
   batteryPercent: number;
   isCommandPending: boolean;
   onCommand: (action: string) => void;
-  onConnectWebcam: () => void;
+  onConnectAirLink?: () => void;
   onOpenFlightDeck: () => void;
   avionics?: DroneAvionics;
 }
@@ -491,9 +483,125 @@ export interface MissionCommandViewportProps {
   batteryPercent: number;
   isCommandPending: boolean;
   onCommand: (action: string) => void;
-  onConnectWebcam: () => void;
+  onConnectAirLink?: () => void;
   onOpenFlightDeck: () => void;
   onRefresh: () => void;
-  onOpenWall: () => void;
+  onSnapshotTrigger?: () => void;
 }
 
+export type RecordingsFilterMode = "all" | "aerial" | "ground";
+
+export interface EvidenceRecordRowProps {
+  snap: SnapshotItem;
+  isExpanded: boolean;
+  onToggle: () => void;
+}
+
+export interface RecordingsViewProps {
+  className?: string;
+}
+
+export interface RecordingsHeaderProps {
+  totalCount: number;
+  filteredCount: number;
+  isLoading: boolean;
+  onRefresh: () => void;
+}
+
+export interface RecordingsFilterTabsProps {
+  activeFilter: RecordingsFilterMode;
+  onFilterChange: (mode: RecordingsFilterMode) => void;
+}
+
+export interface RecordDetailPanelProps {
+  snap: SnapshotItem;
+}
+
+export interface RecordingsEmptyStateProps {
+  isLoading: boolean;
+}
+
+export interface RecordingsFooterProps {
+  totalCount: number;
+}
+
+export interface RecordingsListItemProps {
+  snap: SnapshotItem;
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
+export interface ListItemThumbnailProps {
+  url?: string;
+  filename: string;
+}
+
+export interface ListItemBadgesProps {
+  viewMode?: string;
+  filename: string;
+}
+
+export interface ListItemTimestampProps {
+  createdAt?: string;
+}
+
+export interface ListItemFooterProps {
+  sizeKb: number;
+  filename: string;
+}
+
+export interface RecordingsListPaneProps {
+  snapshots: SnapshotItem[];
+  totalCount: number;
+  filteredCount: number;
+  isLoading: boolean;
+  filterMode: RecordingsFilterMode;
+  selectedSnapshot: SnapshotItem | null;
+  onSelectSnapshot: (snap: SnapshotItem) => void;
+  onFilterChange: (mode: RecordingsFilterMode) => void;
+  onRefresh: () => void;
+}
+
+export interface RecordingsPreviewPaneProps {
+  selectedSnapshot: SnapshotItem | null;
+  onOpenModal: () => void;
+}
+
+export interface RecordingsFullscreenModalProps {
+  snapshot: SnapshotItem | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface ModalHeaderProps {
+  snapshot: SnapshotItem;
+  onClose: () => void;
+}
+
+export interface ModalImageStageProps {
+  url?: string;
+  filename: string;
+}
+
+export interface ModalFooterProps {
+  snapshot: SnapshotItem;
+  onClose: () => void;
+}
+
+export interface EmptyPreviewStateProps {
+  className?: string;
+}
+
+export interface PreviewTopToolbarProps {
+  selectedSnapshot: SnapshotItem;
+  onOpenModal: () => void;
+}
+
+export interface PreviewViewportProps {
+  selectedSnapshot: SnapshotItem;
+  onOpenModal: () => void;
+}
+
+export interface PreviewTelemetryAuditProps {
+  selectedSnapshot: SnapshotItem;
+}

@@ -7,6 +7,13 @@ from datetime import datetime
 from typing import Dict, List, Optional
 from fastapi import WebSocket
 
+from app.core.constants import (
+    DEFAULT_ZONE_POLYGON,
+    DEFAULT_MULTI_PERSON_THRESHOLD,
+    DEFAULT_CONFIDENCE_THRESHOLD,
+    DEFAULT_PROXIMITY_ALERT_DISTANCE_PX,
+)
+
 class TelemetryStateStore:
     """
     Manages live telemetry snapshots and WebSocket subscriber pools.
@@ -26,10 +33,10 @@ class TelemetryStateStore:
             "detections": [],
             "source_type": "synthetic",
             "view_mode": "aerial",
-            "multi_person_threshold": 2,
-            "confidence_threshold": 0.35,
-            "proximity_distance_px": 120,
-            "zone_polygon": [[0.25, 0.25], [0.75, 0.25], [0.75, 0.75], [0.25, 0.75]]
+            "multi_person_threshold": DEFAULT_MULTI_PERSON_THRESHOLD,
+            "confidence_threshold": DEFAULT_CONFIDENCE_THRESHOLD,
+            "proximity_distance_px": DEFAULT_PROXIMITY_ALERT_DISTANCE_PX,
+            "zone_polygon": [list(pt) for pt in DEFAULT_ZONE_POLYGON]
         }
 
     @property

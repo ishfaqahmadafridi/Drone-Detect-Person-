@@ -64,7 +64,8 @@ class EvidenceRecorder:
         if is_active_alert and (now - self.last_snapshot_time >= self.snapshot_cooldown):
             self.last_snapshot_time = now
             timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:19]
-            filename = f"alert_{threat_level.lower()}_{timestamp_str}.jpg"
+            view_mode = str(details.get("view_mode", "aerial")).lower()
+            filename = f"alert_{threat_level.lower()}_{view_mode}_{timestamp_str}.jpg"
             filepath = os.path.join(self.snapshots_dir, filename)
             
             if cv2 is not None and frame is not None:
@@ -94,3 +95,15 @@ class EvidenceRecorder:
                 pass
 
         return snapshot_saved_path
+
+    def capture_manual_snapshot(self, frame: Any, view_mode: str = "aerial") -> str:
+        """
+        Instantly saves unthrottled manual evidence snapshot requested by operator.
+        """
+        timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:19]
+        clean_view = str(view_mode).lower().strip()
+        filename = f"manual_{clean_view}_{timestamp_str}.jpg"
+        filepath = os.path.join(self.snapshots_dir, filename)
+        if cv2 is not None and frame is not None:
+            cv2.imwrite(filepath, frame)
+        return filename

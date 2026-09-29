@@ -9,6 +9,8 @@ export const StreamRtspForm: React.FC<StreamRtspFormProps> = ({
   rtspInput,
   onRtspInputChange,
   onRtspSubmit,
+  placeholder = "rtsp://192.168.1.50:554/live",
+  buttonLabel = "Connect",
 }) => {
   if (!show) return null;
 
@@ -16,17 +18,17 @@ export const StreamRtspForm: React.FC<StreamRtspFormProps> = ({
     <form onSubmit={onRtspSubmit} className="flex items-center gap-2">
       <input
         type="text"
-        placeholder="rtsp://192.168.1.50:554/live"
+        placeholder={placeholder}
         value={rtspInput}
         onChange={(e) => onRtspInputChange(e.target.value)}
-        className="bg-slate-900 border border-slate-700 text-white px-2 py-1 rounded text-xs font-mono-code w-56 focus:border-cyan-400 outline-none"
+        className="bg-slate-900 border border-slate-700 text-white px-2 py-1 rounded text-xs font-mono-code w-64 focus:border-cyan-400 outline-none"
       />
       <button
         type="submit"
         disabled={isConnectingRtsp}
         className="bg-cyan-400 text-black px-2.5 py-1 rounded text-xs font-bold font-display hover:bg-cyan-300 transition-colors"
       >
-        {isConnectingRtsp ? "Connecting..." : "Connect"}
+        {isConnectingRtsp ? "Connecting..." : buttonLabel}
       </button>
     </form>
   );

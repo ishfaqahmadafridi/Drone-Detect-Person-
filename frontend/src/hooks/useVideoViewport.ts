@@ -16,19 +16,19 @@ export function useVideoViewport() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [streamKey, setStreamKey] = useState<number>(0);
   const [rtspInput, setRtspInput] = useState("http://10.10.20.117:8080");
   const [showRtspField, setShowRtspField] = useState(false);
-  const [showUploadField, setShowUploadField] = useState(false);
 
   const configMutation = useConfigMutation();
-  const { switchSource, uploadVideo, switchView } = useStreamMutation();
+  const { switchSource, switchView } = useStreamMutation();
   const { toggleFullscreen } = useFullscreen(containerRef);
 
   const handleViewSelect = async (view: "aerial" | "ground") => {
     await switchView.mutateAsync(view);
+    await switchSource.mutateAsync({ sourceType: "synthetic" });
+    setStreamKey((prev) => prev + 1);
   };
 
   const {
@@ -68,31 +68,18 @@ export function useVideoViewport() {
     dispatch(setIsEditingZone(false));
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    await uploadVideo.mutateAsync(file);
-    setShowUploadField(false);
-  };
-
   const handleRtspSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rtspInput.trim()) return;
     await switchSource.mutateAsync({ sourceType: "rtsp", sourcePath: rtspInput.trim() });
-    await switchView.mutateAsync("ground");
     setStreamKey((prev) => prev + 1);
     setShowRtspField(false);
   };
 
   const handleSourceSelect = async (type: StreamSourceType) => {
-    if (type === "file") {
-      setShowUploadField(true);
-      setShowRtspField(false);
-    } else if (type === "rtsp") {
+    if (type === "rtsp") {
       setShowRtspField(true);
-      setShowUploadField(false);
     } else {
-      setShowUploadField(false);
       setShowRtspField(false);
       await switchSource.mutateAsync({ sourceType: type });
       setStreamKey((prev) => prev + 1);
@@ -109,13 +96,10 @@ export function useVideoViewport() {
     isEditingZone,
     containerRef,
     canvasRef,
-    fileInputRef,
     streamKey,
     rtspInput,
     setRtspInput,
     showRtspField,
-    showUploadField,
-    isUploading: uploadVideo.isPending,
     isConnectingRtsp: switchSource.isPending,
     toggleFullscreen,
     handleMouseDown,
@@ -125,7 +109,6 @@ export function useVideoViewport() {
     handleSaveAndClose,
     handleResetAndClose,
     handleCancel,
-    handleFileUpload,
     handleRtspSubmit,
     handleSourceSelect,
     handleViewSelect,

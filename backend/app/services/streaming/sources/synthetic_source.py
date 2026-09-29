@@ -31,5 +31,11 @@ class SyntheticFrameSource(BaseFrameSource):
             time.sleep(self.frame_interval_seconds)
         return ret, frame
 
+    def set_view_mode(self, view_mode: str) -> str:
+        return self.stream.set_view_mode(view_mode)
+
+    def get_simulated_targets(self):
+        return self.stream.get_simulated_targets()
+
     def release(self) -> None:
         pass

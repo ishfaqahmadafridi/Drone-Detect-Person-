@@ -47,10 +47,13 @@ export function useDroneFlight() {
     commandMutation.mutate(action);
   };
 
-  const handleConnectWebcam = async () => {
-    await switchSource.mutateAsync({ sourceType: "webcam" });
-    await switchView.mutateAsync("ground");
-    commandMutation.mutate("connect_webcam");
+  const handleConnectDroneLink = async (droneRtspUrl?: string) => {
+    await switchSource.mutateAsync({
+      sourceType: "rtsp",
+      sourcePath: droneRtspUrl || "rtsp://192.168.1.1:8554/live",
+    });
+    await switchView.mutateAsync("aerial");
+    commandMutation.mutate("connect_drone_link");
   };
 
   const handleLaunchDroneFlight = async () => {
@@ -73,7 +76,7 @@ export function useDroneFlight() {
     isCommandPending: commandMutation.isPending,
     lastMessage,
     handleCommand,
-    handleConnectWebcam,
+    handleConnectDroneLink,
     handleLaunchDroneFlight,
   };
 }

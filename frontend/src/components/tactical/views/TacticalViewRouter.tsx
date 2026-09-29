@@ -5,6 +5,7 @@ import { TacticalViewRouterProps } from "@/types";
 import { AirspaceCommandView } from "./AirspaceCommandView";
 import { IncidentAuditView } from "./IncidentAuditView";
 import { CalibrationView } from "./CalibrationView";
+import { RecordingsView } from "./RecordingsView";
 
 export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
   activeTab,
@@ -14,19 +15,21 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
   batteryPercent,
   isCommandPending,
   onCommand,
-  onConnectWebcam,
+  onConnectAirLink,
   onOpenFlightDeck,
   avionics,
 }) => {
   switch (activeTab) {
     case "incidents":
       return <IncidentAuditView />;
+    case "recordings":
+      return <RecordingsView />;
     case "settings":
       return (
         <CalibrationView
           avionics={avionics}
           onOpenFlightDeck={onOpenFlightDeck}
-          onOpenWebcam={onConnectWebcam}
+          onConnectAirLink={onConnectAirLink}
         />
       );
     case "airspace":
@@ -41,7 +44,7 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
           batteryPercent={batteryPercent}
           isCommandPending={isCommandPending}
           onCommand={onCommand}
-          onConnectWebcam={onConnectWebcam}
+          onConnectAirLink={onConnectAirLink}
           onOpenFlightDeck={onOpenFlightDeck}
           avionics={avionics}
         />

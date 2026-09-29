@@ -1,18 +1,21 @@
 "use client";
 
 import React from "react";
-import { STREAM_SOURCE_OPTIONS } from "@/constants/tactical";
+import { AERIAL_STREAM_SOURCES, GROUND_STREAM_SOURCES } from "@/constants/tactical";
 import { StreamSourceSelectorProps, StreamSourceType } from "@/types";
 
 export const StreamSourceSelector: React.FC<StreamSourceSelectorProps> = ({
   sourceType,
+  viewMode = "aerial",
   onSourceSelect,
 }) => {
+  const options = viewMode === "ground" ? GROUND_STREAM_SOURCES : AERIAL_STREAM_SOURCES;
+
   return (
     <div className="flex items-center gap-2">
       <span className="font-mono-code text-xs text-slate-400">STREAM SOURCE:</span>
       <div className="flex rounded-md overflow-hidden border border-slate-800">
-        {STREAM_SOURCE_OPTIONS.map((opt) => (
+        {options.map((opt) => (
           <button
             key={opt.value}
             onClick={() => onSourceSelect(opt.value as StreamSourceType)}
