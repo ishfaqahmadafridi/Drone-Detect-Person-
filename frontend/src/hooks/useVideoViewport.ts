@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setIsEditingZone } from "@/store/slices/uiSlice";
 import { useConfigMutation } from "@/services/queries/useConfigMutation";
@@ -22,15 +22,12 @@ export function useVideoViewport() {
   const [rtspInput, setRtspInput] = useState("http://10.10.20.117:8080");
   const [showRtspField, setShowRtspField] = useState(false);
 
-  useEffect(() => {
-    setStreamError(false);
-  }, [streamKey]);
-
   const configMutation = useConfigMutation();
   const { switchSource, switchView } = useStreamMutation();
   const { toggleFullscreen } = useFullscreen(containerRef);
 
   const handleViewSelect = async (view: "aerial" | "ground") => {
+    setStreamError(false);
     await switchView.mutateAsync(view);
     await switchSource.mutateAsync({ sourceType: "synthetic" });
     setStreamKey((prev) => prev + 1);
@@ -82,6 +79,7 @@ export function useVideoViewport() {
   const handleRtspSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rtspInput.trim()) return;
+    setStreamError(false);
     await switchSource.mutateAsync({ sourceType: "rtsp", sourcePath: rtspInput.trim() });
     setStreamKey((prev) => prev + 1);
     setShowRtspField(false);
@@ -92,6 +90,7 @@ export function useVideoViewport() {
       setShowRtspField(true);
     } else {
       setShowRtspField(false);
+      setStreamError(false);
       await switchSource.mutateAsync({ sourceType: type });
       setStreamKey((prev) => prev + 1);
     }
@@ -99,7 +98,10 @@ export function useVideoViewport() {
 
   const handleStreamError = () => {
     setStreamError(true);
-    setTimeout(() => setStreamKey((prev) => prev + 1), 2000);
+    setTimeout(() => {
+      setStreamError(false);
+      setStreamKey((prev) => prev + 1);
+    }, 2000);
   };
 
   const handleStreamLoad = () => {

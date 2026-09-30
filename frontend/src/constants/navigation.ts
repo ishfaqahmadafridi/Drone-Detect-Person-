@@ -3,7 +3,6 @@ import {
   Crosshair,
   LayoutGrid,
   ShieldAlert,
-  Compass,
   Sliders,
   Film,
 } from "lucide-react";

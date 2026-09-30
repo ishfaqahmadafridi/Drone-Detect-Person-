@@ -19,10 +19,6 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
   onCanvasMouseDown,
   onCanvasMouseMove,
   onCanvasMouseUp,
-  onSaveZone,
-  onResetZone,
-  onClearZone,
-  onCancelZone,
 }) => {
   return (
     <div

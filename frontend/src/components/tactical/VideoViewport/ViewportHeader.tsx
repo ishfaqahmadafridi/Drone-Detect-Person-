@@ -2,13 +2,11 @@
 
 import React from "react";
 import { ViewportHeaderProps } from "@/types";
-import { Maximize, Camera, Edit3 } from "lucide-react";
+import { Maximize, Camera } from "lucide-react";
 
 export const ViewportHeader: React.FC<ViewportHeaderProps> = ({
   sourceType,
   viewMode = "aerial",
-  isEditingZone,
-  onToggleEditZone,
   onSnapshotTrigger,
   onToggleFullscreen,
 }) => {
