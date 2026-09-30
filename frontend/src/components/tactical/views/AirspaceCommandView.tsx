@@ -2,12 +2,14 @@
 
 import React from "react";
 import { AirspaceCommandViewProps } from "@/types";
+import { useAppSelector } from "@/store";
 import { VideoViewport } from "../VideoViewport";
 import { FlightControlDeck } from "../FlightControlDeck";
+import { PerimeterSecurityDeck } from "../PerimeterSecurityDeck";
 import { DroneAvionicsCard } from "../DroneAvionicsCard";
+import { PerimeterCameraCard } from "../PerimeterCameraCard";
 import { TelemetryCards } from "../TelemetryCards";
 import { TuningPanel } from "../TuningPanel";
-import { IncidentLogs } from "../IncidentLogs";
 
 export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   onSnapshotTrigger,
@@ -19,35 +21,53 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   onConnectAirLink,
   onOpenFlightDeck,
   avionics,
+  viewMode: propViewMode,
+  onOpenWall,
 }) => {
+  const storeViewMode = useAppSelector((state) => state.telemetry.view_mode);
+  const activeViewMode = propViewMode || storeViewMode || "aerial";
+  const isGround = activeViewMode === "ground";
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-5">
-      {/* Left Column: Primary Video Viewport, Mission Flight Deck & Forensic Captures */}
+      {/* Left Column: Primary Video Viewport, Mission Directives Deck & Forensic Captures */}
       <div className="flex flex-col gap-4 min-w-0">
         <VideoViewport onSnapshotTrigger={onSnapshotTrigger} />
 
-        <FlightControlDeck
-          flightState={flightState}
-          altitude={altitude}
-          batteryPercent={batteryPercent}
-          isCommandPending={isCommandPending}
-          onCommand={onCommand}
-        />
+        {isGround ? (
+          <PerimeterSecurityDeck
+            onReconnectStream={onConnectAirLink}
+            onSnapshotTrigger={onSnapshotTrigger}
+          />
+        ) : (
+          <FlightControlDeck
+            flightState={flightState}
+            altitude={altitude}
+            batteryPercent={batteryPercent}
+            isCommandPending={isCommandPending}
+            onCommand={onCommand}
+          />
+        )}
       </div>
 
-      {/* Right Column: Drone Avionics & Battery, Computer Vision Telemetry, Tuning, Incident Logs */}
+      {/* Right Column: Sensor Specs & Telemetry, CV Analytics, Tuning, Incident Logs */}
       <div className="flex flex-col gap-4 min-w-0">
-        <DroneAvionicsCard
-          avionics={avionics}
-          onOpenFlightDeck={onOpenFlightDeck}
-          onConnectAirLink={onConnectAirLink}
-        />
+        {isGround ? (
+          <PerimeterCameraCard
+            onOpenWall={onOpenWall || onOpenFlightDeck}
+            onReconnectStream={onConnectAirLink}
+          />
+        ) : (
+          <DroneAvionicsCard
+            avionics={avionics}
+            onOpenFlightDeck={onOpenFlightDeck}
+            onConnectAirLink={onConnectAirLink}
+          />
+        )}
 
-        <TelemetryCards />
+        <TelemetryCards viewMode={activeViewMode} />
 
         <TuningPanel />
-
-        <IncidentLogs />
       </div>
     </div>
   );

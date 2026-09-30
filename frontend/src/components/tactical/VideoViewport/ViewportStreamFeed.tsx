@@ -18,6 +18,7 @@ export const ViewportStreamFeed: React.FC<ViewportStreamFeedProps> = ({
       onLoad={onLoad}
       onError={onError}
       className="w-full h-full object-contain pointer-events-none"
+      suppressHydrationWarning
     />
   );
 };

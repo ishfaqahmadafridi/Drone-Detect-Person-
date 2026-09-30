@@ -46,3 +46,26 @@ export const RECORDINGS_FILTER_OPTIONS: readonly { value: "all" | "aerial" | "gr
   { value: "video", label: "VIDEOS" },
   { value: "image", label: "IMAGES" },
 ] as const;
+
+export const CCTV_CAMERA_CONFIG = {
+  id: "CAM-01",
+  name: "PERIMETER CCTV SENSOR",
+  location: "Sector North Perimeter - Post 03",
+  mountHeight: "2.8m Fixed Wall Mount",
+  lens: "3.6mm Fixed Focal (110° FOV)",
+  powerSource: "PoE+ 48V (IEEE 802.3at) / Mains",
+  powerStatus: "100% STABLE (12.4W Nominal)",
+  voltage: "48.2V PoE",
+  resolution: "1080p FHD (1920x1080)",
+  networkProtocol: "Gigabit LAN / RTSP Link",
+  tamperStatus: "ACTIVE (Secure Housing)",
+  irNightVision: "Auto IR-Cut Filter (850nm)",
+  weatherRating: "IP67 Weatherproof / NEMA 4X",
+} as const;
+
+export const PERIMETER_ZOOM_PRESETS = [
+  { label: "1.0x Wide", value: 1.0 },
+  { label: "2.0x Tactical", value: 2.0 },
+  { label: "4.0x Tele", value: 4.0 },
+] as const;
+

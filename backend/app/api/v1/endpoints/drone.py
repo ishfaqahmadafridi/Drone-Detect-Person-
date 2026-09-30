@@ -46,14 +46,34 @@ def execute_flight_command(req: DroneCommandRequest):
 def get_camera_status():
     """
     Provides camera sensor link health, resolution, working condition, and active detection state.
+    In aerial mode: returns drone-mounted gimbal camera telemetry.
+    In ground mode: returns fixed CCTV perimeter camera health.
     """
+    active_view = stream_service.detector.active_view
+
+    if active_view == "ground":
+        return {
+            "camera_online": True,
+            "camera_type": "FIXED_CCTV",
+            "camera_resolution": "1920x1080 (FHD)",
+            "camera_fps": 25.0,
+            "power_source": "PoE 48V (Mains)",
+            "mount_height_m": 2.8,
+            "ir_cut": "AUTO",
+            "tamper_status": "SECURE",
+            "camera_detecting": True,
+            "source_type": stream_service.source_type,
+            "view_mode": "ground"
+        }
+
     avionics = drone_avionics_service.get_avionics_snapshot()
     return {
         "camera_online": avionics["camera_online"],
+        "camera_type": "UAV_GIMBAL",
         "camera_resolution": avionics["camera_resolution"],
         "camera_fps": avionics["camera_fps"],
         "camera_sensor_temp_c": avionics["camera_sensor_temp_c"],
         "camera_detecting": avionics["camera_detecting"],
         "source_type": stream_service.source_type,
-        "view_mode": stream_service.detector.active_view
+        "view_mode": "aerial"
     }

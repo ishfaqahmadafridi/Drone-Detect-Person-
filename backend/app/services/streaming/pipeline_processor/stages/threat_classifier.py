@@ -17,16 +17,19 @@ class PipelineThreatClassifier:
         detected_persons: List[Dict],
         intruders: List[Dict],
         gatherings: List[Any],
-        frame_idx: int
+        frame_idx: int,
+        active_view: str = "aerial"
     ) -> Tuple[str, str, Dict[str, Any]]:
         """
         Evaluates system threat state and prepares incident event metadata.
+        Passes active_view so the evaluator emits perspective-correct domain language.
         """
         threat_level, alert_msg, details = alert_manager.evaluate_state(
             detected_persons=detected_persons,
             intruders=intruders,
             gatherings=gatherings,
-            frame_idx=frame_idx
+            frame_idx=frame_idx,
+            view_mode=active_view
         )
         return threat_level, alert_msg, (details or {})
 

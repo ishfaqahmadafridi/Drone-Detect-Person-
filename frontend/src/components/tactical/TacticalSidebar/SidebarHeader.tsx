@@ -2,14 +2,16 @@
 
 import React from "react";
 import { SidebarHeaderProps } from "@/types";
-import { Shield, ChevronLeft, ChevronRight, Radio } from "lucide-react";
+import { Shield, ChevronLeft, ChevronRight, Radio, Camera } from "lucide-react";
 
 export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   isCollapsed,
   onToggleCollapse,
   flightState,
   isAirborne,
+  viewMode = "aerial",
 }) => {
+  const isGround = viewMode === "ground";
   return (
     <div className="flex flex-col border-b border-slate-800/80 p-3.5">
       <div className="flex items-center justify-between">
@@ -43,21 +45,32 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
         </button>
       </div>
 
-      {/* Tactical Airspace Status Banner */}
+      {/* Tactical Airspace / Perimeter Status Banner */}
       {!isCollapsed && (
         <div className="mt-3 px-2.5 py-1.5 rounded-md bg-slate-900/80 border border-slate-800 flex items-center justify-between text-[11px] font-mono-code">
           <span className="text-slate-400 flex items-center gap-1.5">
-            <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
-            UAV LINK:
+            {isGround ? (
+              <>
+                <Camera className="w-3 h-3 text-emerald-400 animate-pulse" />
+                CAM LINK:
+              </>
+            ) : (
+              <>
+                <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
+                UAV LINK:
+              </>
+            )}
           </span>
           <span
             className={`font-bold px-1.5 py-0.5 rounded text-[10px] uppercase ${
-              isAirborne
+              isGround
+                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                : isAirborne
                 ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
                 : "bg-slate-800 text-slate-400 border border-slate-700"
             }`}
           >
-            {flightState}
+            {isGround ? "ONLINE" : flightState}
           </span>
         </div>
       )}

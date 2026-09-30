@@ -82,7 +82,8 @@ class PipelineFrameOrchestrator:
                 detected_persons=detected_persons,
                 intruders=intruders,
                 gatherings=gatherings,
-                frame_idx=frame_idx
+                frame_idx=frame_idx,
+                active_view=active_view
             )
 
             # Operational Targeting Mode override for manual target designation
@@ -123,10 +124,11 @@ class PipelineFrameOrchestrator:
             raw_fps = getattr(self.services.detector, "fps", 0.0)
             current_fps = max(0.0, float(raw_fps)) if isinstance(raw_fps, (int, float)) and not np.isnan(raw_fps) else 0.0
 
-            # 9. Stage: Avionics Physics & Battery Sync
+            # 9. Stage: Avionics Physics & Battery Sync (aerial only)
             avionics_snapshot = self.services.avionics_syncer.sync(
                 detected_persons=detected_persons,
-                current_fps=current_fps
+                current_fps=current_fps,
+                active_view=active_view
             )
 
             # 10. Stage: Telemetry Payload Serialization

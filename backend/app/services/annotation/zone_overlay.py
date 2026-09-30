@@ -23,31 +23,3 @@ def draw_zone_polygon(
     """
     # Restricted zone is removed from the project
     return
-
-    zone_color = theme.COLOR_ZONE_BREACH if has_intruders else theme.COLOR_ZONE_SECURE
-    alpha = theme.ALPHA_ZONE_BREACH if has_intruders else theme.ALPHA_ZONE_NORMAL
-
-    overlay = annotated.copy()
-    cv2.fillPoly(overlay, [zone_polygon], color=zone_color)
-    cv2.addWeighted(overlay, alpha, annotated, 1.0 - alpha, 0, annotated)
-    cv2.polylines(
-        annotated,
-        [zone_polygon],
-        isClosed=True,
-        color=zone_color,
-        thickness=theme.BOX_BORDER_THICKNESS,
-        lineType=theme.LINE_TYPE
-    )
-
-    zx, zy = zone_polygon[0]
-    label = "[RESTRICTED ZONE BREACH]" if has_intruders else "[RESTRICTED PERIMETER]"
-    cv2.putText(
-        annotated,
-        label,
-        (zx + 5, max(zy - 10, 20)),
-        theme.FONT_FACE,
-        theme.FONT_SCALE_BODY,
-        zone_color,
-        2,
-        theme.LINE_TYPE
-    )

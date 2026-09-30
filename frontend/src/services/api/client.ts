@@ -34,7 +34,16 @@ apiClient.interceptors.response.use(
   },
   (error: AxiosError) => {
     const status = error.response?.status;
-    const message = (error.response?.data as { detail?: string })?.detail || error.message;
+    // Safely extract message — response.data may contain circular DOM references
+    // (e.g. SVGSVGElement with React Fiber nodes) that crash JSON.stringify
+    let message = "Network error";
+    try {
+      const data = error.response?.data as Record<string, unknown> | undefined;
+      const detail = data?.detail;
+      message = typeof detail === "string" ? detail : (error.message || "Network error");
+    } catch {
+      message = error.message || "Network error";
+    }
     console.warn(`[API ERROR ${status || "NETWORK"}] ${message}`);
     return Promise.reject(error);
   }

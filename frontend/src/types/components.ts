@@ -7,6 +7,7 @@ import { ThreatLevel, StreamSourceType, IncidentAlert, SnapshotItem, DroneAvioni
 export interface HeaderProps {
   onRefresh: () => void;
   avionics?: DroneAvionics;
+  viewMode?: "aerial" | "ground";
 }
 
 export interface BrandClusterProps {
@@ -21,10 +22,45 @@ export interface ThreatRibbonProps {
 export interface HeaderActionsProps {
   onRefresh: () => void;
   avionics?: DroneAvionics;
+  viewMode?: "aerial" | "ground";
 }
 
 export interface AvionicsQuickPillsProps {
   avionics?: DroneAvionics;
+  viewMode?: "aerial" | "ground";
+}
+
+export interface FlightStatePillProps {
+  flightState: string;
+  isAirborne: boolean;
+  altitude: number;
+  heading: number;
+}
+
+export interface DroneBatteryPillProps {
+  batteryPct: number;
+  isBatteryLow: boolean;
+  health: number;
+  voltage: number;
+}
+
+export interface GroundSensorPillProps {
+  sensorId?: string;
+  name?: string;
+  mountHeight?: string;
+}
+
+export interface GroundPowerPillProps {
+  powerSource?: string;
+  powerStatus?: string;
+}
+
+export interface AerialAvionicsPillsProps {
+  avionics?: DroneAvionics;
+}
+
+export interface GroundPerimeterPillsProps {
+  className?: string;
 }
 
 export interface HeaderClockProps {
@@ -204,6 +240,11 @@ export interface MetricTileProps {
 
 export interface PersonsMetricCardProps {
   count: number;
+  viewMode?: "aerial" | "ground";
+}
+
+export interface TelemetryCardsProps {
+  viewMode?: "aerial" | "ground";
 }
 
 export interface IntrudersMetricCardProps {
@@ -354,6 +395,83 @@ export interface FlightActionGridProps {
   onCommand: (action: string) => void;
 }
 
+// ==========================================
+// 8B. Ground Perimeter CCTV Component Props
+// ==========================================
+export interface PerimeterCameraCardProps {
+  onOpenWall?: () => void;
+  onReconnectStream?: () => void;
+  className?: string;
+}
+
+export interface PerimeterCardHeaderProps {
+  cameraId?: string;
+  isOnline?: boolean;
+}
+
+export interface PerimeterPowerStatusProps {
+  powerSource?: string;
+  powerStatus?: string;
+  voltage?: string;
+}
+
+export interface PerimeterOpticsGridProps {
+  mountHeight?: string;
+  lens?: string;
+  tamperStatus?: string;
+}
+
+export interface PerimeterNetworkStatusProps {
+  networkProtocol?: string;
+  resolution?: string;
+  fps?: number;
+  isDetecting?: boolean;
+}
+
+export interface PerimeterActionButtonsProps {
+  onOpenWall?: () => void;
+  onReconnectStream?: () => void;
+}
+
+export interface PerimeterSecurityDeckProps {
+  onReconnectStream?: () => void;
+  onSnapshotTrigger?: () => void;
+  className?: string;
+}
+
+export interface PerimeterDeckHeaderProps {
+  className?: string;
+}
+
+export interface PerimeterTelemetryBarProps {
+  cameraId?: string;
+  mountHeight?: string;
+  resolution?: string;
+}
+
+export interface PerimeterActionGridProps {
+  onReconnectStream?: () => void;
+  onSnapshotTrigger?: () => void;
+}
+
+export interface PerimeterZoomControlProps {
+  activeZoom: number;
+  onZoomChange: (zoom: number) => void;
+}
+
+export interface PerimeterNightVisionButtonProps {
+  isEnabled: boolean;
+  onToggle: () => void;
+}
+
+export interface PerimeterReconnectButtonProps {
+  onReconnect?: () => void;
+}
+
+export interface PerimeterSnapshotButtonProps {
+  onSnapshot?: () => void;
+}
+
 
 export interface CameraWallModalProps {
   isOpen: boolean;
@@ -427,6 +545,7 @@ export interface SidebarHeaderProps {
   onToggleCollapse: () => void;
   flightState: string;
   isAirborne: boolean;
+  viewMode?: "aerial" | "ground";
 }
 
 
@@ -463,6 +582,7 @@ export interface SidebarTelemetryWidgetProps {
   isBatteryLow: boolean;
   altitude: number;
   speed: number;
+  viewMode?: "aerial" | "ground";
 }
 
 export interface SidebarFooterProps {
@@ -470,6 +590,31 @@ export interface SidebarFooterProps {
   onToggleMute: () => void;
   isCollapsed: boolean;
 }
+
+export interface SidebarTopSectionProps {
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+  flightState: string;
+  isAirborne: boolean;
+  viewMode?: "aerial" | "ground";
+  onViewSelect?: (view: "aerial" | "ground") => void;
+  activeTab: TacticalNavTab;
+  onTabChange: (tab: TacticalNavTab) => void;
+  onOpenWall?: () => void;
+  threatLevel: ThreatLevel;
+}
+
+export interface SidebarBottomSectionProps {
+  isCollapsed: boolean;
+  batteryPct: number;
+  isBatteryLow: boolean;
+  altitude: number;
+  speed: number;
+  viewMode?: "aerial" | "ground";
+  isMuted: boolean;
+  onToggleMute: () => void;
+}
+
 
 
 // ==========================================
@@ -485,6 +630,8 @@ export interface AirspaceCommandViewProps {
   onConnectAirLink?: () => void;
   onOpenFlightDeck: () => void;
   avionics?: DroneAvionics;
+  viewMode?: "aerial" | "ground";
+  onOpenWall?: () => void;
 }
 
 export interface IncidentAuditViewProps {
@@ -495,6 +642,8 @@ export interface CalibrationViewProps {
   avionics?: DroneAvionics;
   onOpenFlightDeck: () => void;
   onConnectAirLink?: () => void;
+  viewMode?: "aerial" | "ground";
+  onOpenWall?: () => void;
 }
 
 export interface TacticalViewRouterProps {
@@ -508,6 +657,8 @@ export interface TacticalViewRouterProps {
   onConnectAirLink?: () => void;
   onOpenFlightDeck: () => void;
   avionics?: DroneAvionics;
+  viewMode?: "aerial" | "ground";
+  onOpenWall?: () => void;
 }
 
 export interface MissionCommandViewportProps {
@@ -522,6 +673,8 @@ export interface MissionCommandViewportProps {
   onOpenFlightDeck: () => void;
   onRefresh: () => void;
   onSnapshotTrigger?: () => void;
+  viewMode?: "aerial" | "ground";
+  onOpenWall?: () => void;
 }
 
 export type RecordingsFilterMode = "all" | "aerial" | "ground" | "video" | "image";
