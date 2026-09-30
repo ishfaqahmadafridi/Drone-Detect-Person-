@@ -14,3 +14,12 @@ class ConfigUpdateRequest(BaseModel):
 class StreamSourceRequest(BaseModel):
     source_type: str = Field(..., description="synthetic, webcam, file, or rtsp")
     source_path: Optional[str] = None
+
+class TrackingModeRequest(BaseModel):
+    mode: str = Field(..., description="Targeting mode: 'auto' or 'manual'")
+    selected_ids: Optional[List[int]] = Field(None, description="Optional target IDs to pre-lock")
+
+class TargetSelectRequest(BaseModel):
+    x: Optional[float] = Field(None, ge=0.0, le=1.0, description="Normalized X click coordinate [0.0 - 1.0]")
+    y: Optional[float] = Field(None, ge=0.0, le=1.0, description="Normalized Y click coordinate [0.0 - 1.0]")
+    target_id: Optional[int] = Field(None, description="Specific target ID to toggle directly")

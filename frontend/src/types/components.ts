@@ -54,8 +54,36 @@ export interface VideoViewportProps {
 export interface ViewportHeaderProps {
   sourceType: string;
   viewMode?: "aerial" | "ground";
-  isEditingZone: boolean;
-  onToggleEditZone: () => void;
+  trackingMode?: "auto" | "manual";
+  selectedCount?: number;
+  onTrackingModeChange?: (mode: "auto" | "manual") => void;
+  onClearSelectedTargets?: () => void;
+  isEditingZone?: boolean;
+  onToggleEditZone?: () => void;
+  onSnapshotTrigger?: () => void;
+  onToggleFullscreen: () => void;
+}
+
+export interface SensorTitleClusterProps {
+  className?: string;
+}
+
+export interface ViewportSourceBadgeProps {
+  sourceType: string;
+}
+
+export interface ViewportPerspectiveBadgeProps {
+  viewMode?: "aerial" | "ground";
+}
+
+export interface DetectionModeToggleProps {
+  trackingMode?: "auto" | "manual";
+  selectedCount?: number;
+  onTrackingModeChange?: (mode: "auto" | "manual") => void;
+  onClearSelectedTargets?: () => void;
+}
+
+export interface ViewportHeaderActionsProps {
   onSnapshotTrigger?: () => void;
   onToggleFullscreen: () => void;
 }
@@ -68,6 +96,8 @@ export interface ViewportScreenProps {
   streamError: boolean;
   onStreamLoad: () => void;
   onStreamError: () => void;
+  trackingMode?: "auto" | "manual";
+  onSelectTargetAt?: (normX: number, normY: number) => void;
   isEditingZone?: boolean;
   onCanvasMouseDown?: (e: React.MouseEvent<HTMLCanvasElement>) => void;
   onCanvasMouseMove?: (e: React.MouseEvent<HTMLCanvasElement>) => void;

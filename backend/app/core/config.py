@@ -82,7 +82,7 @@ class DetectionConfig:
     save_snapshots_on_alert: bool = True
     snapshot_cooldown_seconds: float = DEFAULT_SNAPSHOT_COOLDOWN_SECONDS
 
-    # Visuals
+    # Visuals & Targeting
     show_hud: bool = True
     show_boxes: bool = True
     show_track_trails: bool = True
@@ -90,3 +90,7 @@ class DetectionConfig:
     show_proximity_lines: bool = True
     show_restricted_zones: bool = False
     enable_audio_alert: bool = False
+
+    # Detection & Tracking Operational Modes
+    tracking_mode: str = "auto"  # "auto" or "manual"
+    selected_target_ids: List[int] = field(default_factory=list)

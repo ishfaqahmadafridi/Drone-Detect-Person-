@@ -1,17 +1,25 @@
-"use client";
-
 import { useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setIsEditingZone } from "@/store/slices/uiSlice";
+import { setTrackingMode, setSelectedTargetIds } from "@/store/slices/telemetrySlice";
 import { useConfigMutation } from "@/services/queries/useConfigMutation";
 import { useStreamMutation } from "@/services/queries/useStreamMutation";
+import { trackingApi } from "@/services/api/trackingApi";
 import { useFullscreen } from "./useFullscreen";
 import { useZoneCanvas } from "./useZoneCanvas";
-import { StreamSourceType } from "@/types";
+import { StreamSourceType, TrackingMode } from "@/types";
 
 export function useVideoViewport() {
   const dispatch = useAppDispatch();
-  const { fps, source_type, view_mode, zone_polygon } = useAppSelector((state) => state.telemetry);
+  const {
+    fps,
+    source_type,
+    view_mode,
+    zone_polygon,
+    tracking_mode,
+    selected_target_ids,
+    detections,
+  } = useAppSelector((state) => state.telemetry);
   const { isEditingZone } = useAppSelector((state) => state.ui);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,6 +116,54 @@ export function useVideoViewport() {
     setStreamError(false);
   };
 
+  const trackingMode: TrackingMode = (tracking_mode as TrackingMode) || "auto";
+  const selectedCount = selected_target_ids?.length || 0;
+
+  const handleTrackingModeChange = async (mode: TrackingMode) => {
+    try {
+      const res = await trackingApi.setMode(mode);
+      dispatch(setTrackingMode(res.mode as TrackingMode));
+      if (res.selected_ids) {
+        dispatch(setSelectedTargetIds(res.selected_ids));
+      }
+    } catch (err) {
+      console.error("Failed to update tracking mode:", err);
+    }
+  };
+
+  const handleClearSelectedTargets = async () => {
+    try {
+      const res = await trackingApi.clearTargets();
+      dispatch(setSelectedTargetIds(res.selected_ids || []));
+    } catch (err) {
+      console.error("Failed to clear manual targets:", err);
+    }
+  };
+
+  const handleSelectTargetAt = async (normX: number, normY: number) => {
+    if (trackingMode !== "manual") return;
+    try {
+      let targetId: number | undefined;
+      const px = normX * 1280;
+      const py = normY * 720;
+
+      for (const d of detections || []) {
+        const [x1, y1, x2, y2] = d.bbox || [0, 0, 0, 0];
+        if (px >= x1 - 35 && px <= x2 + 35 && py >= y1 - 35 && py <= y2 + 35) {
+          targetId = d.id;
+          break;
+        }
+      }
+
+      const res = await trackingApi.selectTarget({ x: normX, y: normY, target_id: targetId });
+      if (res?.selected_ids) {
+        dispatch(setSelectedTargetIds(res.selected_ids));
+      }
+    } catch (err) {
+      console.error("Failed to select target:", err);
+    }
+  };
+
   return {
     sourceType: source_type,
     fps,
@@ -135,5 +191,11 @@ export function useVideoViewport() {
     viewMode: (view_mode as "aerial" | "ground") || "aerial",
     handleStreamError,
     handleStreamLoad,
+    trackingMode,
+    selectedTargetIds: selected_target_ids || [],
+    selectedCount,
+    handleTrackingModeChange,
+    handleClearSelectedTargets,
+    handleSelectTargetAt,
   };
 }

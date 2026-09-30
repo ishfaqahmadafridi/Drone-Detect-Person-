@@ -32,15 +32,24 @@ def draw_detections_and_trails(
     intruder_ids = {p['id'] for p in intruders}
     clustered_ids_set = set(clustered_ids)
     total_people = len(detected_persons)
+    is_manual = getattr(config, "tracking_mode", "auto") == "manual"
+    selected_set = set(getattr(config, "selected_target_ids", []))
 
     for person in detected_persons:
-        pid = person['id']
+        pid = person.get('id', -1)
+        # In Manual Mode: Only render bounding boxes and tags for user-selected/locked targets
+        if is_manual and pid not in selected_set:
+            continue
+
         x1, y1, x2, y2 = person['bbox']
         conf = person['conf']
         is_intruder = pid in intruder_ids
         is_clustered = pid in clustered_ids_set or (total_people >= config.multi_person_threshold)
 
-        if is_intruder:
+        if is_manual:
+            box_color = (0, 215, 255)  # Tactical Gold / Amber locked indicator
+            tag = f"LOCKED TARGET #{pid} ({conf:.2f})"
+        elif is_intruder:
             box_color = theme.COLOR_INTRUDER
             tag = f"INTRUDER #{pid} ({conf:.2f})"
         elif is_clustered:

@@ -11,21 +11,29 @@ class TelemetryFormatter:
     """
 
     @staticmethod
-    def format_detections(detected_persons: List[Dict]) -> List[Dict[str, Any]]:
+    def format_detections(
+        detected_persons: List[Dict],
+        tracking_mode: str = "auto",
+        selected_ids: Optional[List[int]] = None
+    ) -> List[Dict[str, Any]]:
         """
         Extracts and normalizes per-target tracking metrics safely.
         """
         sanitized = []
+        is_manual = tracking_mode == "manual"
+        selected_set = set(selected_ids or [])
         for p in detected_persons:
             if not isinstance(p, dict):
                 continue
+            pid = p.get("id", -1)
             sanitized.append({
-                "id": p.get("id", -1),
+                "id": pid,
                 "conf": round(float(p.get("conf", 0.0)), 2),
                 "bbox": p.get("bbox", [0, 0, 0, 0]),
                 "speed_px_s": round(float(p.get("speed_px_s", 0.0)), 1),
                 "trajectory_len": len(p.get("trajectory", [])),
-                "is_intruder": bool(p.get("is_intruder", False))
+                "is_intruder": bool(p.get("is_intruder", False)),
+                "is_selected": pid in selected_set if is_manual else True
             })
         return sanitized
 
@@ -45,25 +53,37 @@ class TelemetryFormatter:
         confidence_threshold: float,
         proximity_distance_px: int,
         zone_polygon: List[Any],
-        avionics_snapshot: Optional[Dict[str, Any]] = None
+        avionics_snapshot: Optional[Dict[str, Any]] = None,
+        tracking_mode: str = "auto",
+        selected_target_ids: Optional[List[int]] = None
     ) -> Dict[str, Any]:
         """
         Assembles the comprehensive telemetry dictionary adhering to the UI contract.
         """
+        selected_ids = selected_target_ids or []
+        is_manual = tracking_mode == "manual"
+        total_people = len(selected_ids) if is_manual else len(detected_persons)
+
         return {
             "threat_level": threat_level,
             "alert_msg": alert_msg,
-            "total_persons": len(detected_persons),
+            "total_persons": total_people,
             "intruders_count": len(intruders),
             "gathering_pairs": len(gatherings),
             "fps": round(float(fps), 1),
             "frame_idx": int(frame_idx),
-            "detections": cls.format_detections(detected_persons),
+            "detections": cls.format_detections(
+                detected_persons,
+                tracking_mode=tracking_mode,
+                selected_ids=selected_ids
+            ),
             "source_type": source_type,
             "view_mode": view_mode,
             "multi_person_threshold": multi_person_threshold,
             "confidence_threshold": round(float(confidence_threshold), 2),
             "proximity_distance_px": proximity_distance_px,
             "zone_polygon": zone_polygon,
-            "avionics": avionics_snapshot or {}
+            "avionics": avionics_snapshot or {},
+            "tracking_mode": tracking_mode,
+            "selected_target_ids": selected_ids
         }

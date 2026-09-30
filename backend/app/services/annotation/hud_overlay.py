@@ -33,14 +33,35 @@ def draw_hud_banner(
     h, w = annotated.shape[:2]
     hud_h = theme.HUD_HEIGHT_PX
 
-    if threat_level == "INTRUSION":
-        hud_bg = theme.HUD_BG_INTRUSION
-    elif threat_level == "MULTI_PERSON":
-        hud_bg = theme.HUD_BG_MULTI_PERSON
-    elif threat_level == "MONITORING":
-        hud_bg = theme.HUD_BG_MONITORING
+    is_manual = getattr(config, "tracking_mode", "auto") == "manual"
+    selected_count = len(getattr(config, "selected_target_ids", []))
+
+    if is_manual:
+        hud_bg = (0, 60, 90) if selected_count > 0 else (20, 28, 40)
+        status_title = f"MANUAL TARGET ACQUISITION | {alert_msg}"
+        sub_info = (
+            f"LOCKED TARGETS: {selected_count} | "
+            f"TOTAL VISIBLE: {total_people} | "
+            f"FPS: {fps:.1f} | "
+            f"MODE: MANUAL"
+        )
     else:
-        hud_bg = theme.HUD_BG_CLEAR
+        if threat_level == "INTRUSION":
+            hud_bg = theme.HUD_BG_INTRUSION
+        elif threat_level == "MULTI_PERSON":
+            hud_bg = theme.HUD_BG_MULTI_PERSON
+        elif threat_level == "MONITORING":
+            hud_bg = theme.HUD_BG_MONITORING
+        else:
+            hud_bg = theme.HUD_BG_CLEAR
+
+        status_title = f"DRONE AERIAL MONITOR | {alert_msg}"
+        sub_info = (
+            f"PEOPLE: {total_people} | "
+            f"GATHERINGS: {gathering_count} | "
+            f"FPS: {fps:.1f} | "
+            f"THRESHOLD: >= {config.multi_person_threshold}"
+        )
 
     hud_overlay = annotated.copy()
     cv2.rectangle(hud_overlay, (0, 0), (w, hud_h), hud_bg, -1)
@@ -54,7 +75,6 @@ def draw_hud_banner(
     )
     cv2.line(annotated, (0, hud_h), (w, hud_h), theme.COLOR_TEXT_WHITE, 1)
 
-    status_title = f"DRONE AERIAL MONITOR | {alert_msg}"
     cv2.putText(
         annotated,
         status_title,
@@ -64,12 +84,6 @@ def draw_hud_banner(
         theme.COLOR_TEXT_WHITE,
         2,
         theme.LINE_TYPE
-    )
-    sub_info = (
-        f"PEOPLE: {total_people} | "
-        f"GATHERINGS: {gathering_count} | "
-        f"FPS: {fps:.1f} | "
-        f"THRESHOLD: >= {config.multi_person_threshold}"
     )
     cv2.putText(
         annotated,

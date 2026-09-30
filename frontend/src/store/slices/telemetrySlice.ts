@@ -31,6 +31,8 @@ const initialState: TelemetryState = {
   ],
   isConnected: false,
   lastUpdated: 0,
+  tracking_mode: "auto",
+  selected_target_ids: [],
 };
 
 export const telemetrySlice = createSlice({
@@ -47,8 +49,23 @@ export const telemetrySlice = createSlice({
     setConnectionStatus: (state, action: PayloadAction<boolean>) => {
       state.isConnected = action.payload;
     },
+    setTrackingMode: (state, action: PayloadAction<"auto" | "manual">) => {
+      state.tracking_mode = action.payload;
+      if (action.payload === "auto") {
+        state.selected_target_ids = [];
+      }
+    },
+    setSelectedTargetIds: (state, action: PayloadAction<number[]>) => {
+      state.selected_target_ids = action.payload;
+    },
   },
 });
 
-export const { setTelemetryData, setThreatLevel, setConnectionStatus } = telemetrySlice.actions;
+export const {
+  setTelemetryData,
+  setThreatLevel,
+  setConnectionStatus,
+  setTrackingMode,
+  setSelectedTargetIds,
+} = telemetrySlice.actions;
 export default telemetrySlice.reducer;

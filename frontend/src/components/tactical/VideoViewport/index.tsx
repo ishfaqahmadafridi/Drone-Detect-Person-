@@ -23,11 +23,6 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleStartEditing,
-    handleSaveAndClose,
-    handleResetAndClose,
-    handleClearAndClose,
-    handleCancel,
     handleRtspSubmit,
     handleSourceSelect,
     handleViewSelect,
@@ -35,6 +30,11 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
     streamError,
     handleStreamError,
     handleStreamLoad,
+    trackingMode,
+    selectedCount,
+    handleTrackingModeChange,
+    handleClearSelectedTargets,
+    handleSelectTargetAt,
   } = useVideoViewport();
 
   return (
@@ -42,8 +42,10 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
       <ViewportHeader
         sourceType={sourceType}
         viewMode={viewMode}
-        isEditingZone={isEditingZone}
-        onToggleEditZone={handleStartEditing}
+        trackingMode={trackingMode}
+        selectedCount={selectedCount}
+        onTrackingModeChange={handleTrackingModeChange}
+        onClearSelectedTargets={handleClearSelectedTargets}
         onSnapshotTrigger={onSnapshotTrigger}
         onToggleFullscreen={toggleFullscreen}
       />
@@ -53,6 +55,8 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
         canvasRef={canvasRef}
         streamKey={streamKey}
         fps={fps}
+        trackingMode={trackingMode}
+        onSelectTargetAt={handleSelectTargetAt}
         isEditingZone={isEditingZone}
         streamError={streamError}
         onStreamLoad={handleStreamLoad}
@@ -60,10 +64,6 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
         onCanvasMouseDown={handleMouseDown}
         onCanvasMouseMove={handleMouseMove}
         onCanvasMouseUp={handleMouseUp}
-        onSaveZone={handleSaveAndClose}
-        onResetZone={handleResetAndClose}
-        onClearZone={handleClearAndClose}
-        onCancelZone={handleCancel}
       />
 
       <StreamToolbar
