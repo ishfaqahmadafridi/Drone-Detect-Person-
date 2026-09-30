@@ -4,6 +4,7 @@ import { SnapshotCardProps } from "@/types";
 import { useEvidenceMetadata } from "@/hooks";
 
 export const SnapshotCard: React.FC<SnapshotCardProps> = ({ snapshot, onClick }) => {
+  const [imgError, setImgError] = React.useState(false);
   const { datePart, timePart, perspectiveLabel, perspectiveBadgeClass } =
     useEvidenceMetadata(snapshot);
 
@@ -12,13 +13,21 @@ export const SnapshotCard: React.FC<SnapshotCardProps> = ({ snapshot, onClick })
       onClick={onClick}
       className="relative shrink-0 w-52 h-32 rounded-xl overflow-hidden border border-slate-800 hover:border-cyan-400/80 transition-all cursor-pointer group shadow-xl bg-slate-950"
     >
-      {/* Thumbnail */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={snapshot.url}
-        alt={snapshot.filename}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-      />
+      {/* Thumbnail / Fallback */}
+      {imgError ? (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900/80 text-slate-500 gap-1 select-none">
+          <Clock className="w-5 h-5 text-slate-600" />
+          <span className="text-[10px] font-mono-code text-slate-400">Preview Unavailable</span>
+        </div>
+      ) : (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={snapshot.thumbnail_url || snapshot.url}
+          alt={snapshot.filename}
+          onError={() => setImgError(true)}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+      )}
 
       {/* Perspective Badge Top-Right */}
       <span
