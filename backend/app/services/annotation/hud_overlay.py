@@ -67,7 +67,6 @@ def draw_hud_banner(
     )
     sub_info = (
         f"PEOPLE: {total_people} | "
-        f"INTRUDERS: {intruder_count} | "
         f"GATHERINGS: {gathering_count} | "
         f"FPS: {fps:.1f} | "
         f"THRESHOLD: >= {config.multi_person_threshold}"

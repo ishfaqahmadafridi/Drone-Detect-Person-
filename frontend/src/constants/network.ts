@@ -21,3 +21,25 @@ export function getWebSocketTelemetryUrl(): string {
 
   return `${protocol}//${host}${NETWORK_CONFIG.WS_TELEMETRY_PATH}`;
 }
+
+/**
+ * Resolves the appropriate MJPEG video stream URL.
+ * When developing on port 3000, connects directly to FastAPI on port 8000 to
+ * prevent Next.js dev server proxy buffering or socket timeouts on chunked streams.
+ */
+export function getVideoStreamUrl(streamKey?: number): string {
+  if (typeof window === "undefined") {
+    return `/api/stream/video_feed${streamKey !== undefined ? `?t=${streamKey}` : ""}`;
+  }
+
+  const host =
+    window.location.port === "3000"
+      ? `${window.location.hostname}:8000`
+      : window.location.host;
+
+  const protocol = window.location.protocol;
+  const basePath = window.location.port === "3000" ? "/stream/video_feed" : "/api/stream/video_feed";
+  const query = streamKey !== undefined ? `?t=${streamKey}` : "";
+
+  return `${protocol}//${host}${basePath}${query}`;
+}

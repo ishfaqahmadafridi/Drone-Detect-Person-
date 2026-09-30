@@ -88,5 +88,5 @@ class DetectionConfig:
     show_track_trails: bool = True
     track_trail_length: int = 30
     show_proximity_lines: bool = True
-    show_restricted_zones: bool = True
+    show_restricted_zones: bool = False
     enable_audio_alert: bool = False

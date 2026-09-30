@@ -7,25 +7,23 @@ export const THREAT_RIBBON_STYLES: Record<ThreatLevel, string> = {
   CLEAR: "bg-emerald-950/40 border-emerald-500 text-emerald-400",
 };
 
-export const DEFAULT_RESTRICTED_ZONE: [number, number][] = [
-  [0.25, 0.25],
-  [0.75, 0.25],
-  [0.75, 0.75],
-  [0.25, 0.75],
-];
+export const DEFAULT_RESTRICTED_ZONE: [number, number][] = [];
 
 export const AERIAL_STREAM_SOURCES = [
   { label: "Synthetic Drone", value: "synthetic" },
+  { label: "Flight Video", value: "file" },
   { label: "Drone RTSP Link", value: "rtsp" },
 ] as const;
 
 export const GROUND_STREAM_SOURCES = [
   { label: "Synthetic CCTV", value: "synthetic" },
+  { label: "CCTV Video", value: "file" },
   { label: "Phone Camera (IP Stream)", value: "rtsp" },
 ] as const;
 
 export const STREAM_SOURCE_OPTIONS = [
   { label: "Synthetic Drone", value: "synthetic" },
+  { label: "Flight Video", value: "file" },
   { label: "Phone Camera (IP / RTSP)", value: "rtsp" },
   { label: "Synthetic CCTV", value: "synthetic" },
 ] as const;

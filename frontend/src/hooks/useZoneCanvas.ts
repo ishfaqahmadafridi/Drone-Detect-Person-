@@ -20,7 +20,7 @@ export const useZoneCanvas = ({
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
 
   const syncPolygon = useCallback((points?: [number, number][]) => {
-    if (points && points.length >= 3) {
+    if (points) {
       setCurrentPoints(points);
     }
   }, []);
@@ -130,6 +130,11 @@ export const useZoneCanvas = ({
     await onSaveZone(DEFAULT_RESTRICTED_ZONE);
   };
 
+  const clearZone = async () => {
+    setCurrentPoints([]);
+    await onSaveZone([]);
+  };
+
   return {
     currentPoints,
     handleMouseDown,
@@ -137,6 +142,7 @@ export const useZoneCanvas = ({
     handleMouseUp,
     saveZone,
     resetZone,
+    clearZone,
     syncPolygon,
   };
 };

@@ -26,12 +26,15 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
     handleStartEditing,
     handleSaveAndClose,
     handleResetAndClose,
+    handleClearAndClose,
     handleCancel,
     handleRtspSubmit,
     handleSourceSelect,
     handleViewSelect,
     viewMode,
+    streamError,
     handleStreamError,
+    handleStreamLoad,
   } = useVideoViewport();
 
   return (
@@ -51,12 +54,15 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
         streamKey={streamKey}
         fps={fps}
         isEditingZone={isEditingZone}
+        streamError={streamError}
+        onStreamLoad={handleStreamLoad}
         onStreamError={handleStreamError}
         onCanvasMouseDown={handleMouseDown}
         onCanvasMouseMove={handleMouseMove}
         onCanvasMouseUp={handleMouseUp}
         onSaveZone={handleSaveAndClose}
         onResetZone={handleResetAndClose}
+        onClearZone={handleClearAndClose}
         onCancelZone={handleCancel}
       />
 

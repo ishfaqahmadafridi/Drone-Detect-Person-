@@ -18,6 +18,7 @@ export function useVideoViewport() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [streamKey, setStreamKey] = useState<number>(0);
+  const [streamError, setStreamError] = useState<boolean>(false);
   const [rtspInput, setRtspInput] = useState("http://10.10.20.117:8080");
   const [showRtspField, setShowRtspField] = useState(false);
 
@@ -26,6 +27,7 @@ export function useVideoViewport() {
   const { toggleFullscreen } = useFullscreen(containerRef);
 
   const handleViewSelect = async (view: "aerial" | "ground") => {
+    setStreamError(false);
     await switchView.mutateAsync(view);
     await switchSource.mutateAsync({ sourceType: "synthetic" });
     setStreamKey((prev) => prev + 1);
@@ -37,6 +39,7 @@ export function useVideoViewport() {
     handleMouseUp,
     saveZone,
     resetZone,
+    clearZone,
     syncPolygon,
   } = useZoneCanvas({
     canvasRef,
@@ -64,6 +67,11 @@ export function useVideoViewport() {
     dispatch(setIsEditingZone(false));
   };
 
+  const handleClearAndClose = async () => {
+    await clearZone();
+    dispatch(setIsEditingZone(false));
+  };
+
   const handleCancel = () => {
     dispatch(setIsEditingZone(false));
   };
@@ -71,6 +79,7 @@ export function useVideoViewport() {
   const handleRtspSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rtspInput.trim()) return;
+    setStreamError(false);
     await switchSource.mutateAsync({ sourceType: "rtsp", sourcePath: rtspInput.trim() });
     setStreamKey((prev) => prev + 1);
     setShowRtspField(false);
@@ -81,13 +90,22 @@ export function useVideoViewport() {
       setShowRtspField(true);
     } else {
       setShowRtspField(false);
+      setStreamError(false);
       await switchSource.mutateAsync({ sourceType: type });
       setStreamKey((prev) => prev + 1);
     }
   };
 
   const handleStreamError = () => {
-    setTimeout(() => setStreamKey((prev) => prev + 1), 2000);
+    setStreamError(true);
+    setTimeout(() => {
+      setStreamError(false);
+      setStreamKey((prev) => prev + 1);
+    }, 2000);
+  };
+
+  const handleStreamLoad = () => {
+    setStreamError(false);
   };
 
   return {
@@ -97,6 +115,7 @@ export function useVideoViewport() {
     containerRef,
     canvasRef,
     streamKey,
+    streamError,
     rtspInput,
     setRtspInput,
     showRtspField,
@@ -108,11 +127,13 @@ export function useVideoViewport() {
     handleStartEditing,
     handleSaveAndClose,
     handleResetAndClose,
+    handleClearAndClose,
     handleCancel,
     handleRtspSubmit,
     handleSourceSelect,
     handleViewSelect,
     viewMode: (view_mode as "aerial" | "ground") || "aerial",
     handleStreamError,
+    handleStreamLoad,
   };
 }
