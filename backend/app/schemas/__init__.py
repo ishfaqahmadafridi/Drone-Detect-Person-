@@ -11,6 +11,8 @@ from app.schemas.alert import (
 from app.schemas.config import (
     ConfigUpdateRequest,
     StreamSourceRequest,
+    TrackingModeRequest,
+    TargetSelectRequest,
 )
 from app.schemas.drone import (
     DroneCommandRequest,
@@ -35,6 +37,8 @@ __all__ = [
     "SnapshotsListResponse",
     "ConfigUpdateRequest",
     "StreamSourceRequest",
+    "TrackingModeRequest",
+    "TargetSelectRequest",
     "DroneCommandRequest",
     "DroneCommandResponse",
     "DroneAvionicsData",

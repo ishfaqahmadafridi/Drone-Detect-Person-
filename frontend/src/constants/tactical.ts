@@ -5,6 +5,7 @@ export const THREAT_RIBBON_STYLES: Record<ThreatLevel, string> = {
   MULTI_PERSON: "bg-amber-950/60 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)]",
   MONITORING: "bg-cyan-950/40 border-cyan-500 text-cyan-300",
   CLEAR: "bg-emerald-950/40 border-emerald-500 text-emerald-400",
+  MANUAL: "bg-amber-950/50 border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.3)]",
 };
 
 export const DEFAULT_RESTRICTED_ZONE: [number, number][] = [];

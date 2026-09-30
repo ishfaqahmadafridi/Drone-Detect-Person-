@@ -1,6 +1,7 @@
-export type ThreatLevel = "CLEAR" | "MONITORING" | "MULTI_PERSON" | "INTRUSION";
+export type ThreatLevel = "CLEAR" | "MONITORING" | "MULTI_PERSON" | "INTRUSION" | "MANUAL";
 export type StreamSourceType = "synthetic" | "webcam" | "file" | "rtsp";
 export type TacticalNavTab = "airspace" | "cameras" | "incidents" | "geofence" | "settings" | "recordings";
+export type TrackingMode = "auto" | "manual";
 
 export interface Detection {
   id: number;
@@ -9,6 +10,7 @@ export interface Detection {
   speed_px_s?: number;
   trajectory_len?: number;
   is_intruder: boolean;
+  is_selected?: boolean;
 }
 
 export type DroneFlightState =
@@ -69,6 +71,8 @@ export interface TelemetryData {
   proximity_distance_px: number;
   zone_polygon: [number, number][];
   avionics?: DroneAvionics;
+  tracking_mode?: TrackingMode;
+  selected_target_ids?: number[];
 }
 
 

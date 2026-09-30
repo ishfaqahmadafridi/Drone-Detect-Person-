@@ -85,6 +85,16 @@ class PipelineFrameOrchestrator:
                 frame_idx=frame_idx
             )
 
+            # Operational Targeting Mode override for manual target designation
+            tracking_mode = getattr(self.services.config, "tracking_mode", "auto")
+            selected_ids = getattr(self.services.config, "selected_target_ids", [])
+            if tracking_mode == "manual":
+                threat_level = "MANUAL" if selected_ids else "CLEAR"
+                if not selected_ids:
+                    alert_msg = "MANUAL MODE: CLICK PERSON TO LOCK TARGET"
+                else:
+                    alert_msg = f"MANUAL MODE: {len(selected_ids)} TARGET{'S' if len(selected_ids) > 1 else ''} LOCKED"
+
             # 6. Stage: HUD Tactical Annotation
             annotated_frame = self.services.hud_annotator.render(
                 detector=self.services.detector,
@@ -134,7 +144,9 @@ class PipelineFrameOrchestrator:
                 confidence_threshold=conf_thresh,
                 proximity_distance_px=prox_dist,
                 zone_polygon=zone_norm,
-                avionics_snapshot=avionics_snapshot
+                avionics_snapshot=avionics_snapshot,
+                tracking_mode=tracking_mode,
+                selected_target_ids=selected_ids
             )
 
             return PipelineResult(
