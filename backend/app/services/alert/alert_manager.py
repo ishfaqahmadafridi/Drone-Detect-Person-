@@ -65,13 +65,15 @@ class AlertManagerService:
         detected_persons: List[Dict],
         intruders: List[Dict],
         gatherings: List[Tuple[int, int, float]],
-        frame_idx: int = 0
+        frame_idx: int = 0,
+        view_mode: str = "aerial"
     ) -> Tuple[str, str, Dict]:
         threat_level, alert_msg, details = self.state_evaluator.evaluate(
             detected_persons=detected_persons,
             intruders=intruders,
             gatherings=gatherings,
-            frame_idx=frame_idx
+            frame_idx=frame_idx,
+            view_mode=view_mode
         )
         self.current_threat_level = threat_level
         return threat_level, alert_msg, details

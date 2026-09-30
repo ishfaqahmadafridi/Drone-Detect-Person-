@@ -23,12 +23,7 @@ const initialState: TelemetryState = {
   multi_person_threshold: 2,
   confidence_threshold: 0.35,
   proximity_distance_px: 120,
-  zone_polygon: [
-    [0.25, 0.25],
-    [0.75, 0.25],
-    [0.75, 0.75],
-    [0.25, 0.75],
-  ],
+  zone_polygon: [],
   isConnected: false,
   lastUpdated: 0,
   tracking_mode: "auto",

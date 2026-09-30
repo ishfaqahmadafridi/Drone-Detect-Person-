@@ -17,6 +17,8 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
   onOpenFlightDeck,
   onRefresh,
   onSnapshotTrigger,
+  viewMode,
+  onOpenWall,
 }) => {
   return (
     <main className="flex-1 flex flex-col h-full overflow-y-auto min-w-0 p-3.5 md:p-5 gap-4">
@@ -24,6 +26,7 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
       <Header
         onRefresh={onRefresh}
         avionics={avionics}
+        viewMode={viewMode}
       />
 
       {/* Dynamic Command Modes */}
@@ -38,6 +41,8 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
         onConnectAirLink={onConnectAirLink}
         onOpenFlightDeck={onOpenFlightDeck}
         avionics={avionics}
+        viewMode={viewMode}
+        onOpenWall={onOpenWall}
       />
     </main>
   );

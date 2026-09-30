@@ -3,11 +3,8 @@
 import React from "react";
 import { TacticalSidebarProps } from "@/types";
 import { normalizeAvionicsMetrics } from "@/utils";
-import { SidebarHeader } from "./SidebarHeader";
-import { SidebarPerspectiveToggle } from "./SidebarPerspectiveToggle";
-import { SidebarNavList } from "./SidebarNavList";
-import { SidebarTelemetryWidget } from "./SidebarTelemetryWidget";
-import { SidebarFooter } from "./SidebarFooter";
+import { SidebarTopSection } from "./SidebarTopSection";
+import { SidebarBottomSection } from "./SidebarBottomSection";
 
 export const TacticalSidebar: React.FC<TacticalSidebarProps> = ({
   activeTab,
@@ -31,50 +28,30 @@ export const TacticalSidebar: React.FC<TacticalSidebarProps> = ({
         isCollapsed ? "w-[72px]" : "w-[260px]"
       }`}
     >
-      {/* 1. Header: Shield Icon, Title, and UAV Link Status */}
-      <SidebarHeader
+      {/* 1. Top Section: Header, Surveillance Perspective, and Navigation Modes */}
+      <SidebarTopSection
         isCollapsed={isCollapsed}
         onToggleCollapse={onToggleCollapse}
         flightState={flightState}
         isAirborne={isAirborne}
-      />
-
-      {/* 2. Surveillance Vision Perspective Switcher */}
-      {onViewSelect && (
-        <div className="px-2 pt-1 pb-2 border-b border-slate-800/80">
-          <SidebarPerspectiveToggle
-            viewMode={viewMode}
-            onViewSelect={onViewSelect}
-            isCollapsed={isCollapsed}
-          />
-        </div>
-      )}
-
-      {/* 3. Navigation Modes List */}
-      <SidebarNavList
+        viewMode={viewMode}
+        onViewSelect={onViewSelect}
         activeTab={activeTab}
         onTabChange={onTabChange}
-        isCollapsed={isCollapsed}
         onOpenWall={onOpenWall}
         threatLevel={threatLevel}
       />
 
-
-      {/* 3. Real-Time Telemetry Mini-Card */}
-      {!isCollapsed && (
-        <SidebarTelemetryWidget
-          batteryPct={battery}
-          isBatteryLow={isBatteryLow}
-          altitude={altitude}
-          speed={speed}
-        />
-      )}
-
-      {/* 4. Footer: Siren Alert Control & Engine Status */}
-      <SidebarFooter
+      {/* 2. Bottom Section: Telemetry Mini-Card and Audio / System Status Footer */}
+      <SidebarBottomSection
+        isCollapsed={isCollapsed}
+        batteryPct={battery}
+        isBatteryLow={isBatteryLow}
+        altitude={altitude}
+        speed={speed}
+        viewMode={viewMode}
         isMuted={isMuted}
         onToggleMute={onToggleMute}
-        isCollapsed={isCollapsed}
       />
     </aside>
   );
@@ -88,4 +65,5 @@ export * from "./SidebarNavItem";
 export * from "./SidebarCameraWallTrigger";
 export * from "./SidebarTelemetryWidget";
 export * from "./SidebarFooter";
-
+export * from "./SidebarTopSection";
+export * from "./SidebarBottomSection";

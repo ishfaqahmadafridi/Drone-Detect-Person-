@@ -11,14 +11,15 @@ import { HeaderRefreshButton } from "./HeaderRefreshButton";
 export const HeaderActions: React.FC<HeaderActionsProps> = ({
   onRefresh,
   avionics,
+  viewMode = "aerial",
 }) => {
   const { isMuted, toggleMute } = useAudioAlert();
   const { utcTime } = useSystemClock();
 
   return (
     <div className="flex items-center gap-3">
-      {/* 1. Real-Time Avionics Quick Status Pills */}
-      <AvionicsQuickPills avionics={avionics} />
+      {/* 1. Real-Time Avionics / Sensor Quick Status Pills */}
+      <AvionicsQuickPills avionics={avionics} viewMode={viewMode} />
 
       {/* 2. Tactical System Clock */}
       <HeaderClock utcTime={utcTime} />

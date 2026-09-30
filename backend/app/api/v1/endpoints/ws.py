@@ -11,11 +11,10 @@ router = APIRouter()
 @router.websocket("/ws/telemetry")
 async def websocket_telemetry(websocket: WebSocket):
     await websocket.accept()
-    stream_service.active_websockets.append(websocket)
+    stream_service.telemetry_store.register_websocket(websocket)
     try:
         while True:
             await websocket.send_json(stream_service.latest_telemetry)
             await asyncio.sleep(0.12)  # ~8 updates/sec
     except (WebSocketDisconnect, Exception):
-        if websocket in stream_service.active_websockets:
-            stream_service.active_websockets.remove(websocket)
+        stream_service.telemetry_store.unregister_websocket(websocket)

@@ -12,6 +12,7 @@ export function useTelemetryMetrics() {
     threat_level,
     alert_msg,
     isConnected,
+    view_mode,
   } = useAppSelector((state) => state.telemetry);
 
   return {
@@ -23,5 +24,6 @@ export function useTelemetryMetrics() {
     threatLevel: threat_level,
     alertMsg: alert_msg,
     isConnected,
+    viewMode: (view_mode as "aerial" | "ground") || "aerial",
   };
 }

@@ -10,7 +10,7 @@ export const IncidentLogs: React.FC = () => {
   const { alerts, isLoading, refetch, handleExport } = useIncidentLogs();
 
   return (
-    <div className="glass-panel p-4 rounded-xl flex flex-col gap-3 border border-slate-800 max-h-[300px]">
+    <div className="glass-panel p-4 rounded-xl flex flex-col gap-3 border border-slate-800">
       <IncidentHeader
         count={alerts.length}
         isLoading={isLoading}
@@ -18,7 +18,7 @@ export const IncidentLogs: React.FC = () => {
         onExport={handleExport}
       />
 
-      <div className="flex flex-col gap-2 overflow-y-auto pr-1">
+      <div className="flex flex-col gap-2">
         {alerts.length === 0 ? (
           <EmptyLogsState />
         ) : (

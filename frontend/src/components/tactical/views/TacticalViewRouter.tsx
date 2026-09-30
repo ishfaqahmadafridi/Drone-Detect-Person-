@@ -18,6 +18,8 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
   onConnectAirLink,
   onOpenFlightDeck,
   avionics,
+  viewMode,
+  onOpenWall,
 }) => {
   switch (activeTab) {
     case "incidents":
@@ -30,6 +32,8 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
           avionics={avionics}
           onOpenFlightDeck={onOpenFlightDeck}
           onConnectAirLink={onConnectAirLink}
+          viewMode={viewMode}
+          onOpenWall={onOpenWall}
         />
       );
     case "airspace":
@@ -46,6 +50,8 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
           onConnectAirLink={onConnectAirLink}
           onOpenFlightDeck={onOpenFlightDeck}
           avionics={avionics}
+          viewMode={viewMode}
+          onOpenWall={onOpenWall}
         />
       );
   }
