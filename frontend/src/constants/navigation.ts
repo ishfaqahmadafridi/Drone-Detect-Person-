@@ -13,6 +13,5 @@ export const NAV_ITEMS: readonly NavItemConfig[] = [
   { id: "cameras",     label: "Multi-Camera Wall",  icon: LayoutGrid },
   { id: "incidents",   label: "Incident Audits",    icon: ShieldAlert },
   { id: "recordings",  label: "Evidence Records",   icon: Film       },
-  { id: "geofence",    label: "Restricted Zones",   icon: Compass    },
   { id: "settings",    label: "Sensor Calibration", icon: Sliders    },
 ] as const;

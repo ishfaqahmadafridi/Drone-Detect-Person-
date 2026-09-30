@@ -23,7 +23,7 @@ class ThreatStateEvaluator:
         gathering_count = len(gatherings)
         
         threat_level = AlertLevel.CLEAR
-        alert_msg = "AIRSPACE & ZONE SECURE - NO TARGETS"
+        alert_msg = "AIRSPACE SECURE - NO TARGETS"
         
         if intruder_count > 0:
             threat_level = AlertLevel.INTRUSION

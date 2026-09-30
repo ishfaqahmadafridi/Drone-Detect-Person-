@@ -8,12 +8,7 @@ class AlertLevel:
     MULTI_PERSON = "MULTI_PERSON" # >= 2 persons gathering / clustered
     INTRUSION = "INTRUSION"       # 1+ persons breaching restricted polygon perimeter
 
-DEFAULT_ZONE_POLYGON = [
-    (0.25, 0.25),
-    (0.75, 0.25),
-    (0.75, 0.75),
-    (0.25, 0.75),
-]
+DEFAULT_ZONE_POLYGON = []
 
 DEFAULT_FRAME_WIDTH = 1280
 DEFAULT_FRAME_HEIGHT = 720

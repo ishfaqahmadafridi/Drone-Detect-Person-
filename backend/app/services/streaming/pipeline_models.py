@@ -24,7 +24,10 @@ class PipelineResult:
         """
         Generates a safe fallback result when a frame is corrupt or pipeline encounters transient errors.
         """
-        fallback_frame = frame if frame is not None and getattr(frame, "size", 0) > 0 else np.zeros((720, 1280, 3), dtype=np.uint8)
+        if frame is not None and isinstance(frame, np.ndarray) and getattr(frame, "size", 0) > 0 and len(frame.shape) == 3:
+            fallback_frame = frame
+        else:
+            fallback_frame = np.zeros((720, 1280, 3), dtype=np.uint8)
         return cls(
             annotated_frame=fallback_frame,
             telemetry_payload={

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setIsEditingZone } from "@/store/slices/uiSlice";
 import { useConfigMutation } from "@/services/queries/useConfigMutation";
@@ -18,8 +18,13 @@ export function useVideoViewport() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [streamKey, setStreamKey] = useState<number>(0);
+  const [streamError, setStreamError] = useState<boolean>(false);
   const [rtspInput, setRtspInput] = useState("http://10.10.20.117:8080");
   const [showRtspField, setShowRtspField] = useState(false);
+
+  useEffect(() => {
+    setStreamError(false);
+  }, [streamKey]);
 
   const configMutation = useConfigMutation();
   const { switchSource, switchView } = useStreamMutation();
@@ -37,6 +42,7 @@ export function useVideoViewport() {
     handleMouseUp,
     saveZone,
     resetZone,
+    clearZone,
     syncPolygon,
   } = useZoneCanvas({
     canvasRef,
@@ -64,6 +70,11 @@ export function useVideoViewport() {
     dispatch(setIsEditingZone(false));
   };
 
+  const handleClearAndClose = async () => {
+    await clearZone();
+    dispatch(setIsEditingZone(false));
+  };
+
   const handleCancel = () => {
     dispatch(setIsEditingZone(false));
   };
@@ -87,7 +98,12 @@ export function useVideoViewport() {
   };
 
   const handleStreamError = () => {
+    setStreamError(true);
     setTimeout(() => setStreamKey((prev) => prev + 1), 2000);
+  };
+
+  const handleStreamLoad = () => {
+    setStreamError(false);
   };
 
   return {
@@ -97,6 +113,7 @@ export function useVideoViewport() {
     containerRef,
     canvasRef,
     streamKey,
+    streamError,
     rtspInput,
     setRtspInput,
     showRtspField,
@@ -108,11 +125,13 @@ export function useVideoViewport() {
     handleStartEditing,
     handleSaveAndClose,
     handleResetAndClose,
+    handleClearAndClose,
     handleCancel,
     handleRtspSubmit,
     handleSourceSelect,
     handleViewSelect,
     viewMode: (view_mode as "aerial" | "ground") || "aerial",
     handleStreamError,
+    handleStreamLoad,
   };
 }

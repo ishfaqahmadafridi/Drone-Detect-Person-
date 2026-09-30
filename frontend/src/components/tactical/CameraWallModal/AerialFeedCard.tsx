@@ -3,6 +3,7 @@
 import React from "react";
 import { AerialFeedCardProps } from "@/types";
 import { CheckCircle2 } from "lucide-react";
+import { getVideoStreamUrl } from "@/constants/network";
 
 export const AerialFeedCard: React.FC<AerialFeedCardProps> = ({ isActive, onSelect }) => {
   return (
@@ -31,7 +32,7 @@ export const AerialFeedCard: React.FC<AerialFeedCardProps> = ({ isActive, onSele
       <div className="relative aspect-video bg-black/90 flex items-center justify-center overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/api/stream/video_feed"
+          src={getVideoStreamUrl()}
           alt="Aerial Drone Feed"
           className="w-full h-full object-contain pointer-events-none"
         />

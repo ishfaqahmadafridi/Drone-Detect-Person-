@@ -21,8 +21,8 @@ def draw_zone_polygon(
     """
     Renders the restricted zone geofence with semi-transparent fill and perimeter tags.
     """
-    if cv2 is None or zone_polygon is None or len(zone_polygon) < 3:
-        return
+    # Restricted zone is removed from the project
+    return
 
     zone_color = theme.COLOR_ZONE_BREACH if has_intruders else theme.COLOR_ZONE_SECURE
     alpha = theme.ALPHA_ZONE_BREACH if has_intruders else theme.ALPHA_ZONE_NORMAL
@@ -40,7 +40,7 @@ def draw_zone_polygon(
     )
 
     zx, zy = zone_polygon[0]
-    label = "⚠️ RESTRICTED ZONE [BREACH DETECTED]" if has_intruders else "🔒 RESTRICTED PERIMETER"
+    label = "[RESTRICTED ZONE BREACH]" if has_intruders else "[RESTRICTED PERIMETER]"
     cv2.putText(
         annotated,
         label,

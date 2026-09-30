@@ -43,22 +43,4 @@ class TerrainRenderer:
         for gx in range(120, width - 100, 160):
             cv2.line(frame, (gx + drift_x, 80), (gx + drift_x, height - 80), self.config.color_grid_lines, 2)
 
-        # Draw ground restricted zone perimeter marking
-        cv2.rectangle(
-            frame,
-            (self.zx1 + drift_x, self.zy1 + drift_y),
-            (self.zx2 + drift_x, self.zy2 + drift_y),
-            self.config.color_restricted_zone,
-            2
-        )
-        cv2.putText(
-            frame,
-            "ZONE RESTRICTED AREA",
-            (self.zx1 + drift_x + 10, self.zy1 + drift_y + 25),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            self.config.color_restricted_zone,
-            1
-        )
-
         return frame, drift_x, drift_y

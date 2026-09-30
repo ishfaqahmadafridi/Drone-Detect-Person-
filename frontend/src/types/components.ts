@@ -62,17 +62,20 @@ export interface ViewportHeaderProps {
 
 export interface ViewportScreenProps {
   containerRef: RefObject<HTMLDivElement | null>;
-  canvasRef: RefObject<HTMLCanvasElement | null>;
+  canvasRef?: RefObject<HTMLCanvasElement | null>;
   streamKey: number;
   fps: number;
-  isEditingZone: boolean;
+  streamError: boolean;
+  onStreamLoad: () => void;
   onStreamError: () => void;
-  onCanvasMouseDown: (e: React.MouseEvent<HTMLCanvasElement>) => void;
-  onCanvasMouseMove: (e: React.MouseEvent<HTMLCanvasElement>) => void;
-  onCanvasMouseUp: () => void;
-  onSaveZone: () => void;
-  onResetZone: () => void;
-  onCancelZone: () => void;
+  isEditingZone?: boolean;
+  onCanvasMouseDown?: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  onCanvasMouseMove?: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  onCanvasMouseUp?: () => void;
+  onSaveZone?: () => void;
+  onResetZone?: () => void;
+  onClearZone?: () => void;
+  onCancelZone?: () => void;
 }
 
 export interface ViewportStandbyLoaderProps {
@@ -107,15 +110,17 @@ export interface ViewportTelemetryBadgesProps {
 
 export interface ViewportHudOverlayProps {
   fps: number;
-  isEditingZone: boolean;
-  onSaveZone: () => void;
-  onResetZone: () => void;
-  onCancelZone: () => void;
+  isEditingZone?: boolean;
+  onSaveZone?: () => void;
+  onResetZone?: () => void;
+  onClearZone?: () => void;
+  onCancelZone?: () => void;
 }
 
 export interface ZoneBannerProps {
   onSave: () => void;
   onReset: () => void;
+  onClear?: () => void;
   onCancel: () => void;
 }
 

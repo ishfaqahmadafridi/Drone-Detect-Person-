@@ -87,7 +87,6 @@ class CourtyardRenderer:
 
         self._draw_pavement(frame, horizon_y, height, ground_h)
         self._draw_perspective_lines(frame, horizon_y, height, width)
-        self._draw_restricted_zone(frame, horizon_y, ground_h, width)
 
     # ------------------------------------------------------------------
     # Private helpers

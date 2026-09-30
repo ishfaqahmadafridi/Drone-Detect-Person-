@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { ViewportScreenProps } from "@/types";
 import { ViewportStandbyLoader } from "./ViewportStandbyLoader";
 import { ViewportStreamFeed } from "./ViewportStreamFeed";
@@ -13,52 +13,46 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
   streamKey,
   fps,
   isEditingZone,
+  streamError,
+  onStreamLoad,
   onStreamError,
   onCanvasMouseDown,
   onCanvasMouseMove,
   onCanvasMouseUp,
   onSaveZone,
   onResetZone,
+  onClearZone,
   onCancelZone,
 }) => {
-  const [streamLoaded, setStreamLoaded] = useState(false);
-
   return (
     <div
       ref={containerRef}
       className="relative w-full aspect-video bg-[#02050e] overflow-hidden flex items-center justify-center border-y border-cyan-500/20"
     >
-      {/* Tactical Standby / Reconnecting Screen */}
-      <ViewportStandbyLoader isLoaded={streamLoaded} />
+      {/* Tactical Standby / Reconnecting Screen displayed only when connection drops */}
+      {streamError && <ViewportStandbyLoader isLoaded={false} />}
 
       {/* Live Video Feed Image */}
       <ViewportStreamFeed
         streamKey={streamKey}
-        isLoaded={streamLoaded}
-        onLoad={() => setStreamLoaded(true)}
-        onError={() => {
-          setStreamLoaded(false);
-          onStreamError();
-        }}
+        isLoaded={!streamError}
+        onLoad={onStreamLoad}
+        onError={onStreamError}
       />
 
       {/* Interactive Zone Canvas Overlay */}
-      <ViewportCanvasLayer
-        canvasRef={canvasRef}
-        isEditingZone={isEditingZone}
-        onCanvasMouseDown={onCanvasMouseDown}
-        onCanvasMouseMove={onCanvasMouseMove}
-        onCanvasMouseUp={onCanvasMouseUp}
-      />
+      {isEditingZone && canvasRef && onCanvasMouseDown && onCanvasMouseMove && onCanvasMouseUp && (
+        <ViewportCanvasLayer
+          canvasRef={canvasRef}
+          isEditingZone={isEditingZone}
+          onCanvasMouseDown={onCanvasMouseDown}
+          onCanvasMouseMove={onCanvasMouseMove}
+          onCanvasMouseUp={onCanvasMouseUp}
+        />
+      )}
 
-      {/* Tactical HUD Overlay (Reticles, Telemetry Badges, Zone Editing Banner) */}
-      <ViewportHudOverlay
-        fps={fps}
-        isEditingZone={isEditingZone}
-        onSaveZone={onSaveZone}
-        onResetZone={onResetZone}
-        onCancelZone={onCancelZone}
-      />
+      {/* Tactical HUD Overlay (Reticles, Telemetry Badges) */}
+      <ViewportHudOverlay fps={fps} />
     </div>
   );
 };
