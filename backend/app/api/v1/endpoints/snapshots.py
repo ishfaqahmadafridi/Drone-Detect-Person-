@@ -18,6 +18,7 @@ router = APIRouter()
 def get_snapshots(view: Optional[str] = None):
     records = evidence_repository.list_records(
         view_mode=view,
+        media_type="image",
         limit=100,
     )
     return {

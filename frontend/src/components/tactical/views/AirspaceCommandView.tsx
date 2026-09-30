@@ -4,7 +4,6 @@ import React from "react";
 import { AirspaceCommandViewProps } from "@/types";
 import { VideoViewport } from "../VideoViewport";
 import { FlightControlDeck } from "../FlightControlDeck";
-import { SnapshotGallery } from "../SnapshotGallery";
 import { DroneAvionicsCard } from "../DroneAvionicsCard";
 import { TelemetryCards } from "../TelemetryCards";
 import { TuningPanel } from "../TuningPanel";
@@ -34,8 +33,6 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
           isCommandPending={isCommandPending}
           onCommand={onCommand}
         />
-
-        <SnapshotGallery />
       </div>
 
       {/* Right Column: Drone Avionics & Battery, Computer Vision Telemetry, Tuning, Incident Logs */}
