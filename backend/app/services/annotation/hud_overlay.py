@@ -1,5 +1,6 @@
 """
 Tactical HUD Banner Overlay: Renders system status, threat banners, and telemetry stats.
+Enterprise-grade unobtrusive on-screen display (OSD) styling.
 """
 
 import numpy as np
@@ -25,7 +26,7 @@ def draw_hud_banner(
     theme: TacticalAnnotationTheme
 ):
     """
-    Renders top tactical banner bar displaying telemetry and operational alert status.
+    Renders a slim, professional on-screen telemetry bar across the top of the video feed.
     """
     if cv2 is None or annotated is None:
         return
@@ -37,31 +38,19 @@ def draw_hud_banner(
     selected_count = len(getattr(config, "selected_target_ids", []))
 
     if is_manual:
-        hud_bg = (0, 60, 90) if selected_count > 0 else (20, 28, 40)
-        status_title = f"MANUAL TARGET ACQUISITION | {alert_msg}"
-        sub_info = (
-            f"LOCKED TARGETS: {selected_count} | "
-            f"TOTAL VISIBLE: {total_people} | "
-            f"FPS: {fps:.1f} | "
-            f"MODE: MANUAL"
-        )
+        hud_bg = (18, 24, 32)
+        status_title = f"Manual Tracking Active  |  {alert_msg}"
+        telemetry_info = f"Locked: {selected_count}  •  Visible: {total_people}  •  {fps:.1f} FPS"
     else:
         if threat_level == "INTRUSION":
-            hud_bg = theme.HUD_BG_INTRUSION
+            hud_bg = (20, 20, 50)
         elif threat_level == "MULTI_PERSON":
-            hud_bg = theme.HUD_BG_MULTI_PERSON
-        elif threat_level == "MONITORING":
-            hud_bg = theme.HUD_BG_MONITORING
+            hud_bg = (20, 35, 55)
         else:
-            hud_bg = theme.HUD_BG_CLEAR
+            hud_bg = (14, 18, 24)
 
-        status_title = f"DRONE AERIAL MONITOR | {alert_msg}"
-        sub_info = (
-            f"PEOPLE: {total_people} | "
-            f"GATHERINGS: {gathering_count} | "
-            f"FPS: {fps:.1f} | "
-            f"THRESHOLD: >= {config.multi_person_threshold}"
-        )
+        status_title = f"Surveillance Feed  |  {alert_msg}"
+        telemetry_info = f"Tracks: {total_people}  •  Clusters: {gathering_count}  •  {fps:.1f} FPS"
 
     hud_overlay = annotated.copy()
     cv2.rectangle(hud_overlay, (0, 0), (w, hud_h), hud_bg, -1)
@@ -73,25 +62,29 @@ def draw_hud_banner(
         0,
         annotated
     )
-    cv2.line(annotated, (0, hud_h), (w, hud_h), theme.COLOR_TEXT_WHITE, 1)
+    cv2.line(annotated, (0, hud_h), (w, hud_h), (50, 60, 75), 1)
 
+    # Left: Feed & Status
     cv2.putText(
         annotated,
         status_title,
-        (15, 26),
+        (12, 23),
         theme.FONT_FACE,
-        theme.FONT_SCALE_TITLE,
+        theme.FONT_SCALE_BODY,
         theme.COLOR_TEXT_WHITE,
-        2,
+        1,
         theme.LINE_TYPE
     )
+
+    # Right: Telemetry summary
+    text_size = cv2.getTextSize(telemetry_info, theme.FONT_FACE, theme.FONT_SCALE_SUB, 1)[0]
     cv2.putText(
         annotated,
-        sub_info,
-        (15, 48),
+        telemetry_info,
+        (max(12, w - text_size[0] - 14), 23),
         theme.FONT_FACE,
         theme.FONT_SCALE_SUB,
-        theme.COLOR_TEXT_CYAN,
+        theme.COLOR_TEXT_MUTED,
         1,
         theme.LINE_TYPE
     )

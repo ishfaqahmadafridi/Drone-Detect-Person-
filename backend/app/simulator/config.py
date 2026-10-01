@@ -67,12 +67,12 @@ class SimulationConfig:
     color_grid_lines: Tuple[int, int, int] = (160, 165, 170)
     color_restricted_zone: Tuple[int, int, int] = (100, 100, 180)
 
-    # Person shirt colors (BGR)
+    # Realistic civilian/workwear apparel palette (BGR)
     shirt_colors: List[Tuple[int, int, int]] = field(default_factory=lambda: [
-        (40, 40, 220),   # Red
-        (220, 100, 40),  # Blue
-        (40, 200, 40),   # Green
-        (200, 40, 200),  # Purple
-        (30, 200, 230),  # Yellow
-        (240, 240, 240), # White
+        (95, 65, 45),    # Deep Navy
+        (55, 55, 60),    # Charcoal
+        (50, 75, 55),    # Muted Olive
+        (110, 130, 145), # Workwear Khaki/Tan
+        (80, 80, 85),    # Dark Slate Grey
+        (120, 95, 60),   # Industrial Blue
     ])

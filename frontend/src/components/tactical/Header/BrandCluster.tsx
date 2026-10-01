@@ -2,32 +2,31 @@
 
 import React from "react";
 import { BrandClusterProps } from "@/types";
-import { Radio } from "lucide-react";
+import { Shield } from "lucide-react";
 
 export const BrandCluster: React.FC<BrandClusterProps> = ({ isConnected }) => {
   return (
-    <div className="flex items-center gap-3.5">
-      <div className="relative w-9 h-9 rounded-full border-2 border-cyan-400 flex items-center justify-center shadow-[0_0_12px_rgba(0,242,254,0.4)]">
-        <div className="absolute inset-0 rounded-full border border-cyan-400 animate-radar" />
-        <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
+    <div className="flex items-center gap-3">
+      <div className="w-8 h-8 rounded-lg bg-slate-800/80 border border-slate-700/80 flex items-center justify-center shrink-0">
+        <Shield className="w-4 h-4 text-blue-400" />
       </div>
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="font-display font-bold text-xl tracking-wider text-white">
-            AERO<span className="text-cyan-400">GUARD</span>
+          <h1 className="font-semibold text-base text-slate-100 tracking-tight flex items-center gap-1.5">
+            <span>AERO-GUARD</span>
+            <span className="text-[11px] font-normal text-slate-400 font-mono-code">/ Operations Console</span>
           </h1>
-          <span className="font-mono-code text-[10px] bg-cyan-500/10 border border-cyan-400/40 text-cyan-400 px-1.5 py-0.5 rounded">
-            ENTERPRISE HUD
-          </span>
           <span
-            className={`w-2 h-2 rounded-full ${
-              isConnected ? "bg-emerald-400 shadow-[0_0_8px_#10b981]" : "bg-red-500 animate-ping"
+            className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+              isConnected ? "bg-emerald-500" : "bg-amber-500"
             }`}
-            title={isConnected ? "WebSocket Connected" : "Connecting to telemetry feed..."}
+            title={isConnected ? "Telemetry Feed Online" : "Connecting to telemetry feed..."}
           />
         </div>
-        <p className="text-xs text-slate-400">Drone Aerial Vision • Multi-Person Gathering & Intrusion Monitor</p>
+        <p className="text-[11px] text-slate-400 leading-tight">Aerial Computer Vision & Perimeter Security Platform</p>
       </div>
     </div>
   );
 };
+
+export default BrandCluster;
