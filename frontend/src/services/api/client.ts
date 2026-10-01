@@ -9,10 +9,29 @@ export const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request Interceptor: Attach telemetry trace & timing
+// Request Interceptor: Attach telemetry trace & timing + sanitize DOM node references
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     (config as unknown as { metadata?: { startTime: number } }).metadata = { startTime: Date.now() };
+
+    // Defensively sanitize request data to strip any accidental React synthetic events or DOM nodes
+    if (config.data && typeof config.data === "object" && !(config.data instanceof FormData)) {
+      const sanitized: Record<string, unknown> = {};
+      const raw = config.data as Record<string, unknown>;
+      for (const [key, val] of Object.entries(raw)) {
+        if (
+          val &&
+          typeof val === "object" &&
+          ("target" in val || "currentTarget" in val || "nodeType" in val || "_reactFiber" in val)
+        ) {
+          // Stripping accidental DOM event
+          continue;
+        }
+        sanitized[key] = val;
+      }
+      config.data = sanitized;
+    }
+
     return config;
   },
   (error: AxiosError) => {

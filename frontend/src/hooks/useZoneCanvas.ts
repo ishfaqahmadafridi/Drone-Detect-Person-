@@ -1,12 +1,6 @@
 import { useState, useEffect, useCallback, RefObject } from "react";
 import { DEFAULT_RESTRICTED_ZONE } from "@/constants/tactical";
-
-interface UseZoneCanvasProps {
-  canvasRef: RefObject<HTMLCanvasElement | null>;
-  isEditingZone: boolean;
-  initialPolygon?: [number, number][];
-  onSaveZone: (points: [number, number][]) => Promise<void>;
-}
+import { UseZoneCanvasProps } from "@/types";
 
 export const useZoneCanvas = ({
   canvasRef,

@@ -11,6 +11,7 @@ from app.schemas.alert import (
 from app.schemas.config import (
     ConfigUpdateRequest,
     StreamSourceRequest,
+    StreamTestConnectionResponse,
     TrackingModeRequest,
     TargetSelectRequest,
 )
@@ -37,6 +38,7 @@ __all__ = [
     "SnapshotsListResponse",
     "ConfigUpdateRequest",
     "StreamSourceRequest",
+    "StreamTestConnectionResponse",
     "TrackingModeRequest",
     "TargetSelectRequest",
     "DroneCommandRequest",

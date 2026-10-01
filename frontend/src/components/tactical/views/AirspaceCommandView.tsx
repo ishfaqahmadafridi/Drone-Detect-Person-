@@ -11,6 +11,8 @@ import { PerimeterCameraCard } from "../PerimeterCameraCard";
 import { TelemetryCards } from "../TelemetryCards";
 import { TuningPanel } from "../TuningPanel";
 
+import { useStreamMutation } from "@/services/queries/useStreamMutation";
+
 export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   onSnapshotTrigger,
   flightState,
@@ -27,6 +29,14 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   const storeViewMode = useAppSelector((state) => state.telemetry.view_mode);
   const activeViewMode = propViewMode || storeViewMode || "aerial";
   const isGround = activeViewMode === "ground";
+  const activeSourceType = useAppSelector((state) => state.telemetry.source_type) || "synthetic";
+  const { switchSource } = useStreamMutation();
+
+  const handleReconnectGround = async () => {
+    await switchSource.mutateAsync({
+      sourceType: activeSourceType,
+    });
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-5">
@@ -36,7 +46,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
 
         {isGround ? (
           <PerimeterSecurityDeck
-            onReconnectStream={onConnectAirLink}
+            onReconnectStream={handleReconnectGround}
             onSnapshotTrigger={onSnapshotTrigger}
           />
         ) : (
@@ -55,7 +65,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
         {isGround ? (
           <PerimeterCameraCard
             onOpenWall={onOpenWall || onOpenFlightDeck}
-            onReconnectStream={onConnectAirLink}
+            onReconnectStream={handleReconnectGround}
           />
         ) : (
           <DroneAvionicsCard

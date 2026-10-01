@@ -9,7 +9,8 @@ export const PerimeterReconnectButton: React.FC<PerimeterReconnectButtonProps> =
 }) => {
   return (
     <button
-      onClick={onReconnect}
+      type="button"
+      onClick={() => onReconnect?.()}
       className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono-code font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)] active:scale-[0.98]"
       title="Reconnect or reset CCTV feed connection"
     >

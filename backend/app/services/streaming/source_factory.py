@@ -39,7 +39,7 @@ class SourceFactory:
         self._max_frame_width = max_frame_width
         self._blocked_device = blocked_device
 
-    def build(self, source_type: str, source_path: str) -> tuple[BaseFrameSource, str]:
+    def build(self, source_type: str, source_path: str, transport: str = "tcp") -> tuple[BaseFrameSource, str]:
         """
         Construct the appropriate frame source.
 
@@ -59,7 +59,7 @@ class SourceFactory:
             return self._build_http(source_path)
 
         # File or RTSP path — delegate to DeviceFrameSource (handles both)
-        return DeviceFrameSource(source_path=source_path), source_type
+        return DeviceFrameSource(source_path=source_path, transport=transport), source_type
 
     # ------------------------------------------------------------------
     # Private builders

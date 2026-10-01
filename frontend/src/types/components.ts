@@ -190,6 +190,13 @@ export interface ZoneBannerProps {
   onCancel: () => void;
 }
 
+export interface UseZoneCanvasProps {
+  canvasRef: RefObject<HTMLCanvasElement | null>;
+  isEditingZone: boolean;
+  initialPolygon?: [number, number][];
+  onSaveZone: (points: [number, number][]) => Promise<void>;
+}
+
 export interface StreamToolbarProps {
   sourceType: string;
   viewMode?: "aerial" | "ground";
@@ -231,16 +238,21 @@ export interface MetricTileProps {
   icon: ReactNode;
   value: string | number;
   subValue: string;
-  progressPercent: number;
+  progressPercent?: number;
   progressBarColor?: string;
   isAlertActive?: boolean;
   alertBorderColor?: string;
   className?: string;
+  onClick?: () => void;
+  actionHint?: string;
+  isClickable?: boolean;
+  showProgressLine?: boolean;
 }
 
 export interface PersonsMetricCardProps {
   count: number;
   viewMode?: "aerial" | "ground";
+  onClick?: () => void;
 }
 
 export interface TelemetryCardsProps {
@@ -260,11 +272,19 @@ export interface SpeedMetricCardProps {
   fps: number;
 }
 
+export interface DetectedPersonsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  viewMode?: "aerial" | "ground";
+}
+
 // ==========================================
 // 4. Tuning Panel Component Props
 // ==========================================
 export interface TuningHeaderProps {
   showSavedToast: boolean;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
 export interface TuningSliderProps {
@@ -490,9 +510,102 @@ export interface AerialFeedCardProps {
   onSelect: () => void;
 }
 
+export type GroundDeviceCategory = "wall_cctv" | "mobile_phone";
+export type WallCameraConnectionType = "wired" | "wireless";
+export type GroundWizardStep = 1 | 2 | 3 | 4;
+export type WiredSubtype = "poe_rtsp" | "usb_direct";
+export type WirelessSubtype = "wifi_rtsp" | "ap_direct";
+
+export interface GroundSensorConfigState {
+  deviceCategory: GroundDeviceCategory;
+  connectionType: WallCameraConnectionType;
+  wiredSubtype: WiredSubtype;
+  wirelessSubtype: WirelessSubtype;
+  host: string;
+  port: number;
+  streamPath: string;
+  username: string;
+  password: string;
+  transportProtocol: "tcp" | "udp";
+  usbDeviceIndex: string;
+  phoneAppType: "android_ipwebcam" | "ios_livereport";
+}
+
+export interface GroundWizardStepIndicatorProps {
+  currentStep: GroundWizardStep;
+  maxStepReached: GroundWizardStep;
+  onStepClick: (step: GroundWizardStep) => void;
+}
+
+export interface GroundStep1DeviceProps {
+  selectedDevice: GroundDeviceCategory;
+  onSelectDevice: (device: GroundDeviceCategory) => void;
+  onNext: () => void;
+}
+
+export interface GroundStep2UplinkProps {
+  deviceCategory: GroundDeviceCategory;
+  connectionType: WallCameraConnectionType;
+  wiredSubtype: WiredSubtype;
+  wirelessSubtype: WirelessSubtype;
+  onChangeConnectionType: (type: WallCameraConnectionType) => void;
+  onChangeWiredSubtype: (subtype: WiredSubtype) => void;
+  onChangeWirelessSubtype: (subtype: WirelessSubtype) => void;
+  onBack: () => void;
+  onNext: () => void;
+}
+
+export interface GroundStep3FormProps {
+  config: GroundSensorConfigState;
+  onChangeField: <K extends keyof GroundSensorConfigState>(
+    field: K,
+    value: GroundSensorConfigState[K]
+  ) => void;
+  onApplyPreset: (preset: Partial<GroundSensorConfigState>) => void;
+  onBack: () => void;
+  onNext: () => void;
+}
+
+export interface StreamLinkProberProps {
+  constructedUrl: string;
+  sourceType?: StreamSourceType;
+  host?: string;
+  port?: number;
+  streamPath?: string;
+  username?: string;
+  password?: string;
+}
+
+export interface GroundStep4ReviewProps {
+  config: GroundSensorConfigState;
+  constructedUrl: string;
+  onConnect: () => void;
+  onBack: () => void;
+  isConnecting?: boolean;
+}
+
+export interface GroundSensorWizardProps {
+  onComplete: (url: string) => void;
+  onCancel?: () => void;
+}
+
+export interface GroundSensorModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConnect: (url: string) => void;
+}
+
 export interface MobileGroundFeedCardProps {
   isActive: boolean;
   onConnectRtsp?: (url: string) => void;
+  onSelectFeed?: (feedType: StreamSourceType, viewMode: "aerial" | "ground") => void;
+}
+
+
+
+export interface GroundActiveStreamStateProps {
+  onPromote: () => void;
+  onReconfigure: () => void;
 }
 
 export interface MobileGroundCardHeaderProps {
@@ -505,16 +618,6 @@ export interface MobilePixelQuickConnectProps {
 
 export interface MobileCustomStreamFormProps {
   onConnectRtsp?: (url: string) => void;
-}
-
-export interface ThermalFeedCardProps {
-  isActive: boolean;
-  onSelect: () => void;
-}
-
-export interface SatelliteFeedCardProps {
-  isActive: boolean;
-  onSelect: () => void;
 }
 
 // ==========================================

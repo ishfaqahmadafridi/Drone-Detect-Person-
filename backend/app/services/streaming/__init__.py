@@ -11,6 +11,10 @@ from app.services.streaming.coordinator_config import CoordinatorConfig
 from app.services.streaming.frame_streamer import FrameStreamer
 from app.services.streaming.stream_coordinator import StreamManagerService
 from app.services.streaming.drone_service import DroneAvionicsManager, drone_avionics_service
+from app.services.streaming.connection_prober import (
+    StreamConnectionProberService,
+    stream_connection_service,
+)
 
 __all__ = [
     "SourceFactory",
@@ -25,4 +29,6 @@ __all__ = [
     "StreamManagerService",
     "DroneAvionicsManager",
     "drone_avionics_service",
+    "StreamConnectionProberService",
+    "stream_connection_service",
 ]

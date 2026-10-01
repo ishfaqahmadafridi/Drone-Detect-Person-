@@ -16,7 +16,9 @@ export const useStreamMutation = () => {
       sourceType: StreamSourceType;
       sourcePath?: string;
     }) => {
-      return await streamApi.switchSource(sourceType, sourcePath);
+      const safeType = typeof sourceType === "string" ? sourceType : "synthetic";
+      const safePath = typeof sourcePath === "string" && sourcePath.trim().length > 0 ? sourcePath.trim() : undefined;
+      return await streamApi.switchSource(safeType, safePath);
     },
     onSuccess: (_, variables) => {
       dispatch(setTelemetryData({ source_type: variables.sourceType }));

@@ -47,10 +47,14 @@ export function useDroneFlight() {
     commandMutation.mutate(action);
   };
 
-  const handleConnectDroneLink = async (droneRtspUrl?: string) => {
+  const handleConnectDroneLink = async (droneRtspUrl?: unknown) => {
+    const validUrl =
+      typeof droneRtspUrl === "string" && droneRtspUrl.trim().length > 0
+        ? droneRtspUrl.trim()
+        : "rtsp://192.168.1.1:8554/live";
     await switchSource.mutateAsync({
       sourceType: "rtsp",
-      sourcePath: droneRtspUrl || "rtsp://192.168.1.1:8554/live",
+      sourcePath: validUrl,
     });
     await switchView.mutateAsync("aerial");
     commandMutation.mutate("connect_drone_link");

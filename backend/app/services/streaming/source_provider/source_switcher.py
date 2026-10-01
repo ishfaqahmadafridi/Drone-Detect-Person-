@@ -13,7 +13,7 @@ class SourceSwitcher:
         self._factory = factory
         self._state = state
 
-    def switch(self, target_type: str, target_path: str) -> None:
+    def switch(self, target_type: str, target_path: str, transport: str = "tcp") -> None:
         """
         Releases the old active source, constructs the new source via factory,
         applies the active perspective, and commits the state.
@@ -26,7 +26,7 @@ class SourceSwitcher:
                 except Exception as exc:
                     print(f"[SOURCE_SWITCHER] Error releasing previous source: {exc}")
 
-            new_source, effective_type = self._factory.build(target_type, target_path)
+            new_source, effective_type = self._factory.build(target_type, target_path, transport=transport)
 
             # Persist perspective across source switches
             if hasattr(new_source, "set_view_mode"):
