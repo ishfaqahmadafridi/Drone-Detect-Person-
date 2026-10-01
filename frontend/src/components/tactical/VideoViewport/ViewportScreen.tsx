@@ -6,6 +6,7 @@ import { ViewportStandbyLoader } from "./ViewportStandbyLoader";
 import { ViewportStreamFeed } from "./ViewportStreamFeed";
 import { ViewportCanvasLayer } from "./ViewportCanvasLayer";
 import { ViewportHudOverlay } from "./ViewportHudOverlay";
+import { useAppSelector } from "@/store";
 
 export const ViewportScreen: React.FC<ViewportScreenProps> = ({
   containerRef,
@@ -23,6 +24,8 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
   onCanvasMouseUp,
 }) => {
   const [clickPing, setClickPing] = React.useState<{ x: number; y: number } | null>(null);
+  const zoomLevel = useAppSelector((state) => state.telemetry.zoom_level ?? 1.0);
+  const isNightVision = useAppSelector((state) => state.telemetry.is_night_vision ?? false);
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (trackingMode !== "manual" || !onSelectTargetAt) return;
@@ -90,6 +93,23 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
 
       {/* Tactical HUD Overlay (Reticles, Telemetry Badges) */}
       <ViewportHudOverlay fps={fps} />
+
+      {/* Optical Zoom & Night Vision HUD Badges */}
+      {(zoomLevel > 1.0 || isNightVision) && (
+        <div className="absolute bottom-4 left-10 z-20 pointer-events-none flex items-center gap-2">
+          {zoomLevel > 1.0 && (
+            <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/50 text-[10px] font-mono-code font-bold text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)] animate-pulse">
+              OPTICAL ZOOM: {zoomLevel.toFixed(1)}x
+            </span>
+          )}
+          {isNightVision && (
+            <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/50 text-[10px] font-mono-code font-bold text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.3)] flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+              IR NIGHT VISION (850nm)
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 };

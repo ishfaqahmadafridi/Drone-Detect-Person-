@@ -73,6 +73,8 @@ export interface TelemetryData {
   avionics?: DroneAvionics;
   tracking_mode?: TrackingMode;
   selected_target_ids?: number[];
+  zoom_level?: number;
+  is_night_vision?: boolean;
 }
 
 

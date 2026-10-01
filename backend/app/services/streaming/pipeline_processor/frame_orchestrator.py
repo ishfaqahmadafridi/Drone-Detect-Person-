@@ -8,6 +8,8 @@ import numpy as np
 from app.services.streaming.pipeline_models import PipelineResult
 from app.services.streaming.telemetry_formatter import TelemetryFormatter
 from app.services.streaming.pipeline_processor.services_container import PipelineServicesContainer
+from app.services.streaming.pipeline_processor.stages.frame_normalizer import FrameNormalizer
+from app.services.streaming.pipeline_processor.stages.targeting_mode_evaluator import TargetingModeEvaluator
 
 
 class PipelineFrameOrchestrator:
@@ -31,21 +33,10 @@ class PipelineFrameOrchestrator:
         """
         active_view = getattr(self.services.detector, "active_view", "aerial")
 
-        # 1. Defensive check against uninitialized, non-numpy, or empty frame buffers
-        if (
-            frame is None
-            or not isinstance(frame, np.ndarray)
-            or getattr(frame, "size", 0) == 0
-            or len(frame.shape) < 2
-        ):
+        # 1. Defensive validation & color space normalization
+        is_valid, norm_frame, h, w = FrameNormalizer.validate_and_normalize(frame)
+        if not is_valid or norm_frame is None:
             return PipelineResult.empty_fallback(frame, source_type=source_type, view_mode=active_view)
-
-        # Standardize 2D grayscale frames to 3-channel BGR for uniform inference & HUD annotation
-        if len(frame.shape) == 2:
-            import cv2
-            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-
-        h, w = frame.shape[:2]
 
         try:
             # 2. Thread-safe configuration snapshot & zone resolution synchronization
@@ -61,7 +52,7 @@ class PipelineFrameOrchestrator:
             # 3. Stage: Detection & Tracking
             detected_persons = self.services.tracker.detect_and_track(
                 detector=self.services.detector,
-                frame=frame,
+                frame=norm_frame,
                 sim_targets=sim_targets
             )
             detected_persons = detected_persons if isinstance(detected_persons, list) else []
@@ -77,7 +68,7 @@ class PipelineFrameOrchestrator:
             clustered_ids = clustered_ids if isinstance(clustered_ids, set) else set()
 
             # 5. Stage: Threat Classification
-            threat_level, alert_msg, details = self.services.threat_classifier.evaluate_state(
+            raw_threat_level, raw_alert_msg, details = self.services.threat_classifier.evaluate_state(
                 alert_manager=self.services.alert_manager,
                 detected_persons=detected_persons,
                 intruders=intruders,
@@ -86,21 +77,18 @@ class PipelineFrameOrchestrator:
                 active_view=active_view
             )
 
-            # Operational Targeting Mode override for manual target designation
-            tracking_mode = getattr(self.services.config, "tracking_mode", "auto")
-            selected_ids = getattr(self.services.config, "selected_target_ids", [])
-            if tracking_mode == "manual":
-                threat_level = "MANUAL" if selected_ids else "CLEAR"
-                if not selected_ids:
-                    alert_msg = "MANUAL MODE: CLICK PERSON TO LOCK TARGET"
-                else:
-                    alert_msg = f"MANUAL MODE: {len(selected_ids)} TARGET{'S' if len(selected_ids) > 1 else ''} LOCKED"
+            # 6. Stage: Operational Targeting Mode Override (Manual Lock vs Auto)
+            threat_level, alert_msg, tracking_mode, selected_ids = TargetingModeEvaluator.evaluate_mode(
+                config=self.services.config,
+                default_threat_level=raw_threat_level,
+                default_alert_msg=raw_alert_msg
+            )
 
-            # 6. Stage: HUD Tactical Annotation
+            # 7. Stage: HUD Tactical Annotation
             annotated_frame = self.services.hud_annotator.render(
                 detector=self.services.detector,
                 zone_monitor=self.services.zone_monitor,
-                frame=frame,
+                frame=norm_frame,
                 detected_persons=detected_persons,
                 intruders=intruders,
                 gatherings=gatherings,
@@ -109,9 +97,9 @@ class PipelineFrameOrchestrator:
                 alert_msg=alert_msg
             )
             if annotated_frame is None or getattr(annotated_frame, "size", 0) == 0:
-                annotated_frame = frame
+                annotated_frame = norm_frame
 
-            # 7. Stage: Evidence Snapshot Persistence
+            # 8. Stage: Evidence Snapshot Persistence
             self.services.threat_classifier.persist_evidence(
                 alert_manager=self.services.alert_manager,
                 annotated_frame=annotated_frame,
@@ -120,18 +108,18 @@ class PipelineFrameOrchestrator:
                 active_view=active_view
             )
 
-            # 8. Measure & sanitize pipeline throughput FPS
+            # 9. Measure & sanitize pipeline throughput FPS
             raw_fps = getattr(self.services.detector, "fps", 0.0)
             current_fps = max(0.0, float(raw_fps)) if isinstance(raw_fps, (int, float)) and not np.isnan(raw_fps) else 0.0
 
-            # 9. Stage: Avionics Physics & Battery Sync (aerial only)
+            # 10. Stage: Avionics Physics & Battery Sync (aerial only)
             avionics_snapshot = self.services.avionics_syncer.sync(
                 detected_persons=detected_persons,
                 current_fps=current_fps,
                 active_view=active_view
             )
 
-            # 10. Stage: Telemetry Payload Serialization
+            # 11. Stage: Telemetry Payload Serialization
             telemetry_payload = TelemetryFormatter.build_payload(
                 threat_level=threat_level,
                 alert_msg=alert_msg,
@@ -148,7 +136,9 @@ class PipelineFrameOrchestrator:
                 zone_polygon=zone_norm,
                 avionics_snapshot=avionics_snapshot,
                 tracking_mode=tracking_mode,
-                selected_target_ids=selected_ids
+                selected_target_ids=selected_ids,
+                model_name=getattr(getattr(self.services.detector, "config", None), "model_name", "") or getattr(self.services.config, "model_name", ""),
+                engine=getattr(self.services.detector, "engine", "YOLO + ByteTrack")
             )
 
             return PipelineResult(
@@ -162,4 +152,4 @@ class PipelineFrameOrchestrator:
 
         except Exception as exc:
             print(f"[ERROR] Pipeline orchestration error on frame #{frame_idx}: {exc}")
-            return PipelineResult.empty_fallback(frame, source_type=source_type, view_mode=active_view)
+            return PipelineResult.empty_fallback(norm_frame, source_type=source_type, view_mode=active_view)

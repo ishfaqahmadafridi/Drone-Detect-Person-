@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TelemetryData, ThreatLevel } from "@/types";
+import { DEFAULT_AERIAL_MODEL_NAME, DEFAULT_AERIAL_ENGINE } from "@/constants/tactical";
 
 interface TelemetryState extends TelemetryData {
   isConnected: boolean;
@@ -18,8 +19,8 @@ const initialState: TelemetryState = {
   detections: [],
   source_type: "synthetic",
   view_mode: "aerial",
-  model_name: "visdrone_person_best.pt",
-  engine: "YOLO11n + BoT-SORT",
+  model_name: DEFAULT_AERIAL_MODEL_NAME,
+  engine: DEFAULT_AERIAL_ENGINE,
   multi_person_threshold: 2,
   confidence_threshold: 0.35,
   proximity_distance_px: 120,
@@ -28,6 +29,8 @@ const initialState: TelemetryState = {
   lastUpdated: 0,
   tracking_mode: "auto",
   selected_target_ids: [],
+  zoom_level: 1.0,
+  is_night_vision: false,
 };
 
 export const telemetrySlice = createSlice({
@@ -53,6 +56,15 @@ export const telemetrySlice = createSlice({
     setSelectedTargetIds: (state, action: PayloadAction<number[]>) => {
       state.selected_target_ids = action.payload;
     },
+    setZoomLevel: (state, action: PayloadAction<number>) => {
+      state.zoom_level = action.payload;
+    },
+    setNightVision: (state, action: PayloadAction<boolean>) => {
+      state.is_night_vision = action.payload;
+    },
+    toggleNightVision: (state) => {
+      state.is_night_vision = !state.is_night_vision;
+    },
   },
 });
 
@@ -62,5 +74,8 @@ export const {
   setConnectionStatus,
   setTrackingMode,
   setSelectedTargetIds,
+  setZoomLevel,
+  setNightVision,
+  toggleNightVision,
 } = telemetrySlice.actions;
 export default telemetrySlice.reducer;

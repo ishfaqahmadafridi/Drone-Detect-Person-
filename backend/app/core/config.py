@@ -11,6 +11,8 @@ from app.core.constants import (
     DEFAULT_MULTI_PERSON_THRESHOLD,
     DEFAULT_PROXIMITY_ALERT_DISTANCE_PX,
     DEFAULT_SNAPSHOT_COOLDOWN_SECONDS,
+    DEFAULT_GROUND_MODEL_NAME,
+    DEFAULT_AERIAL_MODEL_NAME,
 )
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -44,6 +46,9 @@ _load_env_file(os.path.join(BASE_DIR, ".env"))
 _load_env_file(os.path.join(ROOT_DIR, ".env"))
 
 REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN", "")
+
+GROUND_MODEL_NAME = os.getenv("GROUND_MODEL_NAME", DEFAULT_GROUND_MODEL_NAME)
+AERIAL_MODEL_NAME = os.getenv("AERIAL_MODEL_NAME", DEFAULT_AERIAL_MODEL_NAME)
 
 os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
 os.makedirs(RECORDINGS_DIR, exist_ok=True)
@@ -94,3 +99,9 @@ class DetectionConfig:
     # Detection & Tracking Operational Modes
     tracking_mode: str = "auto"  # "auto" or "manual"
     selected_target_ids: List[int] = field(default_factory=list)
+
+    def __post_init__(self):
+        if not self.model_name:
+            self.model_name = (
+                GROUND_MODEL_NAME if self.view_mode == "ground" else AERIAL_MODEL_NAME
+            )

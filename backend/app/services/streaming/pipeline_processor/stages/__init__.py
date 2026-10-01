@@ -7,6 +7,8 @@ from app.services.streaming.pipeline_processor.stages.hazard_evaluator import Pi
 from app.services.streaming.pipeline_processor.stages.threat_classifier import PipelineThreatClassifier
 from app.services.streaming.pipeline_processor.stages.hud_annotator import PipelineHudAnnotator
 from app.services.streaming.pipeline_processor.stages.avionics_syncer import PipelineAvionicsSyncer
+from app.services.streaming.pipeline_processor.stages.frame_normalizer import FrameNormalizer
+from app.services.streaming.pipeline_processor.stages.targeting_mode_evaluator import TargetingModeEvaluator
 
 __all__ = [
     "PipelineTargetTracker",
@@ -14,4 +16,6 @@ __all__ = [
     "PipelineThreatClassifier",
     "PipelineHudAnnotator",
     "PipelineAvionicsSyncer",
+    "FrameNormalizer",
+    "TargetingModeEvaluator",
 ]

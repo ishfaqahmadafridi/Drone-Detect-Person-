@@ -69,3 +69,9 @@ export const PERIMETER_ZOOM_PRESETS = [
   { label: "4.0x Tele", value: 4.0 },
 ] as const;
 
+export const DEFAULT_AERIAL_MODEL_NAME = "visdrone_person_best.pt";
+export const DEFAULT_GROUND_MODEL_NAME = "mot20_yolo26s_pedestrian.pt";
+export const DEFAULT_AERIAL_ENGINE = "YOLO11n + BoT-SORT";
+export const DEFAULT_GROUND_ENGINE = "YOLO26s + ByteTrack";
+
+

@@ -17,9 +17,11 @@ export const PerimeterZoomControl: React.FC<PerimeterZoomControlProps> = ({
       <div className="flex-1 grid grid-cols-3 gap-1">
         {PERIMETER_ZOOM_PRESETS.map((preset) => (
           <button
+            type="button"
             key={preset.value}
             onClick={() => onZoomChange(preset.value)}
-            className={`py-1 px-1.5 text-[10px] font-mono-code font-bold rounded transition-all ${
+            aria-pressed={activeZoom === preset.value}
+            className={`py-1 px-1.5 text-[10px] font-mono-code font-bold rounded transition-all cursor-pointer ${
               activeZoom === preset.value
                 ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]"
                 : "bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/60"
