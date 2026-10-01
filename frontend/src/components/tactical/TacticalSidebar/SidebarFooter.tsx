@@ -3,12 +3,15 @@
 import React from "react";
 import { SidebarFooterProps } from "@/types";
 import { Volume2, VolumeX, Zap } from "lucide-react";
+import { useInferenceModel } from "@/hooks";
 
 export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   isMuted,
   onToggleMute,
   isCollapsed,
 }) => {
+  const activeEngine = useInferenceModel();
+
   return (
     <div className="p-2.5 border-t border-slate-800/80 flex flex-col gap-2 bg-slate-950/80">
       {/* Siren Alert Toggle */}
@@ -33,11 +36,11 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
       {/* AI Engine & System Pill */}
       {!isCollapsed && (
         <div className="flex items-center justify-between text-[10px] font-mono-code text-slate-400 px-1 pt-1">
-          <span className="flex items-center gap-1 truncate">
-            <Zap className="w-3.5 h-3.5 text-cyan-400" />
-            YOLOv8 + ByteTrack
+          <span className="flex items-center gap-1 truncate" title={`Active Vision Model Engine: ${activeEngine}`}>
+            <Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <span className="truncate">{activeEngine}</span>
           </span>
-          <span className="text-emerald-400 font-bold">ONLINE</span>
+          <span className="text-emerald-400 font-bold shrink-0 ml-1">ONLINE</span>
         </div>
       )}
     </div>

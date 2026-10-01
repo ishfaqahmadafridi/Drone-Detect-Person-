@@ -55,7 +55,9 @@ class TelemetryFormatter:
         zone_polygon: List[Any],
         avionics_snapshot: Optional[Dict[str, Any]] = None,
         tracking_mode: str = "auto",
-        selected_target_ids: Optional[List[int]] = None
+        selected_target_ids: Optional[List[int]] = None,
+        model_name: str = "",
+        engine: str = ""
     ) -> Dict[str, Any]:
         """
         Assembles the comprehensive telemetry dictionary adhering to the UI contract.
@@ -79,6 +81,8 @@ class TelemetryFormatter:
             ),
             "source_type": source_type,
             "view_mode": view_mode,
+            "model_name": model_name,
+            "engine": engine,
             "multi_person_threshold": multi_person_threshold,
             "confidence_threshold": round(float(confidence_threshold), 2),
             "proximity_distance_px": proximity_distance_px,

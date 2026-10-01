@@ -1,5 +1,5 @@
 """
-Stream Manager Service: Senior-level Orchestrator coordinating video ingestion,
+Stream Manager Service: High-level Orchestrator coordinating video ingestion,
 vision pipeline processing, target tracking modes, telemetry distribution, and MJPEG broadcasting.
 """
 
@@ -10,11 +10,12 @@ from app.core.config import DetectionConfig, SYNTHETIC_VIDEO_PATH
 from app.services.streaming.source_provider import StreamSourceProvider
 from app.services.streaming.mjpeg_broadcaster import MjpegBroadcaster
 from app.services.streaming.telemetry_state import TelemetryStateStore
-from app.services.streaming.drone_service import drone_avionics_service
 from app.services.streaming.pipeline_processor import VisionPipelineProcessor
 from app.services.streaming.coordinator_config import CoordinatorConfig
 from app.services.streaming.frame_streamer import FrameStreamer
 from app.services.streaming.coordinator.tracking_manager import TargetTrackingManager
+from app.services.streaming.coordinator.perspective_controller import PerspectiveController
+from app.services.streaming.coordinator.flight_controller import DroneFlightController
 
 
 class StreamManagerService:
@@ -49,6 +50,19 @@ class StreamManagerService:
         # Dedicated Target Tracking Manager (Auto vs Manual Target Designation)
         self.tracking_manager = TargetTrackingManager(
             config=self.config,
+            telemetry_store=self.telemetry_store
+        )
+
+        # Dedicated Perspective & Ingestion Controller
+        self.perspective_controller = PerspectiveController(
+            pipeline_processor=self.pipeline_processor,
+            source_provider=self.source_provider,
+            telemetry_store=self.telemetry_store,
+            config=self.config
+        )
+
+        # Dedicated Drone Flight Directives Controller
+        self.flight_controller = DroneFlightController(
             telemetry_store=self.telemetry_store
         )
 
@@ -101,21 +115,10 @@ class StreamManagerService:
     # -------------------------------------------------------------------------
 
     def set_view_mode(self, view_mode: str) -> str:
-        """
-        Switches AI inference model perspective between aerial drone and ground-level CCTV.
-        """
-        active_view = self.pipeline_processor.set_view(view_mode)
-        self.source_provider.set_view_mode(active_view)
-        self.telemetry_store.update(view_mode=active_view)
-        print(f"[COORDINATOR] Switched perspective view to: {active_view}")
-        return active_view
+        return self.perspective_controller.set_view_mode(view_mode)
 
     def set_source(self, source_type: str, source_path: Optional[str] = None, transport: str = "tcp"):
-        """
-        Updates underlying video source stream.
-        """
-        self.source_provider.set_source(source_type, source_path, transport=transport)
-        self.telemetry_store.update(source_type=source_type)
+        self.perspective_controller.set_source(source_type, source_path, transport=transport)
 
     def update_config(
         self,
@@ -124,20 +127,11 @@ class StreamManagerService:
         prox_dist: Optional[int] = None,
         zone_polygon: Optional[List[Tuple[float, float]]] = None
     ):
-        """
-        Applies dynamic surveillance tuning parameters across detection, zoning, and alerts.
-        """
-        self.pipeline_processor.update_config(
+        self.perspective_controller.update_config(
             multi_person_thresh=multi_person_thresh,
             conf_thresh=conf_thresh,
             prox_dist=prox_dist,
             zone_polygon=zone_polygon
-        )
-        self.telemetry_store.update(
-            multi_person_threshold=self.config.multi_person_threshold,
-            confidence_threshold=self.config.confidence_threshold,
-            proximity_distance_px=self.config.proximity_alert_distance_px,
-            zone_polygon=self.config.default_zone_normalized
         )
 
     # -------------------------------------------------------------------------
@@ -145,9 +139,6 @@ class StreamManagerService:
     # -------------------------------------------------------------------------
 
     def set_tracking_mode(self, mode: str, selected_ids: Optional[List[int]] = None) -> Dict:
-        """
-        Delegates tracking mode transition (AUTO vs MANUAL) to the tracking manager.
-        """
         return self.tracking_manager.set_tracking_mode(mode=mode, selected_ids=selected_ids)
 
     def select_target(
@@ -156,15 +147,9 @@ class StreamManagerService:
         y: Optional[float] = None,
         target_id: Optional[int] = None
     ) -> Dict:
-        """
-        Delegates target lock-on or toggle to the tracking manager.
-        """
         return self.tracking_manager.select_target(x=x, y=y, target_id=target_id)
 
     def clear_manual_targets(self) -> Dict:
-        """
-        Delegates clearing designated targets to the tracking manager.
-        """
         return self.tracking_manager.clear_manual_targets()
 
     # -------------------------------------------------------------------------
@@ -172,16 +157,7 @@ class StreamManagerService:
     # -------------------------------------------------------------------------
 
     def execute_drone_command(self, action: str, target_alt: Optional[float] = None) -> Dict:
-        """
-        Transmits tactical flight directive to drone avionics subsystem.
-        """
-        res = drone_avionics_service.execute_command(action, target_alt)
-        snapshot = drone_avionics_service.get_avionics_snapshot()
-        self.telemetry_store.update(avionics=snapshot)
-        return res
+        return self.flight_controller.execute_command(action, target_alt)
 
     def generate_frames(self) -> Generator[bytes, None, None]:
-        """
-        Delegates real-time frame generation to the dedicated FrameStreamer.
-        """
         return self.frame_streamer.generate_frames()

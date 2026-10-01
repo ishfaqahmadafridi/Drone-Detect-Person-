@@ -33,6 +33,9 @@ MANIFEST
 *.engine
 *.tflite
 *.weights
+!backend/models/mot20_yolo26s_pedestrian.pt
+!backend/models/visdrone_person_best.pt
+!backend/models/registry.json
 
 # Detection Output runs, test media & logs
 runs/

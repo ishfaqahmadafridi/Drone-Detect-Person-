@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { PerimeterActionGridProps } from "@/types";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { setZoomLevel, toggleNightVision } from "@/store/slices/telemetrySlice";
 import {
   PerimeterZoomControl,
   PerimeterNightVisionButton,
@@ -13,21 +15,30 @@ export const PerimeterActionGrid: React.FC<PerimeterActionGridProps> = ({
   onReconnectStream,
   onSnapshotTrigger,
 }) => {
-  const [activeZoom, setActiveZoom] = useState<number>(1.0);
-  const [irEnabled, setIrEnabled] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  const activeZoom = useAppSelector((state) => state.telemetry.zoom_level ?? 1.0);
+  const irEnabled = useAppSelector((state) => state.telemetry.is_night_vision ?? false);
+
+  const handleZoomChange = (zoom: number) => {
+    dispatch(setZoomLevel(zoom));
+  };
+
+  const handleToggleIr = () => {
+    dispatch(toggleNightVision());
+  };
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">
       {/* 1. Optical Zoom Presets Selector */}
       <PerimeterZoomControl
         activeZoom={activeZoom}
-        onZoomChange={setActiveZoom}
+        onZoomChange={handleZoomChange}
       />
 
       {/* 2. IR Night Vision Sensor Toggle */}
       <PerimeterNightVisionButton
         isEnabled={irEnabled}
-        onToggle={() => setIrEnabled((prev) => !prev)}
+        onToggle={handleToggleIr}
       />
 
       {/* 3. Reconnect Stream / Cycle Connection */}

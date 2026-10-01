@@ -120,6 +120,76 @@ class TestModularSubpackages(unittest.TestCase):
         self.assertTrue(hasattr(detector, "DronePersonDetector"))
         self.assertTrue(hasattr(zone_monitor, "ZoneMonitor"))
 
+    def test_cli_subpackage(self):
+        from app.cli import (
+            build_cli_parser,
+            resolve_video_source,
+            CLIDetectionExecutor,
+            CLIReporter,
+            run_cli_detection,
+            main,
+        )
+        parser = build_cli_parser()
+        args = parser.parse_args(["--source", "test.mp4", "--conf", "0.45", "--headless"])
+        self.assertEqual(args.source, "test.mp4")
+        self.assertEqual(args.conf, 0.45)
+        self.assertTrue(args.headless)
+        self.assertTrue(callable(resolve_video_source))
+        self.assertTrue(callable(run_cli_detection))
+        self.assertTrue(callable(main))
+        executor = CLIDetectionExecutor(source="synthetic", confidence=0.45)
+        self.assertEqual(executor.confidence, 0.45)
+        self.assertTrue(hasattr(CLIReporter, "print_header"))
+        self.assertTrue(hasattr(CLIReporter, "print_alert_event"))
+        self.assertTrue(hasattr(CLIReporter, "print_summary"))
+
+    def test_inference_modular_subcomponents(self):
+        from app.services.inference import ModelWeightLoader, InferenceStatusReporter
+        from pathlib import Path
+        self.assertTrue(hasattr(ModelWeightLoader, "verify_and_load"))
+        status = InferenceStatusReporter.build_status(
+            profiles={"aerial": {"name": "Test", "filename": "test.pt", "confidence": 0.3, "iou": 0.4}},
+            loaded_models={},
+            active_view="aerial",
+            device="cpu",
+            models_dir=Path("/tmp")
+        )
+        self.assertEqual(status["active_view"], "aerial")
+        self.assertIn("aerial", status["profiles"])
+
+    def test_coordinator_modular_subcomponents(self):
+        from app.services.streaming.coordinator import (
+            PerspectiveController,
+            DroneFlightController,
+            StreamManagerService,
+            TargetTrackingManager
+        )
+        self.assertTrue(hasattr(PerspectiveController, "set_view_mode"))
+        self.assertTrue(hasattr(DroneFlightController, "execute_command"))
+        self.assertTrue(hasattr(StreamManagerService, "set_view_mode"))
+        self.assertTrue(hasattr(TargetTrackingManager, "set_tracking_mode"))
+
+    def test_pipeline_processor_stages_modular(self):
+        from app.services.streaming.pipeline_processor.stages import (
+            FrameNormalizer,
+            TargetingModeEvaluator
+        )
+        from app.core.config import DetectionConfig
+        # Test FrameNormalizer
+        is_valid, norm_frame, h, w = FrameNormalizer.validate_and_normalize(np.zeros((64, 64), dtype=np.uint8))
+        self.assertTrue(is_valid)
+        self.assertEqual(norm_frame.shape, (64, 64, 3))
+        self.assertEqual(h, 64)
+        self.assertEqual(w, 64)
+
+        # Test TargetingModeEvaluator
+        cfg = DetectionConfig(tracking_mode="manual", selected_target_ids=[1, 2])
+        threat, msg, mode, ids = TargetingModeEvaluator.evaluate_mode(cfg, "CLEAR", "ALL CLEAR")
+        self.assertEqual(threat, "MANUAL")
+        self.assertIn("2 TARGETS LOCKED", msg)
+        self.assertEqual(mode, "manual")
+        self.assertEqual(ids, [1, 2])
+
 
 if __name__ == "__main__":
     unittest.main()
