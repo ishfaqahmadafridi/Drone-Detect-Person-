@@ -14,6 +14,20 @@ class ConfigUpdateRequest(BaseModel):
 class StreamSourceRequest(BaseModel):
     source_type: str = Field(..., description="synthetic, webcam, file, or rtsp")
     source_path: Optional[str] = None
+    device_type: Optional[str] = Field(None, description="wall_cctv or mobile_phone")
+    connection_mode: Optional[str] = Field(None, description="wired or wireless")
+    host: Optional[str] = None
+    port: Optional[int] = None
+    stream_path: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    transport: Optional[str] = Field("tcp", description="tcp or udp")
+
+class StreamTestConnectionResponse(BaseModel):
+    success: bool = Field(..., description="Whether test connection succeeded")
+    latency_ms: Optional[float] = None
+    message: str
+    effective_url: Optional[str] = None
 
 class TrackingModeRequest(BaseModel):
     mode: str = Field(..., description="Targeting mode: 'auto' or 'manual'")

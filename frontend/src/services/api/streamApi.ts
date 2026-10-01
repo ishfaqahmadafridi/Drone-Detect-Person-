@@ -1,12 +1,24 @@
 import { apiClient } from "./client";
-import { StreamSourceType, ModelsStatusResponse } from "@/types";
+import {
+  StreamSourceType,
+  ModelsStatusResponse,
+  TestConnectionPayload,
+  TestConnectionResponse,
+} from "@/types";
 
 export const streamApi = {
   switchSource: async (sourceType: StreamSourceType, sourcePath?: string): Promise<{ message: string }> => {
+    const safeSourceType = typeof sourceType === "string" ? sourceType : "synthetic";
+    const safeSourcePath = typeof sourcePath === "string" && sourcePath.trim().length > 0 ? sourcePath.trim() : undefined;
     const { data } = await apiClient.post<{ message: string }>("/stream/source", {
-      source_type: sourceType,
-      source_path: sourcePath,
+      source_type: safeSourceType,
+      source_path: safeSourcePath,
     });
+    return data;
+  },
+
+  testConnection: async (payload: TestConnectionPayload): Promise<TestConnectionResponse> => {
+    const { data } = await apiClient.post<TestConnectionResponse>("/stream/test-connection", payload);
     return data;
   },
 

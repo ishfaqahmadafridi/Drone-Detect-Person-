@@ -7,7 +7,8 @@ import time
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from app.services.stream_service import stream_service
-from app.schemas.config import StreamSourceRequest
+from app.services.streaming.connection_prober import stream_connection_service
+from app.schemas.config import StreamSourceRequest, StreamTestConnectionResponse
 from app.core.config import UPLOADS_DIR
 
 router = APIRouter()
@@ -21,16 +22,32 @@ def get_video_feed():
 
 @router.post("/stream/source")
 def switch_source(req: StreamSourceRequest):
-    valid_types = ["synthetic", "webcam", "file", "rtsp"]
+    valid_types = ["synthetic", "webcam", "file", "rtsp", "http"]
     if req.source_type not in valid_types:
         raise HTTPException(status_code=400, detail=f"Invalid source_type. Must be one of {valid_types}")
     
-    stream_service.set_source(req.source_type, req.source_path)
+    effective_path = stream_connection_service.build_effective_stream_path(req)
+    stream_service.set_source(
+        req.source_type,
+        effective_path if effective_path else None,
+        transport=req.transport or "tcp"
+    )
     return {
         "message": f"Source updated to {req.source_type}",
         "source_type": stream_service.source_type,
-        "source_path": stream_service.source_path
+        "source_path": stream_service.source_path,
+        "effective_url": effective_path,
+        "device_type": req.device_type,
+        "connection_mode": req.connection_mode,
     }
+
+@router.post("/stream/test-connection", response_model=StreamTestConnectionResponse)
+def test_stream_connection(req: StreamSourceRequest):
+    """
+    Test link reachability and port latency for wired or wireless CCTV/phone stream.
+    Delegates diagnostics to StreamConnectionProberService.
+    """
+    return stream_connection_service.probe_connection(req)
 
 @router.get("/stream/models/status")
 def get_models_status():

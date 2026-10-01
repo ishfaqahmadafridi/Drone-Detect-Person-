@@ -110,11 +110,11 @@ class StreamManagerService:
         print(f"[COORDINATOR] Switched perspective view to: {active_view}")
         return active_view
 
-    def set_source(self, source_type: str, source_path: Optional[str] = None):
+    def set_source(self, source_type: str, source_path: Optional[str] = None, transport: str = "tcp"):
         """
         Updates underlying video source stream.
         """
-        self.source_provider.set_source(source_type, source_path)
+        self.source_provider.set_source(source_type, source_path, transport=transport)
         self.telemetry_store.update(source_type=source_type)
 
     def update_config(

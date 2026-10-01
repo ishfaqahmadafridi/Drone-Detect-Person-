@@ -83,10 +83,10 @@ class StreamSourceProvider:
     # Public API
     # ------------------------------------------------------------------
 
-    def set_source(self, source_type: str, source_path: Optional[str] = None) -> None:
+    def set_source(self, source_type: str, source_path: Optional[str] = None, transport: str = "tcp") -> None:
         """Hot-swap active stream source. Falls back to synthetic on invalid input."""
         resolved_path = source_path or self.config.default_path
-        self._switcher.switch(source_type, resolved_path)
+        self._switcher.switch(source_type, resolved_path, transport=transport)
 
     def set_view_mode(self, view_mode: str) -> str:
         """Persist perspective and propagate to all simulation sources."""

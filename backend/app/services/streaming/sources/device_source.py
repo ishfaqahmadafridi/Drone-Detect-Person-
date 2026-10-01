@@ -19,8 +19,9 @@ class DeviceFrameSource(BaseFrameSource):
     """
     Acquires frames from local USB webcams, video files, or RTSP network streams.
     """
-    def __init__(self, source_path: Union[str, int]):
+    def __init__(self, source_path: Union[str, int], transport: str = "tcp"):
         self.source_path = source_path
+        self.transport = "udp" if str(transport).lower() == "udp" else "tcp"
         self._cap: Optional[cv2.VideoCapture] = None
         self._is_network_rtsp = isinstance(source_path, str) and source_path.startswith("rtsp://")
         self._is_video_file = isinstance(source_path, str) and not self._is_network_rtsp and not source_path.isdigit()
@@ -32,11 +33,22 @@ class DeviceFrameSource(BaseFrameSource):
         
         cap_arg = int(self.source_path) if isinstance(self.source_path, str) and self.source_path.isdigit() else self.source_path
         try:
-            cap = cv2.VideoCapture(cap_arg)
-            if cap.isOpened():
-                self._cap = cap
+            if self._is_network_rtsp:
+                import os
+                # Configure user-selected transport (tcp or udp) with 5s timeout
+                os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = f"rtsp_transport;{self.transport}|timeout;5000000"
+                cap = cv2.VideoCapture(cap_arg, cv2.CAP_FFMPEG)
+                if cap.isOpened():
+                    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+                    self._cap = cap
+                else:
+                    self._cap = None
             else:
-                self._cap = None
+                cap = cv2.VideoCapture(cap_arg)
+                if cap.isOpened():
+                    self._cap = cap
+                else:
+                    self._cap = None
         except Exception:
             self._cap = None
 
