@@ -21,7 +21,7 @@ class TestDetectorAndAnnotation(unittest.TestCase):
         )
         self.assertEqual(theme.COLOR_INTRUDER, (255, 0, 0))
         self.assertEqual(theme.HUD_HEIGHT_PX, 75)
-        self.assertEqual(theme.COLOR_SAFE, (0, 255, 0))
+        self.assertEqual(theme.COLOR_SAFE, (85, 175, 85))
 
     def test_frame_annotator_rendering(self):
         cfg = DetectionConfig()

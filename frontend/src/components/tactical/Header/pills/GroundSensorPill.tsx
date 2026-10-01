@@ -12,11 +12,11 @@ export const GroundSensorPill: React.FC<GroundSensorPillProps> = ({
 }) => {
   return (
     <div
-      className="flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono-code font-bold tracking-wider uppercase border bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-      title={`Sensor: ${name} | Mount: ${mountHeight}`}
+      className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono-code font-medium border bg-slate-800/70 text-slate-300 border-slate-700/60"
+      title={`Sensor: ${name} • Mount: ${mountHeight}`}
     >
       <Camera className="w-3 h-3 text-emerald-400" />
-      <span>{sensorId} FIXED</span>
+      <span>{sensorId} • Fixed</span>
     </div>
   );
 };

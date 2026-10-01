@@ -22,30 +22,32 @@ export function isThreatMonitoring(threatLevel: ThreatLevel | string): boolean {
 }
 
 /**
- * Returns tactical CSS styles for threat badges across incident and log cards.
+ * Returns clean enterprise CSS styles for threat badges across incident and log cards.
  */
 export function getThreatBadgeStyle(threatLevel: ThreatLevel | string): string {
   if (isThreatDanger(threatLevel)) {
-    return "bg-red-500/20 text-red-400";
+    return "bg-red-500/10 text-red-400 border border-red-500/25";
   }
   if (isThreatWarning(threatLevel)) {
-    return "bg-amber-500/20 text-amber-400";
+    return "bg-amber-500/10 text-amber-400 border border-amber-500/25";
   }
-  return "bg-cyan-500/20 text-cyan-400";
+  return "bg-blue-500/10 text-blue-400 border border-blue-500/25";
 }
 
 /**
- * Returns tactical ribbon styles for the main header threat banner.
+ * Returns calm, authoritative ribbon styles for the main header threat banner.
  */
 export function getThreatRibbonStyle(threatLevel: ThreatLevel | string): string {
   switch (threatLevel) {
     case "INTRUSION":
-      return "bg-red-950/60 border-red-500 text-red-400 shadow-[0_0_20px_rgba(239,68,68,0.4)] animate-pulse";
+      return "bg-red-950/30 border-red-500/50 text-red-300";
     case "MULTI_PERSON":
-      return "bg-amber-950/60 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.3)]";
+      return "bg-amber-950/30 border-amber-500/50 text-amber-300";
     case "MONITORING":
-      return "bg-cyan-950/40 border-cyan-500 text-cyan-300";
+      return "bg-blue-950/30 border-blue-500/40 text-blue-300";
+    case "MANUAL":
+      return "bg-slate-900/80 border-slate-700 text-slate-300";
     default:
-      return "bg-emerald-950/40 border-emerald-500 text-emerald-300";
+      return "bg-emerald-950/30 border-emerald-500/40 text-emerald-300";
   }
 }

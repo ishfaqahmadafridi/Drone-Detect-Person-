@@ -77,7 +77,7 @@ class TestModularSubpackages(unittest.TestCase):
 
     def test_annotation_subpackage(self):
         theme = TacticalAnnotationTheme()
-        self.assertEqual(theme.HUD_HEIGHT_PX, 60)
+        self.assertEqual(theme.HUD_HEIGHT_PX, 36)
         annotator = TacticalFrameAnnotator(theme=theme)
         frame = np.zeros((200, 200, 3), dtype=np.uint8)
         annotated = annotator.draw_annotations(

@@ -27,7 +27,7 @@ export default function DroneDashboardPage() {
   } = useDashboardOrchestrator();
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#030712] text-slate-100">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#0B0E14] text-slate-100">
       {/* 1. Tactical Navigation Sidebar */}
       <TacticalSidebar
         activeTab={activeTab}

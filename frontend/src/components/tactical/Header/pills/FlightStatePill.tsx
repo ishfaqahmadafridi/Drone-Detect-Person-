@@ -12,15 +12,15 @@ export const FlightStatePill: React.FC<FlightStatePillProps> = ({
 }) => {
   return (
     <div
-      className={`flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-mono-code font-bold tracking-wider uppercase border ${
+      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono-code font-medium border ${
         isAirborne
-          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-          : "bg-slate-800 text-slate-400 border-slate-700"
+          ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/25"
+          : "bg-slate-800/70 text-slate-300 border-slate-700/60"
       }`}
-      title={`Drone Altitude: ${altitude.toFixed(1)}m | Heading: ${heading}°`}
+      title={`Altitude: ${altitude.toFixed(1)}m • Heading: ${heading}°`}
     >
-      <Navigation className={`w-3 h-3 ${isAirborne ? "animate-pulse text-emerald-400" : ""}`} />
-      <span>{flightState}</span>
+      <Navigation className="w-3 h-3 text-slate-400" />
+      <span className="capitalize">{flightState.toLowerCase()}</span>
     </div>
   );
 };

@@ -47,17 +47,17 @@ def draw_detections_and_trails(
         is_clustered = pid in clustered_ids_set or (total_people >= config.multi_person_threshold)
 
         if is_manual:
-            box_color = (0, 215, 255)  # Tactical Gold / Amber locked indicator
-            tag = f"LOCKED TARGET #{pid} ({conf:.2f})"
+            box_color = (40, 180, 240)  # Locked indicator
+            tag = f"Target {pid:02d} • Locked ({conf:.2f})"
         elif is_intruder:
             box_color = theme.COLOR_INTRUDER
-            tag = f"INTRUDER #{pid} ({conf:.2f})"
+            tag = f"Alert {pid:02d} • Perimeter ({conf:.2f})"
         elif is_clustered:
             box_color = theme.COLOR_GATHERING
-            tag = f"PERSON #{pid} [GATHER]"
+            tag = f"Track {pid:02d} • Cluster ({conf:.2f})"
         else:
             box_color = theme.COLOR_SAFE
-            tag = f"PERSON #{pid} ({conf:.2f})"
+            tag = f"Track {pid:02d} ({conf:.2f})"
 
         # Render motion trails
         if config.show_track_trails and track_history and pid in track_history:

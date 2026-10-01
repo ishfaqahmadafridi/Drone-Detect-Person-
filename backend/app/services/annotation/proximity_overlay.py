@@ -30,11 +30,11 @@ def draw_proximity_lines(
         if id1 in person_map and id2 in person_map:
             pt1 = person_map[id1]['center']
             pt2 = person_map[id2]['center']
-            cv2.line(annotated, pt1, pt2, theme.COLOR_PROXIMITY_LINE, 2, theme.LINE_TYPE)
+            cv2.line(annotated, pt1, pt2, theme.COLOR_PROXIMITY_LINE, 1, theme.LINE_TYPE)
             mid_pt = ((pt1[0] + pt2[0]) // 2, (pt1[1] + pt2[1]) // 2)
             cv2.putText(
                 annotated,
-                f"GATHER: {int(dist)}px",
+                f"Dist: {int(dist)}px",
                 mid_pt,
                 theme.FONT_FACE,
                 theme.FONT_SCALE_SUB,
