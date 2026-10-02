@@ -24,7 +24,7 @@ export const TacticalSidebar: React.FC<TacticalSidebarProps> = ({
 
   return (
     <aside
-      className={`shrink-0 relative flex flex-col justify-between transition-all duration-300 ease-in-out border-r border-cyan-500/20 bg-slate-950/95 backdrop-blur-xl z-30 select-none shadow-[4px_0_24px_rgba(0,0,0,0.5)] ${
+      className={`shrink-0 relative flex flex-col justify-between transition-all duration-300 ease-in-out border-r border-slate-700/60 bg-[#0B0E14] z-30 select-none shadow-[4px_0_24px_rgba(0,0,0,0.5)] ${
         isCollapsed ? "w-[72px]" : "w-[260px]"
       }`}
     >
@@ -67,3 +67,5 @@ export * from "./SidebarTelemetryWidget";
 export * from "./SidebarFooter";
 export * from "./SidebarTopSection";
 export * from "./SidebarBottomSection";
+export * from "./SidebarSystemHealth";
+

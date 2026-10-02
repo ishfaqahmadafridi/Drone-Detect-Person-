@@ -1,16 +1,17 @@
 import { NavItemConfig } from "@/types";
 import {
-  Crosshair,
-  LayoutGrid,
-  ShieldAlert,
-  Sliders,
+  Radio,
+  Camera,
+  FileText,
   Film,
+  Sliders,
 } from "lucide-react";
 
 export const NAV_ITEMS: readonly NavItemConfig[] = [
-  { id: "airspace",    label: "Tactical Airspace",  icon: Crosshair  },
-  { id: "cameras",     label: "Multi-Camera Wall",  icon: LayoutGrid },
-  { id: "incidents",   label: "Incident Audits",    icon: ShieldAlert },
-  { id: "recordings",  label: "Evidence Records",   icon: Film       },
-  { id: "settings",    label: "Sensor Calibration", icon: Sliders    },
+  { id: "airspace",   label: "Airspace Command",   icon: Radio    },
+  { id: "cameras",    label: "Perimeter Cameras",  icon: Camera   },
+  { id: "incidents",  label: "Incident Logs",      icon: FileText },
+  { id: "recordings", label: "Recordings",         icon: Film     },
+  { id: "settings",   label: "Settings",           icon: Sliders  },
 ] as const;
+

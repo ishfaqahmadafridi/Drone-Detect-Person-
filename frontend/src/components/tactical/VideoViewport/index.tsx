@@ -38,18 +38,7 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
   } = useVideoViewport();
 
   return (
-    <div className="glass-panel rounded-xl overflow-hidden flex flex-col border border-slate-800">
-      <ViewportHeader
-        sourceType={sourceType}
-        viewMode={viewMode}
-        trackingMode={trackingMode}
-        selectedCount={selectedCount}
-        onTrackingModeChange={handleTrackingModeChange}
-        onClearSelectedTargets={handleClearSelectedTargets}
-        onSnapshotTrigger={onSnapshotTrigger}
-        onToggleFullscreen={toggleFullscreen}
-      />
-
+    <div className="rounded-xl overflow-hidden flex flex-col border border-slate-700/60 bg-[#0F141F] shadow-lg">
       <ViewportScreen
         containerRef={containerRef}
         canvasRef={canvasRef}
@@ -76,6 +65,8 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
         onViewSelect={handleViewSelect}
         onRtspInputChange={setRtspInput}
         onRtspSubmit={handleRtspSubmit}
+        onSnapshotTrigger={onSnapshotTrigger}
+        onToggleFullscreen={toggleFullscreen}
       />
     </div>
   );
@@ -91,7 +82,5 @@ export * from "./ViewportHudReticle";
 export * from "./ViewportTelemetryBadges";
 export * from "./ViewportHudOverlay";
 export * from "./StreamToolbar";
-export * from "./StreamSourceSelector";
-export * from "./PerspectiveToggle";
-export * from "./StreamRtspForm";
+export * from "./toolbar";
 export * from "./ZoneBanner";

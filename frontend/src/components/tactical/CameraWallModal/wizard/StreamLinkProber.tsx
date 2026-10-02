@@ -47,9 +47,9 @@ export const StreamLinkProber: React.FC<StreamLinkProberProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-900/40 border border-slate-800">
+    <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-[#06080E]/70 border border-slate-700/60">
       <div className="flex items-center gap-2 text-xs font-mono-code min-w-0 flex-1">
-        <Activity className="w-4 h-4 text-cyan-400 shrink-0" />
+        <Activity className="w-4 h-4 text-blue-400 shrink-0" />
         {testResult ? (
           testResult.success ? (
             <span className="text-emerald-400 font-semibold flex items-center gap-1 truncate">
@@ -73,9 +73,9 @@ export const StreamLinkProber: React.FC<StreamLinkProberProps> = ({
         type="button"
         onClick={handleTestLink}
         disabled={isTesting}
-        className="py-1 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 hover:text-white font-mono-code text-[10px] font-bold uppercase transition-colors shrink-0 flex items-center gap-1 disabled:opacity-50"
+        className="py-1.5 px-3 rounded-lg bg-blue-600/15 hover:bg-blue-600/25 border border-blue-500/50 text-blue-300 hover:text-white font-mono-code text-[10px] font-bold uppercase transition-all shrink-0 flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
       >
-        {isTesting && <Loader2 className="w-3 h-3 animate-spin text-cyan-400" />}
+        {isTesting && <Loader2 className="w-3 h-3 animate-spin text-blue-400" />}
         <span>{isTesting ? "PROBING..." : "TEST LINK"}</span>
       </button>
     </div>

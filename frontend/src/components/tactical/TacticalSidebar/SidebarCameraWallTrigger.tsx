@@ -9,15 +9,15 @@ export const SidebarCameraWallTrigger: React.FC<SidebarCameraWallTriggerProps> =
   onOpenWall,
 }) => {
   return (
-    <div className="mt-2 pt-2 border-t border-slate-800/80">
+    <div className="mt-2 pt-2 border-t border-slate-700/60">
       <button
         onClick={onOpenWall}
-        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-display text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-cyan-950/70 to-blue-950/70 border border-cyan-500/40 text-cyan-300 hover:border-cyan-300 hover:shadow-[0_0_15px_rgba(6,182,212,0.25)] transition-all ${
+        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-display text-xs font-bold uppercase tracking-wider bg-blue-600/15 hover:bg-blue-600/25 active:bg-blue-600/35 border border-blue-500/40 text-blue-200 hover:border-blue-400 hover:shadow-[0_0_15px_rgba(59,130,246,0.25)] transition-all cursor-pointer ${
           isCollapsed ? "justify-center px-0" : ""
         }`}
         title="Launch Tactical Multi-Sensor Camera Wall"
       >
-        <Eye className="w-4 h-4 text-cyan-400 shrink-0" />
+        <Eye className="w-4 h-4 text-blue-400 shrink-0" />
         {!isCollapsed && <span>CAMERA WALL</span>}
       </button>
     </div>

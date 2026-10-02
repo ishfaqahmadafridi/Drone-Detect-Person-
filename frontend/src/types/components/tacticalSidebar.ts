@@ -95,3 +95,11 @@ export interface SidebarBottomSectionProps {
   isMuted: boolean;
   onToggleMute: () => void;
 }
+
+export interface SidebarSystemHealthProps {
+  telemetryHz?: number;
+  inferenceFps?: number;
+  lastSync?: string;
+  isCollapsed?: boolean;
+}
+

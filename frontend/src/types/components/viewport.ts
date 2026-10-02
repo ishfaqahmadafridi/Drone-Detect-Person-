@@ -128,7 +128,28 @@ export interface StreamToolbarProps {
   onViewSelect?: (view: "aerial" | "ground") => void;
   onRtspInputChange: (val: string) => void;
   onRtspSubmit: (e: FormEvent) => void;
+  onSnapshotTrigger?: () => void;
+  onToggleFullscreen?: () => void;
+  onOpenEvidence?: () => void;
 }
+
+export interface StreamZoomControlsProps {
+  zoomLevel: number;
+  onZoomChange: (level: number) => void;
+}
+
+export interface StreamFilterControlsProps {
+  isNightVision: boolean;
+  onToggleNightVision: () => void;
+}
+
+export interface StreamActionButtonsProps {
+  onSnapshotTrigger?: () => void;
+  onOpenEvidence?: () => void;
+  onToggleFullscreen?: () => void;
+}
+
+
 
 export interface StreamSourceSelectorProps {
   sourceType: string;

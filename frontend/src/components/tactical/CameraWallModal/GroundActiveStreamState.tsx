@@ -29,7 +29,7 @@ export const GroundActiveStreamState: React.FC<GroundActiveStreamStateProps> = (
         <button
           type="button"
           onClick={onPromote}
-          className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400 font-display text-xs font-bold uppercase tracking-wider transition-all shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+          className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white border border-emerald-400 font-display text-xs font-bold uppercase tracking-wider transition-all shadow-[0_0_12px_rgba(16,185,129,0.3)] cursor-pointer"
         >
           <ArrowUpRight className="w-3.5 h-3.5" />
           <span>PROMOTE TO HUD</span>
@@ -38,7 +38,7 @@ export const GroundActiveStreamState: React.FC<GroundActiveStreamStateProps> = (
         <button
           type="button"
           onClick={onReconfigure}
-          className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 font-display text-xs font-semibold uppercase tracking-wider transition-colors"
+          className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg bg-slate-800/80 hover:bg-slate-700 active:bg-slate-900 text-slate-200 border border-slate-700/80 font-display text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>RECONFIGURE SENSOR</span>

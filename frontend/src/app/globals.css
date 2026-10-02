@@ -7,10 +7,10 @@
   --tactical-emerald: #10B981;
   --tactical-amber: #F59E0B;
   --tactical-rose: #EF4444;
-  --tactical-border: rgba(255, 255, 255, 0.08);
-  --tactical-border-hover: rgba(255, 255, 255, 0.16);
-  --tactical-surface: rgba(17, 23, 34, 0.85);
-  --tactical-surface-elevated: rgba(22, 31, 46, 0.92);
+  --tactical-border: rgba(255, 255, 255, 0.12);
+  --tactical-border-hover: rgba(255, 255, 255, 0.24);
+  --tactical-surface: #0F141F;
+  --tactical-surface-elevated: #151C2C;
 }
 
 @theme inline {
@@ -38,10 +38,8 @@ body {
 /* Senior Enterprise Surface Tokens */
 .glass-panel {
   background: var(--tactical-surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--tactical-border);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
 }
 
 .glass-panel-elevated {
@@ -65,6 +63,27 @@ body {
   transform: translateY(-1px);
   border-color: var(--tactical-border-hover);
   box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.6);
+}
+
+/* Global Button & Tactical Interactive States */
+button {
+  user-select: none;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+.tactical-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tactical-btn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 /* Typography Utility Classes */

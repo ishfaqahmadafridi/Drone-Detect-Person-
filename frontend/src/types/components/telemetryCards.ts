@@ -27,7 +27,18 @@ export interface PersonsMetricCardProps {
 
 export interface TelemetryCardsProps {
   viewMode?: "aerial" | "ground";
+  layout?: "horizontal" | "grid";
 }
+
+export interface TelemetryCardTileProps {
+  title: string;
+  value: string;
+  subText: string;
+  isAlert?: boolean;
+  onClick?: () => void;
+}
+
+
 
 export interface IntrudersMetricCardProps {
   count: number;
