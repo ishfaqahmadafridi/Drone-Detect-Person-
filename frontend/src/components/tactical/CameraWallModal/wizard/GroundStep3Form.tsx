@@ -42,9 +42,9 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
       </div>
 
       {/* 1. Quick Tactical Presets */}
-      <div className="flex flex-col gap-1.5 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-        <span className="font-mono-code text-[10px] text-slate-400 flex items-center gap-1">
-          <Bookmark className="w-3 h-3 text-cyan-400" />
+      <div className="flex flex-col gap-2 p-3 rounded-xl bg-[#0A0D14] border border-slate-700/60">
+        <span className="font-mono-code text-[10px] text-slate-400 flex items-center gap-1.5 font-semibold">
+          <Bookmark className="w-3.5 h-3.5 text-blue-400" />
           QUICK CHANNEL PRESETS:
         </span>
         <div className="grid grid-cols-2 gap-2 text-[10px] font-mono-code">
@@ -63,9 +63,13 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
                       transportProtocol: "tcp",
                     })
                   }
-                  className="p-1.5 rounded-lg border border-emerald-500/40 bg-emerald-950/20 text-emerald-300 hover:bg-emerald-950/40 text-left transition-colors"
+                  className={`p-2 rounded-lg border text-left cursor-pointer transition-all duration-150 active:scale-[0.99] ${
+                    config.host === "192.168.1.100"
+                      ? "border-blue-500/70 bg-blue-600/20 text-white shadow-sm font-semibold"
+                      : "border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 hover:border-slate-600 text-slate-200"
+                  }`}
                 >
-                  <span className="font-bold block">PORT 01: CAM-01 (Main Wall)</span>
+                  <span className="font-bold block text-slate-100">PORT 01: CAM-01 (Main Wall)</span>
                   <span className="text-[9px] text-slate-400 block truncate">192.168.1.100:554/live</span>
                 </button>
 
@@ -81,9 +85,13 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
                       transportProtocol: "tcp",
                     })
                   }
-                  className="p-1.5 rounded-lg border border-slate-700 bg-slate-800/40 text-slate-300 hover:bg-slate-800 text-left transition-colors"
+                  className={`p-2 rounded-lg border text-left cursor-pointer transition-all duration-150 active:scale-[0.99] ${
+                    config.host === "192.168.1.101"
+                      ? "border-blue-500/70 bg-blue-600/20 text-white shadow-sm font-semibold"
+                      : "border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 hover:border-slate-600 text-slate-200"
+                  }`}
                 >
-                  <span className="font-bold block">PORT 02: CAM-02 (Perimeter North)</span>
+                  <span className="font-bold block text-slate-100">PORT 02: CAM-02 (Perimeter North)</span>
                   <span className="text-[9px] text-slate-400 block truncate">192.168.1.101:554/ch1</span>
                 </button>
               </>
@@ -101,9 +109,13 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
                       transportProtocol: "tcp",
                     })
                   }
-                  className="p-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/20 text-cyan-300 hover:bg-cyan-950/40 text-left transition-colors"
+                  className={`p-2 rounded-lg border text-left cursor-pointer transition-all duration-150 active:scale-[0.99] ${
+                    config.host === "192.168.1.150"
+                      ? "border-blue-500/70 bg-blue-600/20 text-white shadow-sm font-semibold"
+                      : "border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 hover:border-slate-600 text-slate-200"
+                  }`}
                 >
-                  <span className="font-bold block">Wi-Fi CAM-01 (Gate West)</span>
+                  <span className="font-bold block text-slate-100">Wi-Fi CAM-01 (Gate West)</span>
                   <span className="text-[9px] text-slate-400 block truncate">192.168.1.150:8554/live</span>
                 </button>
 
@@ -119,9 +131,13 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
                       transportProtocol: "tcp",
                     })
                   }
-                  className="p-1.5 rounded-lg border border-slate-700 bg-slate-800/40 text-slate-300 hover:bg-slate-800 text-left transition-colors"
+                  className={`p-2 rounded-lg border text-left cursor-pointer transition-all duration-150 active:scale-[0.99] ${
+                    config.host === "192.168.1.151"
+                      ? "border-blue-500/70 bg-blue-600/20 text-white shadow-sm font-semibold"
+                      : "border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 hover:border-slate-600 text-slate-200"
+                  }`}
                 >
-                  <span className="font-bold block">Wi-Fi CAM-02 (South Guard)</span>
+                  <span className="font-bold block text-slate-100">Wi-Fi CAM-02 (South Guard)</span>
                   <span className="text-[9px] text-slate-400 block truncate">192.168.1.151:8554/live</span>
                 </button>
               </>
@@ -139,9 +155,13 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
                     password: "",
                   })
                 }
-                className="p-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/20 text-cyan-300 hover:bg-cyan-950/40 text-left transition-colors col-span-2"
+                className={`p-2.5 rounded-lg border text-left cursor-pointer transition-all duration-150 active:scale-[0.99] col-span-2 ${
+                  config.host === "10.10.20.117"
+                    ? "border-blue-500/70 bg-blue-600/20 text-white shadow-sm font-semibold"
+                    : "border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 hover:border-slate-600 text-slate-200"
+                }`}
               >
-                <span className="font-bold block">📱 GOOGLE PIXEL 6A (10.10.20.117:8080)</span>
+                <span className="font-bold block text-slate-100">📱 GOOGLE PIXEL 6A (10.10.20.117:8080)</span>
                 <span className="text-[9px] text-slate-400 block">Default Android IP Webcam Wi-Fi stream</span>
               </button>
             </>
@@ -151,7 +171,7 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
 
       {/* 2. Structured Parameters Form */}
       {isUsb ? (
-        <div className="flex flex-col gap-2 p-3 rounded-xl bg-slate-900/40 border border-slate-800">
+        <div className="flex flex-col gap-2 p-3.5 rounded-xl bg-[#06080E]/70 border border-slate-700/60">
           <label className="flex flex-col gap-1 text-[11px] font-mono-code text-slate-300">
             <span className="flex items-center gap-1">
               <span>USB HARDWARE DEVICE INDEX / DEV PATH:</span>
@@ -162,8 +182,8 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
               value={config.usbDeviceIndex}
               onChange={(e) => onChangeField("usbDeviceIndex", e.target.value)}
               placeholder="0, 1, or /dev/video0"
-              className={`bg-slate-900 border text-white px-2.5 py-1.5 rounded-lg text-xs font-mono-code outline-none transition-colors ${
-                !isUsbValid ? "border-rose-500/80 bg-rose-950/20" : "border-slate-700 focus:border-cyan-400"
+              className={`bg-[#06080E] border text-white px-3 py-2 rounded-lg text-xs font-mono-code outline-none transition-all ${
+                !isUsbValid ? "border-rose-500/80 bg-rose-950/20" : "border-slate-700/80 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40"
               }`}
             />
             {!isUsbValid && (
@@ -174,13 +194,13 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
           </label>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-slate-900/40 border border-slate-800 text-[11px] font-mono-code">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-[#06080E]/70 border border-slate-700/60 text-[11px] font-mono-code">
           {/* Host / IP */}
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="text-slate-300 flex items-center justify-between">
-              <span className="flex items-center gap-1">
-                <Network className="w-3 h-3 text-cyan-400" />
-                <span>CAMERA HOST / IP ADDRESS:</span>
+              <span className="flex items-center gap-1.5">
+                <Network className="w-3.5 h-3.5 text-blue-400" />
+                <span className="font-semibold">CAMERA HOST / IP ADDRESS:</span>
                 <span className="text-rose-400 font-bold">*</span>
               </span>
               {!isHostValid && (
@@ -192,10 +212,10 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
               value={config.host}
               onChange={(e) => onChangeField("host", e.target.value)}
               placeholder={isWall ? "192.168.1.100" : "10.10.20.117"}
-              className={`bg-slate-900 border text-white px-2.5 py-1.5 rounded-lg text-xs font-mono-code outline-none transition-colors ${
+              className={`bg-[#06080E] border text-white px-3 py-2 rounded-lg text-xs font-mono-code outline-none transition-all ${
                 !isHostValid
                   ? "border-rose-500/80 bg-rose-950/20 focus:border-rose-400"
-                  : "border-slate-700 focus:border-cyan-400"
+                  : "border-slate-700/80 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40"
               }`}
             />
             {!isHostValid && (
@@ -208,7 +228,7 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
           {/* Port */}
           <label className="flex flex-col gap-1">
             <span className="text-slate-300 flex items-center justify-between">
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 font-semibold">
                 <span>PORT:</span>
                 <span className="text-rose-400 font-bold">*</span>
               </span>
@@ -223,10 +243,10 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
               value={config.port}
               onChange={(e) => onChangeField("port", e.target.value === "" ? 0 : Number(e.target.value))}
               placeholder={isWall ? "554" : "8080"}
-              className={`bg-slate-900 border text-white px-2.5 py-1.5 rounded-lg text-xs font-mono-code outline-none transition-colors ${
+              className={`bg-[#06080E] border text-white px-3 py-2 rounded-lg text-xs font-mono-code outline-none transition-all ${
                 !isPortValid
                   ? "border-rose-500/80 bg-rose-950/20 focus:border-rose-400"
-                  : "border-slate-700 focus:border-cyan-400"
+                  : "border-slate-700/80 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40"
               }`}
             />
             {!isPortValid && (
@@ -239,7 +259,7 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
           {/* Stream Path */}
           <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="text-slate-300 flex items-center justify-between">
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 font-semibold">
                 <span>STREAM PATH (URI):</span>
                 <span className="text-rose-400 font-bold">*</span>
               </span>
@@ -252,10 +272,10 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
               value={config.streamPath}
               onChange={(e) => onChangeField("streamPath", e.target.value)}
               placeholder={isWall ? "/live" : "/video"}
-              className={`bg-slate-900 border text-white px-2.5 py-1.5 rounded-lg text-xs font-mono-code outline-none transition-colors ${
+              className={`bg-[#06080E] border text-white px-3 py-2 rounded-lg text-xs font-mono-code outline-none transition-all ${
                 !isStreamPathValid
                   ? "border-rose-500/80 bg-rose-950/20 focus:border-rose-400"
-                  : "border-slate-700 focus:border-cyan-400"
+                  : "border-slate-700/80 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40"
               }`}
             />
             {!isStreamPathValid && (
@@ -267,11 +287,11 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
 
           {/* Transport Protocol */}
           <label className="flex flex-col gap-1">
-            <span className="text-slate-300">TRANSPORT:</span>
+            <span className="text-slate-300 font-semibold">TRANSPORT:</span>
             <select
               value={config.transportProtocol}
               onChange={(e) => onChangeField("transportProtocol", e.target.value as "tcp" | "udp")}
-              className="bg-slate-900 border border-slate-700 focus:border-cyan-400 text-white px-2 py-1.5 rounded-lg text-xs font-mono-code outline-none cursor-pointer"
+              className="bg-[#06080E] border border-slate-700/80 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 text-white px-2.5 py-2 rounded-lg text-xs font-mono-code outline-none cursor-pointer"
             >
               <option value="tcp">TCP (Reliable)</option>
               <option value="udp">UDP (Low Latency)</option>
@@ -280,26 +300,26 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
 
           {/* Credentials */}
           <label className="flex flex-col gap-1">
-            <span className="text-slate-300 flex items-center gap-1">
-              <Lock className="w-3 h-3 text-cyan-400" /> USERNAME:
+            <span className="text-slate-300 flex items-center gap-1.5 font-semibold">
+              <Lock className="w-3.5 h-3.5 text-blue-400" /> USERNAME:
             </span>
             <input
               type="text"
               value={config.username}
               onChange={(e) => onChangeField("username", e.target.value)}
               placeholder="admin"
-              className="bg-slate-900 border border-slate-700 focus:border-cyan-400 text-white px-2.5 py-1.5 rounded-lg text-xs font-mono-code outline-none"
+              className="bg-[#06080E] border border-slate-700/80 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 text-white px-3 py-2 rounded-lg text-xs font-mono-code outline-none transition-all"
             />
           </label>
 
           <label className="flex flex-col gap-1 sm:col-span-2">
-            <span className="text-slate-300">PASSWORD (OPTIONAL):</span>
+            <span className="text-slate-300 font-semibold">PASSWORD (OPTIONAL):</span>
             <input
               type="password"
               value={config.password}
               onChange={(e) => onChangeField("password", e.target.value)}
               placeholder="••••••••"
-              className="bg-slate-900 border border-slate-700 focus:border-cyan-400 text-white px-2.5 py-1.5 rounded-lg text-xs font-mono-code outline-none"
+              className="bg-[#06080E] border border-slate-700/80 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 text-white px-3 py-2 rounded-lg text-xs font-mono-code outline-none transition-all"
             />
           </label>
         </div>
@@ -307,14 +327,14 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
 
       {/* Real-time Validation Banner */}
       {!isFormValid ? (
-        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 font-mono-code text-[10px] animate-in fade-in duration-150">
-          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono-code text-[11px] animate-in fade-in duration-150">
+          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
           <span>
             CONNECTION PARAMETERS INCOMPLETE: Provide valid Camera Host IP and Port to proceed.
           </span>
         </div>
       ) : (
-        <div className="flex items-center gap-1.5 px-1 font-mono-code text-[10px] text-emerald-400 animate-in fade-in duration-150">
+        <div className="flex items-center gap-1.5 px-1 font-mono-code text-[11px] text-emerald-400 animate-in fade-in duration-150">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
           <span>Parameters validated • Ready to test socket reachability</span>
         </div>
@@ -325,7 +345,7 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
         <button
           type="button"
           onClick={onBack}
-          className="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-display text-xs font-semibold uppercase flex items-center gap-1.5 transition-colors border border-slate-700"
+          className="py-2 px-3.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-display text-xs font-semibold uppercase flex items-center gap-1.5 transition-colors border border-slate-700/80 cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>BACK</span>
@@ -335,10 +355,10 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
           type="button"
           onClick={handleNextClick}
           disabled={!isFormValid}
-          className={`py-2 px-4 rounded-lg font-display text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all ${
+          className={`py-2 px-4 rounded-lg font-display text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${
             isFormValid
-              ? "bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-400 shadow-[0_0_12px_rgba(0,242,254,0.2)] cursor-pointer"
-              : "opacity-40 cursor-not-allowed border border-slate-700 bg-slate-800 text-slate-500 shadow-none pointer-events-none"
+              ? "bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white border border-blue-500/60 shadow-[0_0_15px_rgba(59,130,246,0.3)] cursor-pointer"
+              : "opacity-40 cursor-not-allowed border border-slate-800 bg-slate-800/50 text-slate-500 shadow-none pointer-events-none"
           }`}
         >
           <span>NEXT: REVIEW & TEST</span>

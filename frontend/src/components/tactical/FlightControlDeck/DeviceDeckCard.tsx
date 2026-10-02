@@ -19,7 +19,7 @@ export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
   isTuningOpen = false,
 }) => {
   return (
-    <div className="glass-panel p-5 rounded-xl border border-slate-800 flex flex-col gap-5 select-none">
+    <div className="p-5 rounded-xl border border-slate-700/60 bg-[#0F141F] flex flex-col gap-5 select-none shadow-lg">
       {/* 1. Header Cluster */}
       <DeviceDeckHeader viewMode={viewMode} />
 

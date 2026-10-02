@@ -38,7 +38,7 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
   } = useVideoViewport();
 
   return (
-    <div className="glass-panel rounded-xl overflow-hidden flex flex-col border border-slate-800">
+    <div className="rounded-xl overflow-hidden flex flex-col border border-slate-700/60 bg-[#0F141F] shadow-lg">
       <ViewportScreen
         containerRef={containerRef}
         canvasRef={canvasRef}

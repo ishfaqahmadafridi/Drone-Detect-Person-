@@ -33,7 +33,7 @@ export const MobileGroundFeedCard: React.FC<MobileGroundFeedCardProps> = ({
         className={`group relative rounded-xl border overflow-hidden transition-all duration-300 flex flex-col justify-between ${
           isActive
             ? "border-emerald-400 bg-emerald-950/20 shadow-[0_0_20px_rgba(16,185,129,0.25)]"
-            : "border-slate-800 bg-slate-950/40 hover:border-emerald-500/50"
+            : "border-slate-700/60 bg-slate-950/40 hover:border-emerald-500/50"
         }`}
       >
         {/* 1. Tactical Channel Header */}
@@ -51,7 +51,7 @@ export const MobileGroundFeedCard: React.FC<MobileGroundFeedCardProps> = ({
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="group/add relative flex flex-col items-center justify-center p-6 w-full max-w-xs rounded-2xl bg-slate-900/50 hover:bg-emerald-950/30 border border-dashed border-slate-700 hover:border-emerald-400 transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.25)]"
+              className="group/add relative flex flex-col items-center justify-center p-6 w-full max-w-xs rounded-2xl bg-[#06080E]/70 hover:bg-emerald-950/30 border border-dashed border-slate-700/80 hover:border-emerald-400 transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.25)]"
             >
               <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 group-hover/add:border-emerald-400 group-hover/add:bg-emerald-500/20 text-emerald-400 transition-all mb-3">
                 <Plus className="w-7 h-7 group-hover/add:scale-125 transition-transform" />

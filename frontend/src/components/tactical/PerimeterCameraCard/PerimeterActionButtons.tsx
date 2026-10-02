@@ -14,7 +14,7 @@ export const PerimeterActionButtons: React.FC<PerimeterActionButtonsProps> = ({
       <button
         type="button"
         onClick={() => onReconnectStream?.()}
-        className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono-code font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(16,185,129,0.1)] active:scale-[0.98]"
+        className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 font-mono-code font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(16,185,129,0.15)] active:scale-[0.98] cursor-pointer"
         title="Reconnect or reset CCTV feed connection"
       >
         <RefreshCw className="w-3.5 h-3.5" />
@@ -25,7 +25,7 @@ export const PerimeterActionButtons: React.FC<PerimeterActionButtonsProps> = ({
       <button
         type="button"
         onClick={() => onOpenWall?.()}
-        className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono-code font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(6,182,212,0.1)] active:scale-[0.98]"
+        className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-blue-600/15 hover:bg-blue-600/25 text-blue-300 border border-blue-500/40 font-mono-code font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_10px_rgba(59,130,246,0.15)] active:scale-[0.98] cursor-pointer"
         title="Open Full Camera Wall Matrix"
       >
         <LayoutGrid className="w-3.5 h-3.5" />

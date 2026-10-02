@@ -8,7 +8,7 @@ export const MobileGroundCardHeader: React.FC<MobileGroundCardHeaderProps> = ({
   isActive,
 }) => {
   return (
-    <div className="p-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+    <div className="p-3 bg-[#06080E]/80 border-b border-slate-700/60 flex items-center justify-between">
       <div className="flex items-center gap-2">
         <Camera className="w-3.5 h-3.5 text-emerald-400" />
         <span className="font-display font-bold text-xs text-white uppercase tracking-wider">

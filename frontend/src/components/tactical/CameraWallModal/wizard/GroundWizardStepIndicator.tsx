@@ -17,7 +17,7 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
   ];
 
   return (
-    <div className="w-full flex items-center justify-between px-2 py-1.5 bg-slate-950/80 rounded-xl border border-slate-800/80">
+    <div className="w-full flex items-center justify-between px-3 py-2 bg-[#0A0D14] rounded-xl border border-slate-700/60">
       {steps.map((step, idx) => {
         const isCurrent = currentStep === step.number;
         const isCompleted = currentStep > step.number;
@@ -28,7 +28,7 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
             {idx > 0 && (
               <div
                 className={`flex-1 h-[2px] mx-2 transition-colors ${
-                  currentStep >= step.number ? "bg-cyan-500/60" : "bg-slate-800"
+                  currentStep >= step.number ? "bg-blue-500/60" : "bg-slate-800"
                 }`}
               />
             )}
@@ -37,15 +37,15 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
               disabled={!isClickable}
               onClick={() => onStepClick(step.number)}
               className={`flex items-center gap-1.5 transition-all text-left ${
-                isClickable ? "cursor-pointer group" : "cursor-not-allowed opacity-50"
+                isClickable ? "cursor-pointer group active:scale-95" : "cursor-not-allowed opacity-50"
               }`}
             >
               <div
                 className={`w-5 h-5 rounded-full flex items-center justify-center font-mono-code text-[10px] font-bold transition-all ${
                   isCurrent
-                    ? "bg-cyan-400 text-slate-950 shadow-[0_0_10px_rgba(0,242,254,0.5)] scale-110"
+                    ? "bg-blue-600 text-white shadow-[0_0_12px_rgba(59,130,246,0.5)] scale-110"
                     : isCompleted
-                    ? "bg-emerald-500/30 text-emerald-400 border border-emerald-400/50"
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
                     : "bg-slate-800 text-slate-400 border border-slate-700"
                 }`}
               >
@@ -54,7 +54,7 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
               <span
                 className={`font-display text-[10px] font-bold tracking-wider uppercase transition-colors ${
                   isCurrent
-                    ? "text-cyan-300"
+                    ? "text-blue-400"
                     : isCompleted
                     ? "text-emerald-400/80"
                     : "text-slate-400"

@@ -20,7 +20,7 @@ export const SidebarTopSection: React.FC<SidebarTopSectionProps> = ({
     <div className="flex flex-col min-w-0">
       {/* 1. Collapse toggle button when collapsed */}
       {isCollapsed && (
-        <div className="p-2 border-b border-slate-800 flex justify-center">
+        <div className="p-2 border-b border-slate-700/60 flex justify-center">
           <button
             onClick={onToggleCollapse}
             className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer active:scale-95 transition-all"
@@ -34,7 +34,7 @@ export const SidebarTopSection: React.FC<SidebarTopSectionProps> = ({
 
       {/* 2. Surveillance Vision Perspective Switcher */}
       {onViewSelect && (
-        <div className="border-b border-slate-800/80">
+        <div className="border-b border-slate-700/60">
           <SidebarPerspectiveToggle
             viewMode={viewMode}
             onViewSelect={onViewSelect}

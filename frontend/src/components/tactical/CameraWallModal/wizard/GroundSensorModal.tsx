@@ -30,15 +30,15 @@ export const GroundSensorModal: React.FC<GroundSensorModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       <div
-        className="relative glass-panel-elevated max-w-xl w-full rounded-2xl overflow-hidden border border-emerald-500/40 shadow-[0_0_40px_rgba(16,185,129,0.25)] flex flex-col bg-[#040814]/95 animate-in zoom-in-95 duration-200"
+        className="relative max-w-xl w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col bg-[#0F141F] animate-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
         aria-labelledby="ground-sensor-dialog-title"
       >
         {/* Tactical Modal Header */}
-        <div className="p-4 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between">
+        <div className="p-4 bg-slate-900/60 border-b border-slate-700/60 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400">
               <Camera className="w-4 h-4" />
             </div>
             <div className="flex flex-col text-left">

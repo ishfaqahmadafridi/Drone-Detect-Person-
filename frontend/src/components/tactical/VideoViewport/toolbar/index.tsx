@@ -28,7 +28,7 @@ export const StreamToolbar: React.FC<StreamToolbarProps> = ({
   const isNightVision = useAppSelector((state) => state.telemetry.is_night_vision ?? false);
 
   return (
-    <div className="flex flex-col border-t border-slate-800 bg-[#0B0E14] select-none">
+    <div className="flex flex-col border-t border-slate-700/60 bg-[#0B0E14] select-none">
       <div className="p-3 px-4 flex flex-wrap items-center justify-between gap-3">
         {/* Left Toolbar Controls Cluster */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">

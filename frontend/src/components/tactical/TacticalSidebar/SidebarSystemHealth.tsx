@@ -42,7 +42,7 @@ export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
   const displaySync = lastSync || timeStr;
 
   return (
-    <div className="p-4 border-t border-slate-800/80 bg-slate-900/30 select-none">
+    <div className="p-4 border-t border-slate-700/60 bg-slate-900/30 select-none">
       <div className="text-[10px] font-mono-code uppercase tracking-wider text-slate-400 font-semibold mb-2.5">
         SYSTEM HEALTH
       </div>

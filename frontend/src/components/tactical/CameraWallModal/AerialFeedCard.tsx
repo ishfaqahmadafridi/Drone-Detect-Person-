@@ -11,11 +11,11 @@ export const AerialFeedCard: React.FC<AerialFeedCardProps> = ({ isActive, onSele
       onClick={onSelect}
       className={`group relative rounded-xl border overflow-hidden cursor-pointer transition-all duration-300 ${
         isActive
-          ? "border-cyan-400 bg-cyan-950/20 shadow-[0_0_20px_rgba(6,182,212,0.25)]"
-          : "border-slate-800 bg-slate-950/40 hover:border-cyan-500/50"
+          ? "border-blue-500 bg-blue-950/20 shadow-[0_0_20px_rgba(59,130,246,0.25)]"
+          : "border-slate-700/60 bg-slate-950/40 hover:border-blue-500/50"
       }`}
     >
-      <div className="p-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+      <div className="p-3 bg-[#06080E]/80 border-b border-slate-700/60 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-display font-bold text-xs text-white uppercase">
@@ -23,7 +23,7 @@ export const AerialFeedCard: React.FC<AerialFeedCardProps> = ({ isActive, onSele
           </span>
         </div>
         {isActive && (
-          <span className="font-mono-code text-[10px] text-cyan-400 flex items-center gap-1">
+          <span className="font-mono-code text-[10px] text-blue-400 flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3" /> ACTIVE VIEWPORT
           </span>
         )}

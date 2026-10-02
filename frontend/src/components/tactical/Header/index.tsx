@@ -16,7 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   const activeViewMode = propViewMode || hookViewMode || "aerial";
 
   return (
-    <header className="h-14 border-b border-slate-800/80 bg-[#0B0E14] px-6 flex items-center justify-between z-30 shrink-0 select-none">
+    <header className="h-14 border-b border-slate-700/60 bg-[#0B0E14] px-6 flex items-center justify-between z-30 shrink-0 select-none">
       <BrandCluster isConnected={isConnected} />
       <div className="flex items-center gap-3">
         <ThreatRibbon threatLevel={threatLevel} alertMsg={alertMsg} />
