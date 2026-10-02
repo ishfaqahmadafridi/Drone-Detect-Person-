@@ -15,6 +15,7 @@ export interface AirspaceCommandViewProps {
   avionics?: DroneAvionics;
   viewMode?: "aerial" | "ground";
   onOpenWall?: () => void;
+  onTabChange?: (tab: TacticalNavTab) => void;
 }
 
 export interface IncidentAuditViewProps {
@@ -42,6 +43,7 @@ export interface TacticalViewRouterProps {
   avionics?: DroneAvionics;
   viewMode?: "aerial" | "ground";
   onOpenWall?: () => void;
+  onTabChange?: (tab: TacticalNavTab) => void;
 }
 
 export interface MissionCommandViewportProps {
@@ -58,4 +60,6 @@ export interface MissionCommandViewportProps {
   onSnapshotTrigger?: () => void;
   viewMode?: "aerial" | "ground";
   onOpenWall?: () => void;
+  onTabChange?: (tab: TacticalNavTab) => void;
 }
+

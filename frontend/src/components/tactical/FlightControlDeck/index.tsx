@@ -39,3 +39,5 @@ export default FlightControlDeck;
 export * from "./FlightDeckHeader";
 export * from "./FlightTelemetryBar";
 export * from "./FlightActionGrid";
+export * from "./DeviceDeckCard";
+

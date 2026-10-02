@@ -2,7 +2,6 @@
 
 import React from "react";
 import { MissionCommandViewportProps } from "@/types";
-import { Header } from "./Header";
 import { TacticalViewRouter } from "./views/TacticalViewRouter";
 
 export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
@@ -19,16 +18,10 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
   onSnapshotTrigger,
   viewMode,
   onOpenWall,
+  onTabChange,
 }) => {
   return (
-    <main className="flex-1 flex flex-col h-full overflow-y-auto min-w-0 p-3.5 md:p-5 gap-4">
-      {/* Top Tactical Header */}
-      <Header
-        onRefresh={onRefresh}
-        avionics={avionics}
-        viewMode={viewMode}
-      />
-
+    <main className="flex-1 flex flex-col h-full overflow-y-auto min-w-0 p-4 md:p-6 gap-5">
       {/* Dynamic Command Modes */}
       <TacticalViewRouter
         activeTab={activeTab}
@@ -43,6 +36,7 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
         avionics={avionics}
         viewMode={viewMode}
         onOpenWall={onOpenWall}
+        onTabChange={onTabChange}
       />
     </main>
   );

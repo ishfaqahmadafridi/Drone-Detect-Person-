@@ -30,3 +30,8 @@ export const IncidentLogs: React.FC = () => {
 };
 
 export default IncidentLogs;
+export * from "./IncidentHeader";
+export * from "./IncidentItem";
+export * from "./EmptyLogsState";
+export * from "./RecentIncidentsTable";
+

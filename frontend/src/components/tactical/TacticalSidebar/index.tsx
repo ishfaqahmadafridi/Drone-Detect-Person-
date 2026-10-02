@@ -67,3 +67,5 @@ export * from "./SidebarTelemetryWidget";
 export * from "./SidebarFooter";
 export * from "./SidebarTopSection";
 export * from "./SidebarBottomSection";
+export * from "./SidebarSystemHealth";
+

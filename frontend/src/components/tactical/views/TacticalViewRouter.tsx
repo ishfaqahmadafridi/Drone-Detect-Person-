@@ -20,6 +20,7 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
   avionics,
   viewMode,
   onOpenWall,
+  onTabChange,
 }) => {
   switch (activeTab) {
     case "incidents":
@@ -37,7 +38,6 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
         />
       );
     case "airspace":
-    case "geofence":
     default:
       return (
         <AirspaceCommandView
@@ -52,6 +52,7 @@ export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
           avionics={avionics}
           viewMode={viewMode}
           onOpenWall={onOpenWall}
+          onTabChange={onTabChange}
         />
       );
   }

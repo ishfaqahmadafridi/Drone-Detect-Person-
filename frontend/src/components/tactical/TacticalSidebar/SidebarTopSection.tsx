@@ -2,36 +2,39 @@
 
 import React from "react";
 import { SidebarTopSectionProps } from "@/types";
-import { SidebarHeader } from "./SidebarHeader";
 import { SidebarPerspectiveToggle } from "./SidebarPerspectiveToggle";
 import { SidebarNavList } from "./SidebarNavList";
+import { ChevronRight } from "lucide-react";
+
 
 export const SidebarTopSection: React.FC<SidebarTopSectionProps> = ({
   isCollapsed,
   onToggleCollapse,
-  flightState,
-  isAirborne,
   viewMode = "aerial",
   onViewSelect,
   activeTab,
   onTabChange,
-  onOpenWall,
   threatLevel,
 }) => {
   return (
     <div className="flex flex-col min-w-0">
-      {/* 1. Header: Shield Icon, Title, and UAV/Camera Link Status */}
-      <SidebarHeader
-        isCollapsed={isCollapsed}
-        onToggleCollapse={onToggleCollapse}
-        flightState={flightState}
-        isAirborne={isAirborne}
-        viewMode={viewMode}
-      />
+      {/* 1. Collapse toggle button when collapsed */}
+      {isCollapsed && (
+        <div className="p-2 border-b border-slate-800 flex justify-center">
+          <button
+            onClick={onToggleCollapse}
+            className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            title="Expand Sidebar"
+            aria-label="Expand Sidebar"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* 2. Surveillance Vision Perspective Switcher */}
       {onViewSelect && (
-        <div className="px-2 pt-1 pb-2 border-b border-slate-800/80">
+        <div className="border-b border-slate-800/80">
           <SidebarPerspectiveToggle
             viewMode={viewMode}
             onViewSelect={onViewSelect}
@@ -45,7 +48,6 @@ export const SidebarTopSection: React.FC<SidebarTopSectionProps> = ({
         activeTab={activeTab}
         onTabChange={onTabChange}
         isCollapsed={isCollapsed}
-        onOpenWall={onOpenWall}
         threatLevel={threatLevel}
       />
     </div>

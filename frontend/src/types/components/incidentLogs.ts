@@ -13,3 +13,8 @@ export interface IncidentHeaderProps {
 export interface IncidentItemProps {
   alert: IncidentAlert;
 }
+
+export interface RecentIncidentsTableProps {
+  onViewAll?: () => void;
+  onOpenEvidence?: (incidentId?: string) => void;
+}

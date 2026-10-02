@@ -15,21 +15,23 @@ export const StreamRtspForm: React.FC<StreamRtspFormProps> = ({
   if (!show) return null;
 
   return (
-    <form onSubmit={onRtspSubmit} className="flex items-center gap-2">
+    <form onSubmit={onRtspSubmit} className="flex items-center gap-2 select-none">
       <input
         type="text"
         placeholder={placeholder}
         value={rtspInput}
         onChange={(e) => onRtspInputChange(e.target.value)}
-        className="bg-slate-900 border border-slate-700 text-white px-2 py-1 rounded text-xs font-mono-code w-64 focus:border-cyan-400 outline-none"
+        className="bg-slate-900 border border-slate-700 text-white px-3 py-1.5 rounded-lg text-xs font-mono-code w-72 focus:border-blue-500 outline-none"
       />
       <button
         type="submit"
         disabled={isConnectingRtsp}
-        className="bg-cyan-400 text-black px-2.5 py-1 rounded text-xs font-bold font-display hover:bg-cyan-300 transition-colors"
+        className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
       >
         {isConnectingRtsp ? "Connecting..." : buttonLabel}
       </button>
     </form>
   );
 };
+
+export default StreamRtspForm;

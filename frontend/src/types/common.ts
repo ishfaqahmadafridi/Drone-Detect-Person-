@@ -4,7 +4,7 @@
 
 export type ThreatLevel = "CLEAR" | "MONITORING" | "MULTI_PERSON" | "INTRUSION" | "MANUAL";
 export type StreamSourceType = "synthetic" | "webcam" | "file" | "rtsp";
-export type TacticalNavTab = "airspace" | "cameras" | "incidents" | "geofence" | "settings" | "recordings";
+export type TacticalNavTab = "airspace" | "cameras" | "incidents" | "recordings" | "settings";
 export type TrackingMode = "auto" | "manual";
 
 export interface Detection {

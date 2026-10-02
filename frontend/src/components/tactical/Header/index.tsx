@@ -16,14 +16,16 @@ export const Header: React.FC<HeaderProps> = ({
   const activeViewMode = propViewMode || hookViewMode || "aerial";
 
   return (
-    <header className="glass-panel-elevated rounded-xl p-3 px-5 flex flex-wrap items-center justify-between gap-4 border border-cyan-500/20">
+    <header className="h-14 border-b border-slate-800/80 bg-[#0B0E14] px-6 flex items-center justify-between z-30 shrink-0 select-none">
       <BrandCluster isConnected={isConnected} />
-      <ThreatRibbon threatLevel={threatLevel} alertMsg={alertMsg} />
-      <HeaderActions
-        onRefresh={onRefresh}
-        avionics={avionics}
-        viewMode={activeViewMode}
-      />
+      <div className="flex items-center gap-3">
+        <ThreatRibbon threatLevel={threatLevel} alertMsg={alertMsg} />
+        <HeaderActions
+          onRefresh={onRefresh}
+          avionics={avionics}
+          viewMode={activeViewMode}
+        />
+      </div>
     </header>
   );
 };

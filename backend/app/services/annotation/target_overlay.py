@@ -29,6 +29,7 @@ def draw_detections_and_trails(
     if cv2 is None or not detected_persons:
         return
 
+    h, w = annotated.shape[:2]
     intruder_ids = {p['id'] for p in intruders}
     clustered_ids_set = set(clustered_ids)
     total_people = len(detected_persons)
@@ -78,21 +79,29 @@ def draw_detections_and_trails(
                 lineType=theme.LINE_TYPE
             )
             tag_size = cv2.getTextSize(tag, theme.FONT_FACE, theme.FONT_SCALE_BODY, 1)[0]
-            tag_y = max(y1 - 5, tag_size[1] + 5)
-            cv2.rectangle(
-                annotated,
-                (x1, tag_y - tag_size[1] - 4),
-                (x1 + tag_size[0] + 8, tag_y + 4),
-                box_color,
-                -1
-            )
+            tag_y = max(y1 - 6, tag_size[1] + 6)
+            chip_x1 = max(0, x1)
+            chip_y1 = max(0, tag_y - tag_size[1] - 4)
+            chip_x2 = min(w - 1, x1 + tag_size[0] + 12)
+            chip_y2 = min(h - 1, tag_y + 4)
+
+            # Draw semi-transparent dark backdrop to preserve visibility of targets
+            chip_roi = annotated[chip_y1:chip_y2, chip_x1:chip_x2]
+            if chip_roi.size > 0:
+                dark_bg = np.full_like(chip_roi, (12, 16, 22))
+                cv2.addWeighted(dark_bg, 0.85, chip_roi, 0.15, 0, chip_roi)
+                # Left accent status color
+                cv2.rectangle(annotated, (chip_x1, chip_y1), (min(chip_x1 + 3, chip_x2), chip_y2), box_color, -1)
+                # Subtle border around chip
+                cv2.rectangle(annotated, (chip_x1, chip_y1), (chip_x2, chip_y2), box_color, 1, lineType=theme.LINE_TYPE)
+
             cv2.putText(
                 annotated,
                 tag,
-                (x1 + 4, tag_y),
+                (chip_x1 + 7, tag_y),
                 theme.FONT_FACE,
                 theme.FONT_SCALE_BODY,
-                theme.COLOR_TEXT_BLACK,
+                theme.COLOR_TEXT_WHITE,
                 1,
                 theme.LINE_TYPE
             )

@@ -59,3 +59,39 @@ export interface FlightActionGridProps {
   isCommandPending: boolean;
   onCommand: (action: string) => void;
 }
+
+export interface DeviceDeckCardProps {
+  avionics?: DroneAvionics;
+  flightState: string;
+  altitude: number;
+  batteryPercent: number;
+  isCommandPending: boolean;
+  onCommand: (action: string) => void;
+  viewMode?: "aerial" | "ground";
+  onToggleTuning?: () => void;
+  isTuningOpen?: boolean;
+}
+
+export interface DeviceDeckHeaderProps {
+  viewMode?: "aerial" | "ground";
+}
+
+export interface DeviceDeckGridProps {
+  altitude: number;
+  altitudeM?: number;
+  groundSpeedMs?: number;
+  compassHeadingDeg?: number;
+  gpsSats?: number;
+  batteryPercent?: number;
+  latencyMs?: number;
+  viewMode?: "aerial" | "ground";
+}
+
+export interface DeviceDeckActionsProps {
+  flightState: string;
+  isCommandPending: boolean;
+  onCommand: (action: string) => void;
+  viewMode?: "aerial" | "ground";
+}
+
+
