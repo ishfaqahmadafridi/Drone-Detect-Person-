@@ -1,13 +1,17 @@
 import { useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setIsEditingZone } from "@/store/slices/uiSlice";
-import { setTrackingMode, setSelectedTargetIds } from "@/store/slices/telemetrySlice";
+import {
+  setTrackingMode,
+  setSelectedTargetIds,
+  setViewportLayout,
+} from "@/store/slices/telemetrySlice";
 import { useConfigMutation } from "@/services/queries/useConfigMutation";
 import { useStreamMutation } from "@/services/queries/useStreamMutation";
 import { trackingApi } from "@/services/api/trackingApi";
 import { useFullscreen } from "./useFullscreen";
 import { useZoneCanvas } from "./useZoneCanvas";
-import { StreamSourceType, TrackingMode } from "@/types";
+import { StreamSourceType, TrackingMode, ViewportLayoutMode } from "@/types";
 
 export function useVideoViewport() {
   const dispatch = useAppDispatch();
@@ -19,6 +23,7 @@ export function useVideoViewport() {
     tracking_mode,
     selected_target_ids,
     detections,
+    viewport_layout,
   } = useAppSelector((state) => state.telemetry);
   const { isEditingZone } = useAppSelector((state) => state.ui);
 
@@ -164,6 +169,10 @@ export function useVideoViewport() {
     }
   };
 
+  const handleLayoutChange = (layout: ViewportLayoutMode) => {
+    dispatch(setViewportLayout(layout));
+  };
+
   return {
     sourceType: source_type,
     fps,
@@ -197,5 +206,7 @@ export function useVideoViewport() {
     handleTrackingModeChange,
     handleClearSelectedTargets,
     handleSelectTargetAt,
+    viewportLayout: viewport_layout || "single",
+    handleLayoutChange,
   };
 }

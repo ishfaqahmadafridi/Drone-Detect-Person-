@@ -3,15 +3,158 @@ import { StreamSourceType } from "../index";
 // ==========================================
 // 9. Camera Wall & Ground Uplink Wizard Props
 // ==========================================
+export interface TacticalCameraChannel {
+  id: string;
+  channelNum: string;
+  name: string;
+  location: string;
+  deviceType: "drone_uav" | "poe_cctv" | "wifi_cctv" | "mobile_phone";
+  viewMode: "aerial" | "ground";
+  sourceType: StreamSourceType;
+  streamUrl?: string;
+  ipAddress?: string;
+  status: "ONLINE" | "STANDBY" | "CONNECTING" | "OFFLINE";
+  resolution?: string;
+}
+
 export interface CameraWallModalProps {
   isOpen: boolean;
   activeSource: string;
+  activeCameraId?: string;
+  connectedCameraIds?: string[];
   onClose: () => void;
-  onSelectFeed: (feedType: StreamSourceType, viewMode: "aerial" | "ground") => void;
+  onSelectFeed: (
+    feedType: StreamSourceType,
+    viewMode: "aerial" | "ground",
+    channel?: TacticalCameraChannel
+  ) => void;
+  onToggleConnectCamera?: (cameraId: string) => void;
+  onConnectAll?: () => void;
+  onConnectRtsp?: (url: string) => void;
+  onSetLayout?: (layout: "single" | "dual" | "quad") => void;
+}
+
+export interface UseCameraWallModalProps {
+  onSetLayout?: (layout: "single" | "dual" | "quad") => void;
+  onClose: () => void;
   onConnectRtsp?: (url: string) => void;
 }
 
+export interface UseCameraWallModalReturn {
+  isWizardOpen: boolean;
+  setIsWizardOpen: (open: boolean) => void;
+  handleLaunchSplit: (mode: "dual" | "quad") => void;
+  handleConnectWizard: (url: string) => void;
+}
+
+export interface UseMobileGroundFeedProps {
+  onConnectRtsp?: (url: string) => void;
+  onSelectFeed?: (feedType: StreamSourceType, viewMode: "aerial" | "ground") => void;
+}
+
+export interface UseMobileGroundFeedReturn {
+  isModalOpen: boolean;
+  setIsModalOpen: (open: boolean) => void;
+  handleConnect: (url: string) => void;
+  handlePromote: () => void;
+}
+
+export interface CameraWallModalDialogProps {
+  onClose: () => void;
+  connectedCount: number;
+  totalCount: number;
+  onConnectAll?: () => void;
+  onLaunchSplit: (mode: "dual" | "quad") => void;
+  activeSource: string;
+  activeCameraId?: string;
+  connectedCameraIds: string[];
+  onSelectFeed: (
+    feedType: StreamSourceType,
+    viewMode: "aerial" | "ground",
+    channel?: TacticalCameraChannel
+  ) => void;
+  onToggleConnectCamera?: (cameraId: string) => void;
+  onOpenWizard: () => void;
+}
+
+export interface CameraWallGridProps {
+  activeSource: string;
+  activeCameraId?: string;
+  connectedCameraIds: string[];
+  onSelectFeed: (
+    feedType: StreamSourceType,
+    viewMode: "aerial" | "ground",
+    channel?: TacticalCameraChannel
+  ) => void;
+  onToggleConnectCamera?: (cameraId: string) => void;
+  onLaunchSplit?: (mode: "dual" | "quad") => void;
+  onOpenWizard: () => void;
+}
+
+export interface AddSensorCardProps {
+  onClick: () => void;
+}
+
+export interface CameraWallCardProps {
+  channel: TacticalCameraChannel;
+  isActive: boolean;
+  isConnected: boolean;
+  onToggleConnect: () => void;
+  onSelect: () => void;
+  onLaunchSplit?: (mode: "dual" | "quad") => void;
+}
+
+export interface CameraCardHeaderProps {
+  channel: TacticalCameraChannel;
+  isActive: boolean;
+  isConnected: boolean;
+}
+
+export interface CameraCardLocationSpecsProps {
+  channel: TacticalCameraChannel;
+}
+
+export interface CameraCardActionsProps {
+  isActive: boolean;
+  isConnected: boolean;
+  onSelect: () => void;
+  onToggleConnect: () => void;
+}
+
+export interface TacticalCameraFeedPreviewProps {
+  channel: TacticalCameraChannel;
+  isActive: boolean;
+  className?: string;
+  onSelect?: () => void;
+}
+
+export interface UseProceduralFeedCanvasProps {
+  canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  viewMode: "aerial" | "ground";
+  isActive: boolean;
+  channelNum?: string;
+}
+
 export interface CameraWallHeaderProps {
+  onClose: () => void;
+  connectedCount?: number;
+  totalCount?: number;
+  onConnectAll?: () => void;
+  onLaunchSplit?: (mode: "dual" | "quad") => void;
+}
+
+export interface HeaderTitleClusterProps {
+  className?: string;
+}
+
+export interface HeaderConnectionBadgeProps {
+  connectedCount: number;
+  totalCount: number;
+}
+
+export interface HeaderActionControlsProps {
+  onConnectAll?: () => void;
+  onLaunchSplit?: (mode: "dual" | "quad") => void;
   onClose: () => void;
 }
 

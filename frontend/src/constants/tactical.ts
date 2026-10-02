@@ -1,4 +1,4 @@
-import { ThreatLevel } from "@/types";
+import { ThreatLevel, TacticalCameraChannel, ViewportLayoutOption, ClassificationLegendItem } from "@/types";
 
 export const THREAT_RIBBON_STYLES: Record<ThreatLevel, string> = {
   INTRUSION: "bg-red-950/30 border-red-500/50 text-red-300",
@@ -73,5 +73,131 @@ export const DEFAULT_AERIAL_MODEL_NAME = "visdrone_person_best.pt";
 export const DEFAULT_GROUND_MODEL_NAME = "mot20_yolo26s_pedestrian.pt";
 export const DEFAULT_AERIAL_ENGINE = "YOLO11n + BoT-SORT";
 export const DEFAULT_GROUND_ENGINE = "YOLO26s + ByteTrack";
+
+export const DEFAULT_TACTICAL_CAMERAS: readonly TacticalCameraChannel[] = [
+  {
+    id: "CAM-01",
+    channelNum: "CH-01",
+    name: "UAV-01 Aerial Gimbal",
+    location: "North Airspace - Sector 04",
+    deviceType: "drone_uav",
+    viewMode: "aerial",
+    sourceType: "synthetic",
+    status: "ONLINE",
+    resolution: "1080p FHD @ 25 FPS",
+    ipAddress: "10.10.10.1 (Avionics Link)",
+  },
+  {
+    id: "CAM-02",
+    channelNum: "CH-02",
+    name: "Gate 01 Perimeter CCTV",
+    location: "North Perimeter - Gate 01",
+    deviceType: "poe_cctv",
+    viewMode: "ground",
+    sourceType: "rtsp",
+    streamUrl: "rtsp://192.168.1.100:554/live",
+    status: "ONLINE",
+    resolution: "1080p FHD @ 25 FPS",
+    ipAddress: "192.168.1.100:554",
+  },
+  {
+    id: "CAM-03",
+    channelNum: "CH-03",
+    name: "East Perimeter Fence CCTV",
+    location: "Perimeter East - Fence Line",
+    deviceType: "poe_cctv",
+    viewMode: "ground",
+    sourceType: "rtsp",
+    streamUrl: "rtsp://192.168.1.101:554/live",
+    status: "STANDBY",
+    resolution: "1080p FHD @ 25 FPS",
+    ipAddress: "192.168.1.101:554",
+  },
+  {
+    id: "CAM-04",
+    channelNum: "CH-04",
+    name: "South Loading Dock CCTV",
+    location: "Loading Dock South - Post 07",
+    deviceType: "poe_cctv",
+    viewMode: "ground",
+    sourceType: "rtsp",
+    streamUrl: "rtsp://192.168.1.102:554/live",
+    status: "STANDBY",
+    resolution: "1080p FHD @ 25 FPS",
+    ipAddress: "192.168.1.102:554",
+  },
+  {
+    id: "CAM-05",
+    channelNum: "CH-05",
+    name: "Mobile Patrol Unit (Pixel 6A)",
+    location: "West Perimeter - Mobile Patrol",
+    deviceType: "mobile_phone",
+    viewMode: "ground",
+    sourceType: "rtsp",
+    streamUrl: "http://10.10.20.117:8080/video",
+    status: "STANDBY",
+    resolution: "1080p FHD @ 30 FPS",
+    ipAddress: "10.10.20.117:8080",
+  },
+] as const;
+
+export const DEFAULT_CONNECTED_CAMERA_IDS = ["CAM-01", "CAM-02"] as const;
+
+export const VIEWPORT_LAYOUT_OPTIONS: readonly ViewportLayoutOption[] = [
+  {
+    mode: "single",
+    label: "1-UP",
+    tooltip: "Single Sensor Focus (Maximized HUD)",
+  },
+  {
+    mode: "dual",
+    label: "2-UP",
+    tooltip: "Dual Split: Aerial Drone + Ground CCTV Live",
+  },
+  {
+    mode: "quad",
+    label: "4-UP",
+    tooltip: "Quad Grid: 4 Simultaneous Live Cameras",
+  },
+] as const;
+
+export const CLASSIFICATION_LEGEND_ITEMS: readonly ClassificationLegendItem[] = [
+  { label: "Safe", dotClass: "bg-emerald-400" },
+  { label: "Gathering", dotClass: "bg-amber-400" },
+  { label: "Intrusion", dotClass: "bg-red-400" },
+  { label: "Restricted zone", dotClass: "border border-blue-400" },
+] as const;
+
+export const TACTICAL_FEED_PREVIEW_TOKENS = {
+  canvasWidth: 320,
+  canvasHeight: 180,
+  gridSize: 24,
+  scanlineSpeed: 1.5,
+  cornerBracketLength: 10,
+  colors: {
+    background: "#030712",
+    grid: "rgba(30, 41, 59, 0.4)",
+    groundHorizon: "rgba(59, 130, 246, 0.25)",
+    groundWireframe: "rgba(71, 85, 105, 0.3)",
+    aerialRadar: "rgba(59, 130, 246, 0.25)",
+    scanline: "rgba(59, 130, 246, 0.35)",
+    brackets: "rgba(148, 163, 184, 0.6)",
+    timestamp: "rgba(226, 232, 240, 0.75)",
+    targetBox: "#10B981",
+    targetLabelBg: "rgba(16, 185, 129, 0.9)",
+    targetLabelText: "#000000",
+  },
+  typography: {
+    tagFont: "bold 8px monospace",
+    timestampFont: "9px monospace",
+  },
+  labels: {
+    liveAiDetect: "LIVE • AI DETECT",
+    feedReestablishing: "FEED RE-ESTABLISHING...",
+    liveCoverageSuffix: "LIVE COVERAGE",
+    promoteHint: "Promote to Tactical Viewport",
+    defaultFpsResolution: "1080p @ 25 FPS",
+  },
+} as const;
 
 

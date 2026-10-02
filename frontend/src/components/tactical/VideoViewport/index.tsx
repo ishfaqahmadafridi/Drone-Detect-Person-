@@ -35,16 +35,32 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
     handleTrackingModeChange,
     handleClearSelectedTargets,
     handleSelectTargetAt,
+    viewportLayout,
+    handleLayoutChange,
   } = useVideoViewport();
 
   return (
     <div className="rounded-xl overflow-hidden flex flex-col border border-slate-700/60 bg-[#0F141F] shadow-lg">
+      <ViewportHeader
+        sourceType={sourceType}
+        viewMode={viewMode}
+        trackingMode={trackingMode}
+        selectedCount={selectedCount}
+        layoutMode={viewportLayout}
+        onLayoutChange={handleLayoutChange}
+        onTrackingModeChange={handleTrackingModeChange}
+        onClearSelectedTargets={handleClearSelectedTargets}
+        onSnapshotTrigger={onSnapshotTrigger}
+        onToggleFullscreen={toggleFullscreen}
+      />
+
       <ViewportScreen
         containerRef={containerRef}
         canvasRef={canvasRef}
         streamKey={streamKey}
         fps={fps}
         trackingMode={trackingMode}
+        layoutMode={viewportLayout}
         onSelectTargetAt={handleSelectTargetAt}
         isEditingZone={isEditingZone}
         streamError={streamError}
@@ -75,6 +91,7 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger 
 export default VideoViewport;
 export * from "./ViewportHeader";
 export * from "./ViewportScreen";
+export * from "./ViewportSplitGrid";
 export * from "./ViewportStandbyLoader";
 export * from "./ViewportStreamFeed";
 export * from "./ViewportCanvasLayer";

@@ -2,52 +2,64 @@
 
 import React from "react";
 import { CameraWallModalProps } from "@/types";
-import { CameraWallHeader } from "./CameraWallHeader";
-import { AerialFeedCard } from "./AerialFeedCard";
-import { MobileGroundFeedCard } from "./MobileGroundFeedCard";
+import { CameraWallModalDialog } from "./dialog";
+import { GroundSensorModal } from "./wizard/GroundSensorModal";
+import { DEFAULT_TACTICAL_CAMERAS } from "@/constants/tactical";
+import { useCameraWallModal } from "@/hooks";
 
 export const CameraWallModal: React.FC<CameraWallModalProps> = ({
   isOpen,
   activeSource,
+  activeCameraId = "CAM-01",
+  connectedCameraIds = ["CAM-01", "CAM-02"],
   onClose,
   onSelectFeed,
+  onToggleConnectCamera,
+  onConnectAll,
   onConnectRtsp,
+  onSetLayout,
 }) => {
+  const {
+    isWizardOpen,
+    setIsWizardOpen,
+    handleLaunchSplit,
+    handleConnectWizard,
+  } = useCameraWallModal({ onSetLayout, onClose, onConnectRtsp });
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative bg-[#0F141F] max-w-4xl w-full rounded-2xl overflow-hidden border border-slate-700/80 flex flex-col max-h-[90vh] shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-        {/* 1. Modal Tactical Header */}
-        <CameraWallHeader onClose={onClose} />
+    <>
+      {/* 1. Tactical Camera Wall Matrix Dialog */}
+      <CameraWallModalDialog
+        onClose={onClose}
+        connectedCount={connectedCameraIds.length}
+        totalCount={DEFAULT_TACTICAL_CAMERAS.length}
+        onConnectAll={onConnectAll}
+        onLaunchSplit={handleLaunchSplit}
+        activeSource={activeSource}
+        activeCameraId={activeCameraId}
+        connectedCameraIds={connectedCameraIds}
+        onSelectFeed={onSelectFeed}
+        onToggleConnectCamera={onToggleConnectCamera}
+        onOpenWizard={() => setIsWizardOpen(true)}
+      />
 
-        {/* 2. Dual Perspective Tactical Matrix Grid */}
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5 overflow-y-auto">
-          {/* Channel 01: Aerial Drone Primary Gimbal */}
-          <AerialFeedCard
-            isActive={activeSource === "synthetic"}
-            onSelect={() => onSelectFeed("synthetic", "aerial")}
-          />
-
-          {/* Channel 02: Ground CCTV & Mobile Sensors */}
-          <MobileGroundFeedCard
-            isActive={activeSource === "rtsp"}
-            onConnectRtsp={onConnectRtsp}
-            onSelectFeed={onSelectFeed}
-          />
-        </div>
-      </div>
-    </div>
+      {/* 2. Standalone Ground Sensor Connection Wizard */}
+      <GroundSensorModal
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+        onConnect={handleConnectWizard}
+      />
+    </>
   );
 };
 
 export default CameraWallModal;
-export * from "./CameraWallHeader";
-export * from "./AerialFeedCard";
-export * from "./MobileGroundFeedCard";
-export * from "./MobileGroundCardHeader";
-export * from "./GroundActiveStreamState";
-export * from "./MobilePixelQuickConnect";
-export * from "./MobileCustomStreamForm";
+export * from "./dialog";
+export * from "./header";
+export * from "./card";
+export * from "./grid";
 export * from "./wizard/GroundSensorWizard";
 export * from "./wizard/GroundSensorModal";
+export * from "./legacy";

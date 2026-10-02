@@ -1,12 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  Header,
-  TacticalSidebar,
-  MissionCommandViewport,
-  CameraWallModal,
-} from "@/components/tactical";
+import { Header, TacticalWorkspace, TacticalOverlays } from "@/components/tactical";
 import { useDashboardOrchestrator } from "@/hooks";
 
 export default function DroneDashboardPage() {
@@ -14,7 +9,6 @@ export default function DroneDashboardPage() {
     activeTab,
     isSidebarCollapsed,
     toggleSidebar,
-
     handleManualRefresh,
     handleCaptureSnapshot,
     threatLevel,
@@ -37,48 +31,32 @@ export default function DroneDashboardPage() {
       />
 
       {/* 2. Workspace Body: Left Sidebar + Center Command Viewport */}
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        <TacticalSidebar
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={toggleSidebar}
-          onOpenWall={wall.openWall}
-
-          avionics={flight.avionics}
-          isMuted={isMuted}
-          onToggleMute={toggleMute}
-          threatLevel={threatLevel}
-          viewMode={viewMode}
-          onViewSelect={handleViewSelect}
-        />
-
-        <MissionCommandViewport
-          activeTab={activeTab}
-          avionics={flight.avionics}
-          flightState={flight.flightState}
-          altitude={flight.altitude}
-          batteryPercent={flight.batteryPercent}
-          isCommandPending={flight.isCommandPending}
-          onCommand={flight.handleCommand}
-          onConnectAirLink={flight.handleConnectDroneLink}
-          onOpenFlightDeck={flight.handleLaunchDroneFlight}
-          onRefresh={handleManualRefresh}
-          onSnapshotTrigger={handleCaptureSnapshot}
-          viewMode={viewMode}
-          onOpenWall={wall.openWall}
-          onTabChange={handleTabChange}
-        />
-      </div>
-
-      {/* 3. Multi-Sensor Camera Wall Modal */}
-      <CameraWallModal
-        isOpen={wall.isWallOpen}
-        activeSource={wall.activeSource}
-        onClose={wall.closeWall}
-        onSelectFeed={wall.selectFeed}
-        onConnectRtsp={wall.connectRtsp}
+      <TacticalWorkspace
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        isSidebarCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebar}
+        onOpenWall={wall.openWall}
+        avionics={flight.avionics}
+        isMuted={isMuted}
+        onToggleMute={toggleMute}
+        threatLevel={threatLevel}
+        viewMode={viewMode}
+        onViewSelect={handleViewSelect}
+        flightState={flight.flightState}
+        altitude={flight.altitude}
+        batteryPercent={flight.batteryPercent}
+        isCommandPending={flight.isCommandPending}
+        onCommand={flight.handleCommand}
+        onConnectAirLink={flight.handleConnectDroneLink}
+        onOpenFlightDeck={flight.handleLaunchDroneFlight}
+        onRefresh={handleManualRefresh}
+        onSnapshotTrigger={handleCaptureSnapshot}
       />
+
+      {/* 3. Tactical Modal & Multi-Camera Overlays */}
+      <TacticalOverlays wall={wall} />
     </div>
   );
 }
+

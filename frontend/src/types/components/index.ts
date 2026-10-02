@@ -15,3 +15,4 @@ export * from "./cameraWall";
 export * from "./tacticalSidebar";
 export * from "./views";
 export * from "./recordings";
+export * from "./dashboard";
