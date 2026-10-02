@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
+import { formatUtcTime } from "@/utils";
 
 export const useSystemClock = () => {
-  const [utcTime, setUtcTime] = useState<string>("");
+  const [utcTime, setUtcTime] = useState<string>(() => formatUtcTime());
 
   useEffect(() => {
     const updateClock = () => {
-      const now = new Date();
-      setUtcTime(now.toTimeString().split(" ")[0]);
+      setUtcTime(formatUtcTime());
     };
 
-    updateClock();
     const timer = setInterval(updateClock, 1000);
-
     return () => clearInterval(timer);
   }, []);
 
-  return { utcTime };
+  return { utcTime, timeStr: utcTime };
 };
+
+export default useSystemClock;

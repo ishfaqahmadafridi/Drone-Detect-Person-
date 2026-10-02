@@ -3,10 +3,22 @@ V1 API Router Aggregator.
 """
 
 from fastapi import APIRouter
-from app.api.v1.endpoints import stream, ws, config, alerts, snapshots, drone, recordings, evidence, tracking
+from app.api.v1.endpoints import (
+    stream,
+    ws,
+    config,
+    alerts,
+    snapshots,
+    drone,
+    recordings,
+    evidence,
+    tracking,
+    cameras,
+)
 
 api_router = APIRouter()
 
+api_router.include_router(cameras.router)
 api_router.include_router(stream.router, tags=["Stream & Video"])
 api_router.include_router(tracking.router, tags=["Targeting & Detection Mode"])
 api_router.include_router(drone.router, tags=["Drone Flight & Avionics"])

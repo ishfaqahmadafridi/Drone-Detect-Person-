@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { SidebarSystemHealthProps } from "@/types";
-import { useTelemetryMetrics } from "@/hooks";
+import { useTelemetryMetrics, useSystemClock } from "@/hooks";
 
 export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
   telemetryHz = 10,
@@ -11,23 +11,7 @@ export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
   isCollapsed = false,
 }) => {
   const { fps } = useTelemetryMetrics();
-  const [timeStr, setTimeStr] = useState<string>("15:24:06");
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTimeStr(
-        [
-          String(now.getUTCHours()).padStart(2, "0"),
-          String(now.getUTCMinutes()).padStart(2, "0"),
-          String(now.getUTCSeconds()).padStart(2, "0"),
-        ].join(":")
-      );
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const { utcTime } = useSystemClock();
 
   if (isCollapsed) {
     return (
@@ -39,7 +23,7 @@ export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
   }
 
   const displayFps = (inferenceFps ?? (fps > 0 ? fps : 29.8)).toFixed(1);
-  const displaySync = lastSync || timeStr;
+  const displaySync = lastSync || utcTime;
 
   return (
     <div className="p-4 border-t border-slate-700/60 bg-slate-900/30 select-none">

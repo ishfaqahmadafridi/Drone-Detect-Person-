@@ -13,3 +13,4 @@ export * from "./TacticalSidebar";
 export * from "./MissionCommandViewport";
 export * from "./RecordingsView";
 export * from "./views";
+export * from "./dashboard";

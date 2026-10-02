@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.router import api_router
+from app.api.v1.endpoints import ws
 from app.core.config import SNAPSHOTS_DIR, RECORDINGS_DIR
 
 app = FastAPI(
@@ -26,8 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount API v1 routes under /api prefix only
+# Mount API v1 routes under /api prefix and WebSocket at root & /api
 app.include_router(api_router, prefix="/api")
+app.include_router(ws.router)
 
 @app.get("/")
 def get_root():

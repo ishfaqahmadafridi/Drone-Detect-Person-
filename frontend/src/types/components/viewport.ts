@@ -1,5 +1,6 @@
 import { RefObject, FormEvent } from "react";
 import { StreamSourceType } from "../index";
+import { TacticalCameraChannel } from "./cameraWall";
 
 // ==========================================
 // 2. Video Viewport Component Props
@@ -8,17 +9,58 @@ export interface VideoViewportProps {
   onSnapshotTrigger?: () => void;
 }
 
+export type ViewportLayoutMode = "single" | "dual" | "quad";
+
+export interface ViewportSplitGridProps {
+  layoutMode: "dual" | "quad";
+  activeCameraId: string;
+  fps: number;
+  onSelectCamera: (channel: TacticalCameraChannel) => void;
+}
+
+export interface UseViewportSplitGridProps {
+  layoutMode: "dual" | "quad";
+  onSelectCamera: (channel: TacticalCameraChannel) => void;
+}
+
+export interface UseViewportSplitGridReturn {
+  channelsToDisplay: readonly TacticalCameraChannel[];
+  gridClass: string;
+  handlePromoteCamera: (channel: TacticalCameraChannel) => void;
+  handleDisconnectCamera: (cameraId: string) => void;
+}
+
+export interface ViewportLayoutOption {
+  mode: ViewportLayoutMode;
+  label: string;
+  tooltip: string;
+}
+
+export interface UseViewportScreenReturn {
+  zoomLevel: number;
+  isNightVision: boolean;
+  activeCameraId: string;
+  handleSelectCamera: (cam: TacticalCameraChannel) => void;
+}
+
 export interface ViewportHeaderProps {
   sourceType: string;
   viewMode?: "aerial" | "ground";
   trackingMode?: "auto" | "manual";
   selectedCount?: number;
+  layoutMode?: ViewportLayoutMode;
+  onLayoutChange?: (mode: ViewportLayoutMode) => void;
   onTrackingModeChange?: (mode: "auto" | "manual") => void;
   onClearSelectedTargets?: () => void;
   isEditingZone?: boolean;
   onToggleEditZone?: () => void;
   onSnapshotTrigger?: () => void;
   onToggleFullscreen: () => void;
+}
+
+export interface ViewportLayoutSelectorProps {
+  layoutMode: ViewportLayoutMode;
+  onLayoutChange: (mode: ViewportLayoutMode) => void;
 }
 
 export interface SensorTitleClusterProps {
@@ -51,6 +93,7 @@ export interface ViewportScreenProps {
   streamKey: number;
   fps: number;
   streamError: boolean;
+  layoutMode?: ViewportLayoutMode;
   onStreamLoad: () => void;
   onStreamError: () => void;
   trackingMode?: "auto" | "manual";
@@ -93,6 +136,23 @@ export interface ViewportTelemetryBadgesProps {
   latencyMs?: number;
   resolution?: string;
   engine?: string;
+}
+
+export interface SensorIdentityBadgeProps {
+  className?: string;
+}
+
+export interface StreamStatusBadgeProps {
+  className?: string;
+}
+
+export interface ClassificationLegendItem {
+  label: string;
+  dotClass: string;
+}
+
+export interface ClassificationLegendBadgeProps {
+  className?: string;
 }
 
 export interface ViewportHudOverlayProps {
