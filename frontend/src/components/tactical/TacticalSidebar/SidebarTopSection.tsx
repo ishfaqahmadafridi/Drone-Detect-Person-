@@ -23,7 +23,7 @@ export const SidebarTopSection: React.FC<SidebarTopSectionProps> = ({
         <div className="p-2 border-b border-slate-800 flex justify-center">
           <button
             onClick={onToggleCollapse}
-            className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer active:scale-95 transition-all"
             title="Expand Sidebar"
             aria-label="Expand Sidebar"
           >

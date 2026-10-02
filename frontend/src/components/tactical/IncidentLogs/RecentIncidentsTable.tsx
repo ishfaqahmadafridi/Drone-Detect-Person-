@@ -67,7 +67,7 @@ export const RecentIncidentsTable: React.FC<RecentIncidentsTableProps> = ({
         {onViewAll && (
           <button
             onClick={onViewAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 text-xs font-medium text-slate-200 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-xs font-medium text-slate-200 hover:text-white cursor-pointer transition-all duration-150 active:scale-[0.98]"
           >
             <span>View all incidents</span>
             <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
@@ -112,7 +112,7 @@ export const RecentIncidentsTable: React.FC<RecentIncidentsTableProps> = ({
                 <td className="py-3 text-right pr-2">
                   <button
                     onClick={() => onOpenEvidence?.(item.id)}
-                    className="px-3 py-1 rounded bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-xs font-medium text-slate-200 transition-colors"
+                    className="px-3 py-1 rounded-md bg-slate-800/80 hover:bg-blue-600/20 border border-slate-700 hover:border-blue-500/40 text-xs font-medium text-slate-200 hover:text-blue-300 cursor-pointer transition-all duration-150 active:scale-95"
                   >
                     Evidence
                   </button>

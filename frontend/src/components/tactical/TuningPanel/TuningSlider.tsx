@@ -23,7 +23,7 @@ export const TuningSlider: React.FC<TuningSliderProps> = ({
         <span className="text-[11px] font-mono-code text-slate-300">
           {label}
         </span>
-        <span className="font-mono-code text-xs font-bold text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30 shadow-[0_0_8px_rgba(0,242,254,0.1)]">
+        <span className="font-mono-code text-xs font-bold text-blue-300 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-500/30 shadow-[0_0_8px_rgba(59,130,246,0.1)]">
           {badgeValue}
         </span>
       </div>
@@ -34,7 +34,7 @@ export const TuningSlider: React.FC<TuningSliderProps> = ({
           onClick={decrement}
           disabled={value <= min}
           aria-label="Decrease value"
-          className="w-6 h-6 flex items-center justify-center rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-bold text-sm leading-none shrink-0"
+          className="w-6 h-6 flex items-center justify-center rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors font-bold text-sm leading-none shrink-0"
         >
           −
         </button>
@@ -46,7 +46,7 @@ export const TuningSlider: React.FC<TuningSliderProps> = ({
           step={step}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="flex-1 accent-cyan-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+          className="flex-1 accent-blue-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
         />
 
         <button
@@ -54,7 +54,7 @@ export const TuningSlider: React.FC<TuningSliderProps> = ({
           onClick={increment}
           disabled={value >= max}
           aria-label="Increase value"
-          className="w-6 h-6 flex items-center justify-center rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-bold text-sm leading-none shrink-0"
+          className="w-6 h-6 flex items-center justify-center rounded bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors font-bold text-sm leading-none shrink-0"
         >
           +
         </button>

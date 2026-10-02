@@ -14,11 +14,11 @@ export const TelemetryCardTile: React.FC<TelemetryCardTileProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`glass-panel p-4 rounded-xl border flex flex-col justify-between gap-3 select-none transition-all ${
+      className={`glass-panel p-4 rounded-xl border flex flex-col justify-between gap-3 select-none transition-all duration-150 ${
         isAlert
           ? "border-red-500/50 bg-red-950/20 shadow-sm"
           : "border-slate-800 hover:border-slate-700 bg-slate-900/60"
-      } ${onClick ? "cursor-pointer group" : ""}`}
+      } ${onClick ? "cursor-pointer group active:scale-[0.99] hover:bg-slate-900/90 hover:border-slate-600" : ""}`}
     >
       <div>
         <div className="text-xs font-medium text-slate-400 group-hover:text-slate-300 transition-colors">

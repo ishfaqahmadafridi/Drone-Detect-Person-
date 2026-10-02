@@ -16,8 +16,8 @@ export const TuningHeader: React.FC<TuningHeaderProps> = ({
       className="w-full flex items-center justify-between group cursor-pointer focus:outline-none"
     >
       <div className="flex items-center gap-2">
-        <Sliders className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
-        <h3 className="font-display font-bold text-xs uppercase tracking-wider text-white group-hover:text-cyan-300 transition-colors">
+        <Sliders className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
+        <h3 className="font-display font-bold text-xs uppercase tracking-wider text-white group-hover:text-blue-300 transition-colors">
           SURVEILLANCE PARAMETERS
         </h3>
       </div>
@@ -27,7 +27,7 @@ export const TuningHeader: React.FC<TuningHeaderProps> = ({
             <CheckCircle2 className="w-3.5 h-3.5" /> Updated
           </span>
         )}
-        <span className="text-[10px] font-mono-code text-slate-400 group-hover:text-cyan-400 flex items-center gap-1 transition-colors">
+        <span className="text-[10px] font-mono-code text-slate-400 group-hover:text-blue-400 flex items-center gap-1 transition-colors">
           {isOpen ? (
             <>
               <span>COLLAPSE</span>
@@ -35,8 +35,8 @@ export const TuningHeader: React.FC<TuningHeaderProps> = ({
             </>
           ) : (
             <>
-              <span className="text-cyan-400 font-semibold">&gt; CLICK TO OPEN</span>
-              <ChevronDown className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="text-blue-400 font-semibold">&gt; CLICK TO OPEN</span>
+              <ChevronDown className="w-3.5 h-3.5 text-blue-400" />
             </>
           )}
         </span>

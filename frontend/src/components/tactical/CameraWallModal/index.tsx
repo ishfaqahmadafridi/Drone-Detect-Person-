@@ -17,7 +17,7 @@ export const CameraWallModal: React.FC<CameraWallModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative glass-panel-elevated max-w-4xl w-full rounded-2xl overflow-hidden border border-cyan-500/30 flex flex-col max-h-[90vh] shadow-[0_0_40px_rgba(6,182,212,0.2)]">
+      <div className="relative bg-[#0F141F] max-w-4xl w-full rounded-2xl overflow-hidden border border-slate-700/80 flex flex-col max-h-[90vh] shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
         {/* 1. Modal Tactical Header */}
         <CameraWallHeader onClose={onClose} />
 

@@ -15,10 +15,10 @@ export const StreamZoomControls: React.FC<StreamZoomControlsProps> = ({
         <button
           key={zoom}
           onClick={() => onZoomChange(zoom)}
-          className={`px-2.5 py-1 rounded text-xs font-mono-code font-medium transition-colors ${
+          className={`px-2.5 py-1 rounded text-xs font-mono-code font-medium cursor-pointer transition-all duration-150 active:scale-95 ${
             zoomLevel === zoom
-              ? "bg-slate-800 text-white border border-slate-700 shadow-sm"
-              : "text-slate-400 hover:text-slate-200"
+              ? "bg-blue-600/25 text-white border border-blue-500/50 shadow-sm font-semibold"
+              : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/80"
           }`}
           title={`Set Optical Zoom to ${zoom}x`}
         >

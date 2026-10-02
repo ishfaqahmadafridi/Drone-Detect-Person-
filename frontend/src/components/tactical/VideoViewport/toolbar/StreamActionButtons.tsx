@@ -15,7 +15,7 @@ export const StreamActionButtons: React.FC<StreamActionButtonsProps> = ({
       {onSnapshotTrigger && (
         <button
           onClick={onSnapshotTrigger}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-medium transition-colors select-none"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:bg-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] select-none"
           title="Capture High-Resolution Forensic Snapshot"
         >
           <Camera className="w-3.5 h-3.5 text-slate-400" />
@@ -27,7 +27,7 @@ export const StreamActionButtons: React.FC<StreamActionButtonsProps> = ({
       {onOpenEvidence && (
         <button
           onClick={onOpenEvidence}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-medium transition-colors select-none"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:bg-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] select-none"
           title="View Evidence Captures"
         >
           <FolderArchive className="w-3.5 h-3.5 text-slate-400" />
@@ -39,7 +39,7 @@ export const StreamActionButtons: React.FC<StreamActionButtonsProps> = ({
       {onToggleFullscreen && (
         <button
           onClick={onToggleFullscreen}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors shadow-sm ml-auto select-none"
+          className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] shadow-sm ml-auto select-none"
           title="Toggle Fullscreen Optical Feed"
         >
           <Maximize2 className="w-3.5 h-3.5" />

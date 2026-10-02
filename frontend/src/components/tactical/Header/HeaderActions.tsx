@@ -15,7 +15,7 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({
       <button
         onClick={onRefresh}
         title="Refresh Telemetry Feed"
-        className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-slate-100 text-xs font-medium transition-colors"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98]"
       >
         <Activity className="w-3.5 h-3.5 text-blue-400" />
         <span>Telemetry</span>
@@ -24,7 +24,7 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({
       <button
         onClick={toggleMute}
         title={isMuted ? "Audio siren muted - click to enable" : "Audio siren active - click to mute"}
-        className="p-1.5 rounded-md border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+        className="p-1.5 rounded-md border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-400 hover:text-slate-100 cursor-pointer transition-all duration-150 active:scale-95"
       >
         {isMuted ? <VolumeX className="w-3.5 h-3.5 text-amber-400" /> : <Volume2 className="w-3.5 h-3.5 text-slate-300" />}
       </button>

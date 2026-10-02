@@ -14,10 +14,10 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   return (
     <button
       onClick={() => onSelect(item.id)}
-      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${
+      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] ${
         isActive
-          ? "bg-blue-600/20 text-white border border-blue-500/40 shadow-sm"
-          : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent"
+          ? "bg-blue-600/20 text-white border border-blue-500/50 shadow-sm font-semibold"
+          : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 border border-transparent hover:border-slate-800/80"
       } ${isCollapsed ? "justify-center px-0" : ""}`}
       title={item.label}
     >

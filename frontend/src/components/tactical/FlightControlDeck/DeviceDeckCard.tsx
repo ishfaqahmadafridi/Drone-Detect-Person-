@@ -16,6 +16,7 @@ export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
   onCommand,
   viewMode = "aerial",
   onToggleTuning,
+  isTuningOpen = false,
 }) => {
   return (
     <div className="glass-panel p-5 rounded-xl border border-slate-800 flex flex-col gap-5 select-none">
@@ -46,10 +47,14 @@ export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
       {onToggleTuning && (
         <button
           onClick={onToggleTuning}
-          className="flex items-center justify-between px-3.5 py-2.5 rounded-lg border border-slate-700/80 bg-slate-900/80 hover:bg-slate-800 text-xs font-medium text-slate-200 transition-colors"
+          className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg border text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] ${
+            isTuningOpen
+              ? "border-blue-500/50 bg-blue-600/20 text-white shadow-sm font-semibold"
+              : "border-slate-700/80 bg-slate-900/80 hover:bg-slate-800 hover:border-slate-600 text-slate-200 hover:text-white"
+          }`}
         >
           <span>Detection tuning</span>
-          <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400" />
+          <SlidersHorizontal className={`w-3.5 h-3.5 ${isTuningOpen ? "text-blue-400" : "text-slate-400"}`} />
         </button>
       )}
     </div>
