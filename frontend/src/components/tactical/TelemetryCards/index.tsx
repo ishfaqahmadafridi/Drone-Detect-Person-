@@ -36,7 +36,7 @@ export const TelemetryCards: React.FC<TelemetryCardsProps> = ({
       value: String(intrudersCount).padStart(2, "0"),
       subText: "Restricted zone",
       isAlert: intrudersCount > 0,
-      onClick: undefined,
+      onClick: () => setIsModalOpen(true),
     },
     {
       id: "gatherings",
@@ -44,7 +44,7 @@ export const TelemetryCards: React.FC<TelemetryCardsProps> = ({
       value: String(gatheringPairs).padStart(2, "0"),
       subText: "Group review",
       isAlert: gatheringPairs > 0,
-      onClick: undefined,
+      onClick: () => setIsModalOpen(true),
     },
     {
       id: "evidence",

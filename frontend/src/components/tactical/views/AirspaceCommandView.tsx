@@ -6,7 +6,6 @@ import { useAppSelector } from "@/store";
 import { VideoViewport } from "../VideoViewport";
 import { DeviceDeckCard } from "../FlightControlDeck";
 import { TelemetryCards } from "../TelemetryCards";
-import { RecentIncidentsTable } from "../IncidentLogs";
 import { TuningPanel } from "../TuningPanel";
 
 export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
@@ -29,7 +28,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   return (
     <div className="flex flex-col gap-4 min-w-0">
       {/* 1. Operations Header & Status Pill */}
-      <div className="flex items-center justify-between pb-1 select-none">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-800/80 select-none">
         <div>
           <div className="text-[10px] font-mono-code uppercase tracking-wider text-slate-400 font-semibold">
             OPERATIONS / SECTOR 04
@@ -44,10 +43,10 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
 
         <div className="flex items-center">
           <span
-            className={`px-3 py-1 rounded-md text-xs font-mono-code font-bold tracking-wider uppercase border ${
+            className={`px-3 py-1.5 rounded-md text-xs font-mono-code font-bold tracking-wider uppercase border shadow-sm ${
               isSimulation
-                ? "border-emerald-500/40 bg-emerald-950/20 text-emerald-400"
-                : "border-blue-500/40 bg-blue-950/20 text-blue-400"
+                ? "border-emerald-500/50 bg-emerald-950/30 text-emerald-400"
+                : "border-blue-500/50 bg-blue-950/30 text-blue-400"
             }`}
           >
             {isSimulation ? "SIMULATION" : "LIVE LINK"}
@@ -57,24 +56,13 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
 
       {/* 2. Operations Command Layout: Primary Feed Column + Right Device Deck */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] 2xl:grid-cols-[1fr_360px] gap-5 items-start">
-        {/* Left Column: Video Feed, 5-Metric Telemetry Cards, Event Stream Table */}
+        {/* Left Column: Video Feed, 5-Metric Telemetry Cards */}
         <div className="flex flex-col gap-4 min-w-0">
           {/* Primary Optical / Radar Viewport */}
           <VideoViewport onSnapshotTrigger={onSnapshotTrigger} />
 
           {/* 5-Metric Telemetry Cards in a single row */}
           <TelemetryCards viewMode={activeViewMode} layout="horizontal" />
-
-          {/* Recent Incidents Forensic Table */}
-          <RecentIncidentsTable
-            onViewAll={() => onTabChange?.("incidents")}
-            onOpenEvidence={() => onTabChange?.("recordings")}
-          />
-
-          {/* Operational Advisory Note */}
-          <div className="text-[11px] font-mono-code text-slate-400 px-1 py-1 select-none">
-            Simulation mode • Evidence is locally retained • Operator session active
-          </div>
         </div>
 
         {/* Right Column: Device Deck (Flight Telemetry, Directives Grid & Calibration) */}
