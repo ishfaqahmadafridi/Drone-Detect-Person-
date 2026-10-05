@@ -1,100 +1,75 @@
-import { useState } from "react";
+﻿import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useStreamMutation } from "@/services/queries/useStreamMutation";
 import { useAppDispatch, useAppSelector } from "@/store";
-import {
-  setActiveCamera,
-  setViewportLayout,
-  toggleConnectCamera,
-  connectAllCameras,
-} from "@/store/slices/telemetrySlice";
+import { setActiveCamera, toggleConnectCamera, setConnectedCameras, setViewportLayout } from "@/store/slices/telemetrySlice";
+import { setSuspectPortraits } from "@/store/slices/uiSlice";
 import { cameraApi } from "@/services/api/cameraApi";
-import { StreamSourceType, TacticalCameraChannel } from "@/types";
+import { streamApi } from "@/services/api/streamApi";
+import { useCameraFleet, CAMERA_FLEET_QUERY_KEY } from "./useCameraFleet";
+import type { StreamSourceType, TacticalCameraChannel } from "@/types";
 
 export function useCameraWall() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
-  const { source_type, active_camera_id, connected_camera_ids } = useAppSelector(
-    (state) => state.telemetry
-  );
-  const { switchSource, switchView } = useStreamMutation();
+  const queryClient = useQueryClient();
+  const { cameras } = useCameraFleet();
+  const { source_type, active_camera_id, connected_camera_ids, view_mode, primary_camera_ids } = useAppSelector(state => state.telemetry);
+  const { switchView } = useStreamMutation();
 
-  const openWall = () => setIsOpen(true);
-  const closeWall = () => setIsOpen(false);
-
-  const setLayout = (mode: "single" | "dual" | "quad") => {
-    dispatch(setViewportLayout(mode));
-  };
-
-  const toggleConnect = (cameraId: string) => {
-    dispatch(toggleConnectCamera(cameraId));
+  const toggleConnect = async (cameraId: string) => {
+    if (connected_camera_ids.includes(cameraId)) {
+      if (cameraId === active_camera_id) {
+        const replacement = cameras.find(camera => camera.viewMode === view_mode && camera.id !== cameraId && connected_camera_ids.includes(camera.id));
+        if (!replacement) return;
+        await selectFeed(replacement.sourceType, replacement.viewMode, replacement);
+      }
+      dispatch(toggleConnectCamera(cameraId));
+    } else {
+      dispatch(setConnectedCameras([...new Set([...connected_camera_ids, primary_camera_ids[view_mode === "ground" ? "ground" : "aerial"], cameraId])]));
+    }
+    dispatch(setViewportLayout("dual"));
   };
 
   const connectAll = () => {
-    dispatch(connectAllCameras());
+    dispatch(setConnectedCameras([...new Set([...connected_camera_ids, ...cameras.filter(camera => camera.viewMode === view_mode).map(camera => camera.id)])]));
+    dispatch(setViewportLayout("quad"));
   };
 
-  const selectFeed = async (
-    feedType: StreamSourceType,
-    viewMode: "aerial" | "ground",
-    channel?: TacticalCameraChannel
-  ) => {
-    if (channel) {
-      dispatch(
-        setActiveCamera({
-          id: channel.id,
-          name: channel.name,
-          location: channel.location,
-        })
-      );
-      // Synchronize with backend camera registry service
-      try {
-        await cameraApi.activateCamera(channel.id);
-      } catch {
-        // Fallback to direct stream switch if needed
-        await switchSource.mutateAsync({
-          sourceType: feedType,
-          sourcePath: channel.streamUrl,
-        });
-        await switchView.mutateAsync(viewMode);
-      }
+  const selectFeed = async (feedType: StreamSourceType, viewMode: "aerial" | "ground", camera?: TacticalCameraChannel) => {
+    if (camera) {
+      await streamApi.selectCamera(camera.id);
+      if (viewMode === "ground" && camera.id !== active_camera_id) dispatch(setSuspectPortraits([]));
+      dispatch(setActiveCamera(camera));
+      dispatch(setConnectedCameras([...new Set([...connected_camera_ids, primary_camera_ids[viewMode], camera.id])]));
+      dispatch(setViewportLayout("dual"));
     } else {
-      dispatch(
-        setActiveCamera(
-          viewMode === "aerial"
-            ? { id: "CAM-01", name: "UAV-01 Aerial Gimbal", location: "North Airspace - Sector 04" }
-            : { id: "CAM-02", name: "Gate 01 Perimeter CCTV", location: "North Perimeter - Gate 01" }
-        )
-      );
-      await switchSource.mutateAsync({ sourceType: feedType });
-      await switchView.mutateAsync(viewMode);
+      await streamApi.switchSource(feedType, undefined, viewMode);
+      if (viewMode === "ground") dispatch(setSuspectPortraits([]));
     }
-    setIsOpen(false);
-  };
-
-  const connectRtsp = async (rtspUrl: string, viewMode: "aerial" | "ground" = "ground") => {
-    dispatch(
-      setActiveCamera({
-        id: "CAM-02",
-        name: "Custom RTSP Sensor",
-        location: "Perimeter Stream Link",
-      })
-    );
-    await switchSource.mutateAsync({ sourceType: "rtsp", sourcePath: rtspUrl });
     await switchView.mutateAsync(viewMode);
     setIsOpen(false);
+  };
+
+  const connectRtsp = async (url: string, viewMode: "aerial" | "ground" = "ground") => {
+    const camera = await cameraApi.registerCamera({ name: `Ground camera ${cameras.filter(camera => camera.viewMode === "ground").length + 1}`,
+      location: "Ground perimeter", source_type: "rtsp", view_mode: viewMode, stream_url: url, device_type: "poe_cctv" });
+    await queryClient.invalidateQueries({ queryKey: CAMERA_FLEET_QUERY_KEY });
+    await selectFeed("rtsp", viewMode, camera);
+    dispatch(setViewportLayout("dual"));
   };
 
   return {
     isWallOpen: isOpen,
     activeSource: source_type,
     activeCameraId: active_camera_id,
-    connectedCameraIds: connected_camera_ids || ["CAM-01", "CAM-02"],
-    openWall,
-    closeWall,
+    connectedCameraIds: connected_camera_ids,
+    openWall: () => setIsOpen(true),
+    closeWall: () => setIsOpen(false),
     selectFeed,
     connectRtsp,
-    setLayout,
     toggleConnect,
     connectAll,
+    setLayout: (layout: "single" | "dual" | "quad") => dispatch(setViewportLayout(layout)),
   };
 }

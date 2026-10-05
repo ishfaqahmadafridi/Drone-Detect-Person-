@@ -1,5 +1,6 @@
 import { apiClient } from "./client";
-import { TacticalCameraChannel } from "@/types";
+import { TacticalCameraChannel, CameraWireModel } from "@/types";
+import { normalizeCamera } from "@/utils/cameraUtils";
 
 export interface CameraListResponse {
   cameras: TacticalCameraChannel[];
@@ -25,22 +26,22 @@ export interface CameraCreatePayload {
 
 export const cameraApi = {
   listCameras: async (): Promise<CameraListResponse> => {
-    const { data } = await apiClient.get<CameraListResponse>("/cameras");
-    return data;
+    const { data } = await apiClient.get<{ cameras: CameraWireModel[]; active_camera_id: string }>("/cameras");
+    return { ...data, cameras: data.cameras.map(normalizeCamera) };
   },
 
   getActiveCamera: async (): Promise<TacticalCameraChannel> => {
-    const { data } = await apiClient.get<TacticalCameraChannel>("/cameras/active");
-    return data;
+    const { data } = await apiClient.get<CameraWireModel>("/cameras/active");
+    return normalizeCamera(data);
   },
 
   activateCamera: async (cameraId: string): Promise<CameraSwitchResponse> => {
-    const { data } = await apiClient.post<CameraSwitchResponse>(`/cameras/${cameraId}/activate`);
-    return data;
+    const { data } = await apiClient.post<{ success: boolean; message: string; active_camera: CameraWireModel }>(`/cameras/${encodeURIComponent(cameraId)}/activate`);
+    return { ...data, active_camera: normalizeCamera(data.active_camera) };
   },
 
   registerCamera: async (payload: CameraCreatePayload): Promise<TacticalCameraChannel> => {
-    const { data } = await apiClient.post<TacticalCameraChannel>("/cameras", payload);
-    return data;
+    const { data } = await apiClient.post<CameraWireModel>("/cameras", payload);
+    return normalizeCamera(data);
   },
 };

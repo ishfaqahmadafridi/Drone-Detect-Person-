@@ -49,23 +49,17 @@ class PerspectiveController:
 
     def update_config(
         self,
-        multi_person_thresh: Optional[int] = None,
         conf_thresh: Optional[float] = None,
-        prox_dist: Optional[int] = None,
         zone_polygon: Optional[List[Tuple[float, float]]] = None
     ):
         """
         Applies dynamic surveillance tuning parameters across detection, zoning, and alerts.
         """
         self.pipeline_processor.update_config(
-            multi_person_thresh=multi_person_thresh,
             conf_thresh=conf_thresh,
-            prox_dist=prox_dist,
             zone_polygon=zone_polygon
         )
         self.telemetry_store.update(
-            multi_person_threshold=self.config.multi_person_threshold,
             confidence_threshold=self.config.confidence_threshold,
-            proximity_distance_px=self.config.proximity_alert_distance_px,
             zone_polygon=self.config.default_zone_normalized
         )

@@ -7,12 +7,8 @@ import { TuningSlider } from "./TuningSlider";
 
 export const TuningPanel: React.FC = () => {
   const {
-    multiThresh,
-    setMultiThresh,
     conf,
     setConf,
-    proxDist,
-    setProxDist,
     showSavedToast,
     isPending,
     handleSubmit,
@@ -34,14 +30,6 @@ export const TuningPanel: React.FC = () => {
       {/* Expandable Parameters Body */}
       {isOpen && (
         <form onSubmit={handleSubmit} className="px-4 pb-4 flex flex-col gap-3 pt-3">
-          <TuningSlider
-            label="Multi-Person Alert Trigger:"
-            badgeValue={`≥ ${multiThresh} People`}
-            min={1}
-            max={8}
-            value={multiThresh}
-            onChange={setMultiThresh}
-          />
 
           <TuningSlider
             label="Detection Confidence:"
@@ -53,15 +41,6 @@ export const TuningPanel: React.FC = () => {
             onChange={setConf}
           />
 
-          <TuningSlider
-            label="Gathering Proximity:"
-            badgeValue={`${proxDist} px`}
-            min={40}
-            max={260}
-            step={10}
-            value={proxDist}
-            onChange={setProxDist}
-          />
 
           <button
             type="submit"

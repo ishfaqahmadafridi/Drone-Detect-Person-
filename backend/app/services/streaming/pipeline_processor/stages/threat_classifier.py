@@ -16,7 +16,6 @@ class PipelineThreatClassifier:
         alert_manager,
         detected_persons: List[Dict],
         intruders: List[Dict],
-        gatherings: List[Any],
         frame_idx: int,
         active_view: str = "aerial"
     ) -> Tuple[str, str, Dict[str, Any]]:
@@ -27,7 +26,6 @@ class PipelineThreatClassifier:
         threat_level, alert_msg, details = alert_manager.evaluate_state(
             detected_persons=detected_persons,
             intruders=intruders,
-            gatherings=gatherings,
             frame_idx=frame_idx,
             view_mode=active_view
         )

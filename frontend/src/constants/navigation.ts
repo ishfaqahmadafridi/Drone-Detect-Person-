@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 export const NAV_ITEMS: readonly NavItemConfig[] = [
-  { id: "airspace",   label: "Airspace Command",   icon: Radio    },
+  { id: "airspace",   label: "Aerial View",        icon: Radio    },
   { id: "cameras",    label: "Perimeter Cameras",  icon: Camera   },
   { id: "incidents",  label: "Incident Logs",      icon: FileText },
   { id: "recordings", label: "Recordings",         icon: Film     },

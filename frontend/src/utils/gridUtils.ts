@@ -1,13 +1,14 @@
 import { TacticalCameraChannel } from "@/types";
 
 export const getSplitGridLayoutClass = (channelCount: number): string => {
+  if (channelCount <= 1) return "grid grid-cols-1";
   if (channelCount === 2) {
     return "grid grid-cols-1 md:grid-cols-2";
   }
   if (channelCount === 3) {
     return "grid grid-cols-1 md:grid-cols-3";
   }
-  return "grid grid-cols-2 grid-rows-2";
+  return "grid grid-cols-1 md:grid-cols-2";
 };
 
 export const filterConnectedChannels = (

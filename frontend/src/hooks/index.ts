@@ -19,7 +19,7 @@ export * from "./useTacticalVideoPlayer";
 export * from "./useInferenceModel";
 export * from "./useActiveCamera";
 export * from "./useProceduralFeedCanvas";
-export * from "./useViewportSplitGrid";
 export * from "./useMobileGroundFeed";
 export * from "./useCameraWallModal";
 export * from "./useViewportScreen";
+export * from "./useViewportSplitGrid";

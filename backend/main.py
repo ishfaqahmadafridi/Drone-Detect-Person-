@@ -1,8 +1,9 @@
 """
-FastAPI Application Entrypoint for Drone Aerial Person & Multi-Person Intrusion Detection System.
+FastAPI Application Entrypoint for Drone Aerial Person Detection System.
 """
 
 import os
+from contextlib import asynccontextmanager
 from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,10 +12,18 @@ from fastapi.staticfiles import StaticFiles
 from app.api.v1.router import api_router
 from app.api.v1.endpoints import ws
 from app.core.config import SNAPSHOTS_DIR, RECORDINGS_DIR
+from app.services.reid.service import reid_service
+
+
+@asynccontextmanager
+async def lifespan(application):
+    yield
+    reid_service.close()
 
 app = FastAPI(
+    lifespan=lifespan,
     title="AERO-GUARD Aerial Vision API",
-    description="Decoupled Real-Time Aerial Person Detection, Multi-Person Gathering & Intrusion Monitoring Microservice",
+    description="Decoupled Real-Time Aerial Person Detection and Tracking Microservice",
     version="2.0.0"
 )
 

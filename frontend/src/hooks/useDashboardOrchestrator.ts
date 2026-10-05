@@ -11,15 +11,20 @@ import { useAudioAlert } from "./useAudioAlert";
 import { useAppSelector } from "@/store";
 import { useStreamMutation } from "@/services/queries/useStreamMutation";
 import { streamApi } from "@/services/api/streamApi";
+import { useAppDispatch } from "@/store";
+import { setActiveCamera, setViewportLayout } from "@/store/slices/telemetrySlice";
+import { useCameraFleet } from "./useCameraFleet";
 import { TacticalNavTab } from "@/types";
 
 
 export function useDashboardOrchestrator() {
   const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<TacticalNavTab>("airspace");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  const { view_mode } = useAppSelector((state) => state.telemetry);
+  const { view_mode, primary_camera_ids, connected_camera_ids } = useAppSelector((state) => state.telemetry);
+  const { cameras } = useCameraFleet();
   const { switchView } = useStreamMutation();
 
   const { threatLevel } = useTelemetryMetrics();
@@ -50,11 +55,18 @@ export function useDashboardOrchestrator() {
     setActiveTab(tab);
     if (tab === "cameras") {
       wall.openWall();
+    } else if (tab === "airspace") {
+      void handleViewSelect("aerial");
     }
   };
 
   const handleViewSelect = async (view: "aerial" | "ground") => {
     await switchView.mutateAsync(view);
+    const camera = cameras.find(camera => camera.id === primary_camera_ids[view]);
+    if (camera) dispatch(setActiveCamera(camera));
+    const count = cameras.filter(camera => camera.viewMode === view && connected_camera_ids.includes(camera.id)).length;
+    dispatch(setViewportLayout(count > 1 ? "dual" : "single"));
+    setActiveTab("airspace");
   };
 
 

@@ -11,7 +11,7 @@ def build_cli_parser() -> argparse.ArgumentParser:
     Constructs and returns the argparse parser for the CLI detection runner.
     """
     parser = argparse.ArgumentParser(
-        description="AERO-GUARD: Drone Person & Multi-Person Intrusion Detection CLI"
+        description="AERO-GUARD: Drone Person Detection CLI"
     )
     parser.add_argument(
         "--source", "-s",
@@ -30,18 +30,6 @@ def build_cli_parser() -> argparse.ArgumentParser:
         type=float,
         default=0.35,
         help="Detection confidence threshold"
-    )
-    parser.add_argument(
-        "--multi-thresh", "-t",
-        type=int,
-        default=2,
-        help="Multi-person alert trigger threshold (default: 2)"
-    )
-    parser.add_argument(
-        "--proximity-dist", "-p",
-        type=int,
-        default=120,
-        help="Proximity threshold in pixels"
     )
     parser.add_argument(
         "--save-video",

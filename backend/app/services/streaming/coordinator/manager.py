@@ -4,15 +4,16 @@ vision pipeline processing, target tracking modes, telemetry distribution, and M
 """
 
 from typing import List, Dict, Tuple, Optional, Generator
-from fastapi import WebSocket
+from fastapi import WebSocket, HTTPException
 
-from app.core.config import DetectionConfig, SYNTHETIC_VIDEO_PATH
+from app.core.config import DetectionConfig, SYNTHETIC_VIDEO_PATH, STREAM_ASYNC_PREVIEW
 from app.services.streaming.source_provider import StreamSourceProvider
 from app.services.streaming.mjpeg_broadcaster import MjpegBroadcaster
 from app.services.streaming.telemetry_state import TelemetryStateStore
 from app.services.streaming.pipeline_processor import VisionPipelineProcessor
 from app.services.streaming.coordinator_config import CoordinatorConfig
 from app.services.streaming.frame_streamer import FrameStreamer
+from app.services.streaming.preview_streamer import PreviewStreamer
 from app.services.streaming.coordinator.tracking_manager import TargetTrackingManager
 from app.services.streaming.coordinator.perspective_controller import PerspectiveController
 from app.services.streaming.coordinator.flight_controller import DroneFlightController
@@ -27,10 +28,11 @@ class StreamManagerService:
     def __init__(
         self,
         config: Optional[DetectionConfig] = None,
-        coordinator_config: Optional[CoordinatorConfig] = None
+        coordinator_config: Optional[CoordinatorConfig] = None,
+        isolated: bool = False
     ):
         self.coordinator_config = coordinator_config or CoordinatorConfig()
-        self.pipeline_processor = VisionPipelineProcessor(config)
+        self.pipeline_processor = VisionPipelineProcessor(config, isolated=isolated)
         self.source_provider = StreamSourceProvider(
             default_source_type="synthetic",
             default_path=SYNTHETIC_VIDEO_PATH
@@ -39,7 +41,8 @@ class StreamManagerService:
         self.broadcaster = MjpegBroadcaster(jpeg_quality=self.coordinator_config.jpeg_quality)
 
         # Dedicated Frame Streamer Pipeline
-        self.frame_streamer = FrameStreamer(
+        streamer_class = PreviewStreamer if STREAM_ASYNC_PREVIEW else FrameStreamer
+        self.frame_streamer = streamer_class(
             source_provider=self.source_provider,
             pipeline_processor=self.pipeline_processor,
             telemetry_store=self.telemetry_store,
@@ -115,22 +118,28 @@ class StreamManagerService:
     # -------------------------------------------------------------------------
 
     def set_view_mode(self, view_mode: str) -> str:
-        return self.perspective_controller.set_view_mode(view_mode)
+        if getattr(self, "fixed_view", view_mode) != view_mode:
+            raise HTTPException(409, "This channel has a fixed perspective.")
+        with self.frame_streamer.selection.lock, self.frame_streamer.source_lock:
+            self.frame_streamer.invalidate()
+            self.tracking_manager.set_tracking_mode("auto")
+            return self.perspective_controller.set_view_mode(view_mode)
 
     def set_source(self, source_type: str, source_path: Optional[str] = None, transport: str = "tcp"):
-        self.perspective_controller.set_source(source_type, source_path, transport=transport)
+        with self.frame_streamer.selection.lock, self.frame_streamer.source_lock:
+            self.frame_streamer.invalidate()
+            self.detector.reset_tracking()
+            self.tracking_manager.set_tracking_mode("auto")
+            self.telemetry_store.update(detections=[], video_finished=False)
+            self.perspective_controller.set_source(source_type, source_path, transport=transport)
 
     def update_config(
         self,
-        multi_person_thresh: Optional[int] = None,
         conf_thresh: Optional[float] = None,
-        prox_dist: Optional[int] = None,
         zone_polygon: Optional[List[Tuple[float, float]]] = None
     ):
         self.perspective_controller.update_config(
-            multi_person_thresh=multi_person_thresh,
             conf_thresh=conf_thresh,
-            prox_dist=prox_dist,
             zone_polygon=zone_polygon
         )
 
@@ -139,7 +148,14 @@ class StreamManagerService:
     # -------------------------------------------------------------------------
 
     def set_tracking_mode(self, mode: str, selected_ids: Optional[List[int]] = None) -> Dict:
-        return self.tracking_manager.set_tracking_mode(mode=mode, selected_ids=selected_ids)
+        with self.frame_streamer.selection.lock:
+            if mode == "manual" and self.config.view_mode != "ground":
+                raise HTTPException(409, "Manual suspect selection is ground-only.")
+            result = self.tracking_manager.set_tracking_mode(mode=mode, selected_ids=selected_ids)
+            callback = self.frame_streamer.selection.on_commit
+            if callback is not None:
+                callback(self.config.selected_target_ids)
+            return result
 
     def select_target(
         self,
@@ -147,10 +163,22 @@ class StreamManagerService:
         y: Optional[float] = None,
         target_id: Optional[int] = None
     ) -> Dict:
-        return self.tracking_manager.select_target(x=x, y=y, target_id=target_id)
+        with self.frame_streamer.selection.lock:
+            if self.config.view_mode != "ground":
+                raise HTTPException(409, "Manual suspect selection is ground-only.")
+            result = self.tracking_manager.select_target(x=x, y=y, target_id=target_id)
+            callback = self.frame_streamer.selection.on_commit
+            if callback is not None:
+                callback(self.config.selected_target_ids)
+            return result
 
     def clear_manual_targets(self) -> Dict:
-        return self.tracking_manager.clear_manual_targets()
+        with self.frame_streamer.selection.lock:
+            result = self.tracking_manager.clear_manual_targets()
+            callback = self.frame_streamer.selection.on_commit
+            if callback is not None:
+                callback([])
+            return result
 
     # -------------------------------------------------------------------------
     # Flight Directives & Frame Stream Generator

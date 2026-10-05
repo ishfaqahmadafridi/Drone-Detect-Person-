@@ -16,8 +16,8 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   isCommandPending,
   onCommand,
   avionics,
+  onOpenWall,
   viewMode: propViewMode,
-  onTabChange,
 }) => {
   const [isTuningOpen, setIsTuningOpen] = useState(false);
   const storeViewMode = useAppSelector((state) => state.telemetry.view_mode);
@@ -59,7 +59,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
         {/* Left Column: Video Feed, 5-Metric Telemetry Cards */}
         <div className="flex flex-col gap-4 min-w-0">
           {/* Primary Optical / Radar Viewport */}
-          <VideoViewport onSnapshotTrigger={onSnapshotTrigger} />
+          <VideoViewport onSnapshotTrigger={onSnapshotTrigger} onManageCameras={onOpenWall} />
 
           {/* 5-Metric Telemetry Cards in a single row */}
           <TelemetryCards viewMode={activeViewMode} layout="horizontal" />

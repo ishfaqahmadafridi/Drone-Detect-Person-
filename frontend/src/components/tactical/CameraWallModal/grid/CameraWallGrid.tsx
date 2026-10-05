@@ -2,12 +2,12 @@
 
 import React from "react";
 import { CameraWallGridProps } from "@/types";
-import { DEFAULT_TACTICAL_CAMERAS } from "@/constants/tactical";
+import { useCameraFleet } from "@/hooks/useCameraFleet";
+import { useAppSelector } from "@/store";
 import { CameraWallCard } from "../CameraWallCard";
 import { AddSensorCard } from "./AddSensorCard";
 
 export const CameraWallGrid: React.FC<CameraWallGridProps> = ({
-  activeSource,
   activeCameraId,
   connectedCameraIds,
   onSelectFeed,
@@ -15,12 +15,12 @@ export const CameraWallGrid: React.FC<CameraWallGridProps> = ({
   onLaunchSplit,
   onOpenWizard,
 }) => {
+  const { cameras } = useCameraFleet();
+  const viewMode = useAppSelector(state => state.telemetry.view_mode);
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto">
-      {DEFAULT_TACTICAL_CAMERAS.map((cam) => {
-        const isCamActive =
-          activeCameraId === cam.id ||
-          (activeSource === cam.sourceType && cam.deviceType === "drone_uav");
+      {cameras.filter(camera => camera.viewMode === viewMode).map((cam) => {
+        const isCamActive = activeCameraId === cam.id;
         const isCamConnected = connectedCameraIds.includes(cam.id);
 
         return (

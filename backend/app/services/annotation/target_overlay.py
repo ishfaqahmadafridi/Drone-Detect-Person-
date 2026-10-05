@@ -18,7 +18,6 @@ def draw_detections_and_trails(
     annotated: np.ndarray,
     detected_persons: List[Dict],
     intruders: List[Dict],
-    clustered_ids: List[int],
     track_history: Optional[Dict[int, List[Tuple[int, int]]]],
     config: DetectionConfig,
     theme: TacticalAnnotationTheme
@@ -30,35 +29,18 @@ def draw_detections_and_trails(
         return
 
     h, w = annotated.shape[:2]
-    intruder_ids = {p['id'] for p in intruders}
-    clustered_ids_set = set(clustered_ids)
-    total_people = len(detected_persons)
     is_manual = getattr(config, "tracking_mode", "auto") == "manual"
     selected_set = set(getattr(config, "selected_target_ids", []))
 
     for person in detected_persons:
         pid = person.get('id', -1)
-        # In Manual Mode: Only render bounding boxes and tags for user-selected/locked targets
-        if is_manual and pid not in selected_set:
-            continue
+        is_selected = is_manual and pid in selected_set
 
         x1, y1, x2, y2 = person['bbox']
         conf = person['conf']
-        is_intruder = pid in intruder_ids
-        is_clustered = pid in clustered_ids_set or (total_people >= config.multi_person_threshold)
 
-        if is_manual:
-            box_color = (40, 180, 240)  # Locked indicator
-            tag = f"Target {pid:02d} • Locked ({conf:.2f})"
-        elif is_intruder:
-            box_color = theme.COLOR_INTRUDER
-            tag = f"Alert {pid:02d} • Perimeter ({conf:.2f})"
-        elif is_clustered:
-            box_color = theme.COLOR_GATHERING
-            tag = f"Track {pid:02d} • Cluster ({conf:.2f})"
-        else:
-            box_color = theme.COLOR_SAFE
-            tag = f"Track {pid:02d} ({conf:.2f})"
+        box_color = theme.COLOR_LOCKED if is_selected else theme.COLOR_SAFE
+        tag = (f"Person #{pid} {conf:.0%}" if pid is not None else f"Person {conf:.0%} (pending ID)") + (" SELECTED" if is_selected else "")
 
         # Render motion trails
         if config.show_track_trails and track_history and pid in track_history:
@@ -104,14 +86,4 @@ def draw_detections_and_trails(
                 theme.COLOR_TEXT_WHITE,
                 1,
                 theme.LINE_TYPE
-            )
-
-            fx, fy = person['foot']
-            cv2.circle(
-                annotated,
-                (fx, fy),
-                theme.FOOT_POINT_RADIUS,
-                box_color,
-                -1,
-                lineType=theme.LINE_TYPE
             )

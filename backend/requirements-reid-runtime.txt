@@ -1,0 +1,5 @@
+# Model runtime versions exercised by the local CPU smoke test.
+# Install appropriate CPU/CUDA wheels for this pair before the application requirements.
+torch==2.13.0
+torchvision==0.29.0
+-r requirements-reid.txt

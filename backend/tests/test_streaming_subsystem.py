@@ -45,8 +45,7 @@ class TestStreamingSubsystem(unittest.TestCase):
 
     def test_stream_manager_service_facade(self):
         self.assertIsInstance(stream_service, StreamManagerService)
-        stream_service.update_config(multi_person_thresh=4, conf_thresh=0.5)
-        self.assertEqual(stream_service.config.multi_person_threshold, 4)
+        stream_service.update_config(conf_thresh=0.5)
         self.assertEqual(stream_service.config.confidence_threshold, 0.5)
 
 if __name__ == "__main__":

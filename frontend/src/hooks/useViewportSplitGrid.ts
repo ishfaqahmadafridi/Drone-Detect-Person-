@@ -4,26 +4,26 @@ import {
   UseViewportSplitGridReturn,
   TacticalCameraChannel,
 } from "@/types";
-import {
-  DEFAULT_TACTICAL_CAMERAS,
-  DEFAULT_CONNECTED_CAMERA_IDS,
-} from "@/constants/tactical";
-import { filterConnectedChannels, getSplitGridLayoutClass } from "@/utils";
+import { DEFAULT_CONNECTED_CAMERA_IDS } from "@/constants/tactical";
+import { getSplitGridLayoutClass } from "@/utils";
+import { useCameraFleet } from "./useCameraFleet";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { toggleConnectCamera } from "@/store/slices/telemetrySlice";
 
 export const useViewportSplitGrid = ({
-  layoutMode,
   onSelectCamera,
 }: UseViewportSplitGridProps): UseViewportSplitGridReturn => {
   const dispatch = useAppDispatch();
+  const { cameras } = useCameraFleet();
+  const viewMode = useAppSelector(state => state.telemetry.view_mode);
+  const activeId = useAppSelector(state => state.telemetry.active_camera_id);
   const connectedIds = useAppSelector(
     (state) => state.telemetry.connected_camera_ids || DEFAULT_CONNECTED_CAMERA_IDS
   );
 
   const channelsToDisplay = useMemo(
-    () => filterConnectedChannels(DEFAULT_TACTICAL_CAMERAS, connectedIds, layoutMode),
-    [connectedIds, layoutMode]
+    () => cameras.filter(camera => connectedIds.includes(camera.id) && camera.viewMode === viewMode),
+    [cameras, connectedIds, viewMode]
   );
 
   const gridClass = useMemo(
@@ -35,7 +35,12 @@ export const useViewportSplitGrid = ({
     onSelectCamera(channel);
   };
 
-  const handleDisconnectCamera = (cameraId: string) => {
+  const handleDisconnectCamera = async (cameraId: string) => {
+    if (cameraId === activeId) {
+      const replacement = channelsToDisplay.find(camera => camera.id !== cameraId);
+      if (!replacement) return;
+      await onSelectCamera(replacement);
+    }
     dispatch(toggleConnectCamera(cameraId));
   };
 

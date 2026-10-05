@@ -12,14 +12,12 @@ class CLIReporter:
     """
 
     @staticmethod
-    def print_header(source: str, model_name: str, confidence: float, multi_thresh: int, proximity_dist_px: int, headless: bool):
+    def print_header(source: str, model_name: str, confidence: float, headless: bool):
         print("=" * 70)
-        print("🚁 AERO-GUARD: DRONE PERSON & MULTI-PERSON INTRUSION DETECTION 🚁")
+        print("🚁 AERO-GUARD: DRONE PERSON DETECTION DETECTION 🚁")
         print("=" * 70)
         print(f"[CONFIG] Source: {source}")
         print(f"[CONFIG] Model: {model_name} (Confidence: {confidence:.2f})")
-        print(f"[CONFIG] Multi-Person Threshold: >= {multi_thresh} People")
-        print(f"[CONFIG] Proximity Gathering Distance: {proximity_dist_px} px")
         print(f"[CONFIG] Headless Mode: {headless}")
         print("-" * 70)
 

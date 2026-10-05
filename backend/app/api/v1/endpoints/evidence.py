@@ -15,7 +15,7 @@ router = APIRouter()
 def get_evidence(
     view: Optional[str] = Query(None, description="'aerial', 'ground', or 'all'"),
     media_type: Optional[str] = Query(None, description="'image', 'video', or 'all'"),
-    threat_level: Optional[str] = Query(None, description="'INTRUSION', 'MULTI_PERSON', 'CLEAR', etc."),
+    threat_level: Optional[str] = Query(None, description="'INTRUSION', 'MONITORING', 'CLEAR', etc."),
     limit: int = Query(60, ge=1, le=500),
     offset: int = Query(0, ge=0),
 ):

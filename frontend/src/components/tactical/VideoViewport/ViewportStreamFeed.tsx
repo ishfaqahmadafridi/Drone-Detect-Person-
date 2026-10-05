@@ -1,7 +1,8 @@
 import React from "react";
 import { ViewportStreamFeedProps } from "@/types";
-import { getVideoStreamUrl } from "@/constants/network";
+import { getChannelStreamUrl } from "@/constants/network";
 import { useAppSelector } from "@/store";
+import { useVideoStreamUrl } from "@/hooks/useVideoStreamUrl";
 
 export const ViewportStreamFeed: React.FC<ViewportStreamFeedProps> = ({
   streamKey,
@@ -10,13 +11,16 @@ export const ViewportStreamFeed: React.FC<ViewportStreamFeedProps> = ({
 }) => {
   const zoomLevel = useAppSelector((state) => state.telemetry.zoom_level ?? 1.0);
   const isNightVision = useAppSelector((state) => state.telemetry.is_night_vision ?? false);
+  const viewMode = useAppSelector((state) => state.telemetry.view_mode);
+  const cameraId = useAppSelector(state => state.telemetry.primary_camera_ids[viewMode === "ground" ? "ground" : "aerial"]);
+  const streamUrl = useVideoStreamUrl(getChannelStreamUrl(viewMode === "ground" ? "ground" : "aerial", streamKey, cameraId));
 
   return (
     <div className="w-full h-full overflow-hidden flex items-center justify-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        key={streamKey}
-        src={getVideoStreamUrl(streamKey)}
+        key={`${viewMode}:${cameraId}:${streamKey}`}
+        src={streamUrl}
         alt="Tactical Surveillance Video Stream"
         onLoad={onLoad}
         onError={onError}

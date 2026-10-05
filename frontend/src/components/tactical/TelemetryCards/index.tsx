@@ -14,7 +14,7 @@ export const TelemetryCards: React.FC<TelemetryCardsProps> = ({
   const {
     totalPersons,
     intrudersCount,
-    gatheringPairs,
+    fps,
     viewMode: hookViewMode,
   } = useTelemetryMetrics();
 
@@ -39,11 +39,11 @@ export const TelemetryCards: React.FC<TelemetryCardsProps> = ({
       onClick: () => setIsModalOpen(true),
     },
     {
-      id: "gatherings",
-      title: "Gathering Clusters",
-      value: String(gatheringPairs).padStart(2, "0"),
-      subText: "Group review",
-      isAlert: gatheringPairs > 0,
+      id: "processing",
+      title: "Processing FPS",
+      value: fps.toFixed(1),
+      subText: "Analyzed frames / second",
+      isAlert: false,
       onClick: () => setIsModalOpen(true),
     },
     {
@@ -56,9 +56,9 @@ export const TelemetryCards: React.FC<TelemetryCardsProps> = ({
     },
     {
       id: "latency",
-      title: "System Latency",
-      value: "48 ms",
-      subText: "Nominal range",
+      title: "Frame Interval",
+      value: fps > 0 ? `${Math.round(1000 / fps)} ms` : "--",
+      subText: "Measured processing interval",
       isAlert: false,
       onClick: undefined,
     },
@@ -99,6 +99,5 @@ export * from "./MetricTile";
 export * from "./TelemetryCardTile";
 export * from "./PersonsMetricCard";
 export * from "./IntrudersMetricCard";
-export * from "./GatheringsMetricCard";
 export * from "./SpeedMetricCard";
 export * from "./DetectedPersonsModal";

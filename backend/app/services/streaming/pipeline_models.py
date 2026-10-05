@@ -35,7 +35,6 @@ class PipelineResult:
                 "alert_msg": "FRAME DROP / STANDBY",
                 "total_persons": 0,
                 "intruders_count": 0,
-                "gathering_pairs": 0,
                 "fps": 0.0,
                 "frame_idx": 0,
                 "detections": [],

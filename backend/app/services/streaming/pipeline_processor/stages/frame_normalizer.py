@@ -4,6 +4,7 @@ Frame Normalizer Stage: Validates frame buffer integrity and normalizes color ch
 
 from typing import Optional, Tuple
 import numpy as np
+from app.core.config import PREVIEW_MAX_EDGE
 
 
 class FrameNormalizer:
@@ -30,4 +31,9 @@ class FrameNormalizer:
             frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
 
         h, w = frame.shape[:2]
+        if max(h, w) > PREVIEW_MAX_EDGE:
+            import cv2
+            scale = PREVIEW_MAX_EDGE / max(h, w)
+            frame = cv2.resize(frame, (round(w * scale), round(h * scale)), interpolation=cv2.INTER_AREA)
+            h, w = frame.shape[:2]
         return True, frame, h, w

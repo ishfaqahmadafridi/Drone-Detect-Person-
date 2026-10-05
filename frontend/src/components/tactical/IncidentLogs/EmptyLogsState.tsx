@@ -9,7 +9,7 @@ export const EmptyLogsState: React.FC = () => {
         AIRSPACE SECURE • NO INCIDENTS
       </span>
       <span className="text-[10px] text-slate-500 font-mono-code">
-        Intrusion and multi-person gathering alerts stream here live.
+        Restricted-zone intrusion events appear here.
       </span>
     </div>
   );

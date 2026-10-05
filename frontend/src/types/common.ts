@@ -2,7 +2,7 @@
 // Tactical Common & Detection Types
 // ==============================================================================
 
-export type ThreatLevel = "CLEAR" | "MONITORING" | "MULTI_PERSON" | "INTRUSION" | "MANUAL";
+export type ThreatLevel = "CLEAR" | "MONITORING" | "INTRUSION" | "MANUAL";
 export type StreamSourceType = "synthetic" | "webcam" | "file" | "rtsp";
 export type TacticalNavTab = "airspace" | "cameras" | "incidents" | "recordings" | "settings";
 export type TrackingMode = "auto" | "manual";

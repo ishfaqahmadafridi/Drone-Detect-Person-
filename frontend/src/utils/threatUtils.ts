@@ -7,12 +7,6 @@ export function isThreatDanger(threatLevel: ThreatLevel | string): boolean {
   return threatLevel === "INTRUSION";
 }
 
-/**
- * Checks if the threat level represents a multi-person gathering or warning.
- */
-export function isThreatWarning(threatLevel: ThreatLevel | string): boolean {
-  return threatLevel === "MULTI_PERSON";
-}
 
 /**
  * Checks if the threat level is monitoring or clear.
@@ -28,9 +22,6 @@ export function getThreatBadgeStyle(threatLevel: ThreatLevel | string): string {
   if (isThreatDanger(threatLevel)) {
     return "bg-red-500/10 text-red-400 border border-red-500/25";
   }
-  if (isThreatWarning(threatLevel)) {
-    return "bg-amber-500/10 text-amber-400 border border-amber-500/25";
-  }
   return "bg-blue-500/10 text-blue-400 border border-blue-500/25";
 }
 
@@ -41,8 +32,6 @@ export function getThreatRibbonStyle(threatLevel: ThreatLevel | string): string 
   switch (threatLevel) {
     case "INTRUSION":
       return "bg-red-950/30 border-red-500/50 text-red-300";
-    case "MULTI_PERSON":
-      return "bg-amber-950/30 border-amber-500/50 text-amber-300";
     case "MONITORING":
       return "bg-blue-950/30 border-blue-500/40 text-blue-300";
     case "MANUAL":

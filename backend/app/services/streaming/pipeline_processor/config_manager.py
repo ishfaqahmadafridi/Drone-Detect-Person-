@@ -36,22 +36,15 @@ class PipelineConfigManager:
 
     def update_config(
         self,
-        multi_person_thresh: Optional[int] = None,
         conf_thresh: Optional[float] = None,
-        prox_dist: Optional[int] = None,
         zone_polygon: Optional[List[Tuple[float, float]]] = None
     ) -> None:
         """
         Thread-safely applies dynamic thresholds and geofence boundary coordinates.
         """
         with self._lock:
-            if multi_person_thresh is not None:
-                self.config.multi_person_threshold = multi_person_thresh
-                self.alert_manager.multi_person_threshold = multi_person_thresh
             if conf_thresh is not None:
                 self.config.confidence_threshold = conf_thresh
-            if prox_dist is not None:
-                self.config.proximity_alert_distance_px = prox_dist
             if zone_polygon is not None:
                 if len(zone_polygon) >= MIN_ZONE_VERTICES:
                     self.config.default_zone_normalized = zone_polygon

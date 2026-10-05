@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TelemetryData, ThreatLevel } from "@/types";
+import { TelemetryData, ThreatLevel, ViewportLayoutMode } from "@/types";
 import { DEFAULT_AERIAL_MODEL_NAME, DEFAULT_AERIAL_ENGINE } from "@/constants/tactical";
 
 interface TelemetryState extends TelemetryData {
@@ -8,8 +8,9 @@ interface TelemetryState extends TelemetryData {
   active_camera_id: string;
   camera_name: string;
   camera_location: string;
-  viewport_layout: "single" | "dual" | "quad";
   connected_camera_ids: string[];
+  viewport_layout: ViewportLayoutMode;
+  primary_camera_ids: Record<"ground" | "aerial", string>;
 }
 
 const initialState: TelemetryState = {
@@ -17,7 +18,6 @@ const initialState: TelemetryState = {
   alert_msg: "AIRSPACE SECURE - INITIALIZING",
   total_persons: 0,
   intruders_count: 0,
-  gathering_pairs: 0,
   fps: 0,
   frame_idx: 0,
   timestamp: "",
@@ -26,9 +26,7 @@ const initialState: TelemetryState = {
   view_mode: "aerial",
   model_name: DEFAULT_AERIAL_MODEL_NAME,
   engine: DEFAULT_AERIAL_ENGINE,
-  multi_person_threshold: 2,
   confidence_threshold: 0.35,
-  proximity_distance_px: 120,
   zone_polygon: [],
   isConnected: false,
   lastUpdated: 0,
@@ -39,8 +37,9 @@ const initialState: TelemetryState = {
   active_camera_id: "CAM-01",
   camera_name: "UAV-01 Aerial Gimbal",
   camera_location: "North Airspace - Sector 04",
-  viewport_layout: "dual",
-  connected_camera_ids: ["CAM-01", "CAM-02"],
+  connected_camera_ids: ["CAM-01"],
+  viewport_layout: "single",
+  primary_camera_ids: { ground: "CAM-02", aerial: "CAM-01" },
 };
 
 export const telemetrySlice = createSlice({
@@ -59,11 +58,12 @@ export const telemetrySlice = createSlice({
     },
     setActiveCamera: (
       state,
-      action: PayloadAction<{ id: string; name: string; location: string }>
+      action: PayloadAction<{ id: string; name: string; location: string; viewMode?: "ground" | "aerial" }>
     ) => {
       state.active_camera_id = action.payload.id;
       state.camera_name = action.payload.name;
       state.camera_location = action.payload.location;
+      if (action.payload.viewMode) state.primary_camera_ids[action.payload.viewMode] = action.payload.id;
     },
     setTrackingMode: (state, action: PayloadAction<"auto" | "manual">) => {
       state.tracking_mode = action.payload;
@@ -77,9 +77,6 @@ export const telemetrySlice = createSlice({
     setZoomLevel: (state, action: PayloadAction<number>) => {
       state.zoom_level = action.payload;
     },
-    setViewportLayout: (state, action: PayloadAction<"single" | "dual" | "quad">) => {
-      state.viewport_layout = action.payload;
-    },
     toggleConnectCamera: (state, action: PayloadAction<string>) => {
       const camId = action.payload;
       if (state.connected_camera_ids.includes(camId)) {
@@ -92,27 +89,15 @@ export const telemetrySlice = createSlice({
       } else {
         state.connected_camera_ids.push(camId);
       }
-      if (state.connected_camera_ids.length === 1) {
-        state.viewport_layout = "single";
-      } else if (state.connected_camera_ids.length === 2) {
-        state.viewport_layout = "dual";
-      } else {
-        state.viewport_layout = "quad";
-      }
     },
     setConnectedCameras: (state, action: PayloadAction<string[]>) => {
       state.connected_camera_ids = action.payload;
-      if (action.payload.length === 1) {
-        state.viewport_layout = "single";
-      } else if (action.payload.length === 2) {
-        state.viewport_layout = "dual";
-      } else {
-        state.viewport_layout = "quad";
-      }
+    },
+    setViewportLayout: (state, action: PayloadAction<ViewportLayoutMode>) => {
+      state.viewport_layout = action.payload;
     },
     connectAllCameras: (state) => {
       state.connected_camera_ids = ["CAM-01", "CAM-02", "CAM-03", "CAM-04", "CAM-05"];
-      state.viewport_layout = "quad";
     },
     setNightVision: (state, action: PayloadAction<boolean>) => {
       state.is_night_vision = action.payload;
@@ -131,9 +116,9 @@ export const {
   setTrackingMode,
   setSelectedTargetIds,
   setZoomLevel,
-  setViewportLayout,
   toggleConnectCamera,
   setConnectedCameras,
+  setViewportLayout,
   connectAllCameras,
   setNightVision,
   toggleNightVision,

@@ -44,9 +44,6 @@ class PedestrianKinematicsConfig:
     min_speed: float = 1.8
     max_speed: float = 3.2
     vertical_drift_max: float = 0.3
-    gathering_start_frame: int = 60
-    gathering_end_frame: int = 280
-    gathering_speed: float = 2.2
     walk_cycle_increment: float = 0.22
     stride_amplitude: float = 18.0
     arm_swing_amplitude: float = 14.0

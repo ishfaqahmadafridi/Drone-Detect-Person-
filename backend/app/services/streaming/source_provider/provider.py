@@ -79,6 +79,22 @@ class StreamSourceProvider:
     def source_path(self) -> str:
         return self._state.source_path
 
+    @property
+    def source_identity(self):
+        """Detect fallback, reconnection and file looping before a tracker ID is reused."""
+        source = self._state.active_source
+        return (id(source), getattr(source, "playback_epoch", 0),
+                self._fallback_handler.using_fallback, self.source_type)
+
+    @property
+    def frame_source_type(self):
+        """Actual origin of the last frame, including transient simulation fallback."""
+        return "synthetic" if self._fallback_handler.using_fallback else self.source_type
+
+    @property
+    def video_finished(self):
+        return self.source_type == "file" and bool(getattr(self._state.active_source, "finished", False))
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
@@ -102,6 +118,12 @@ class StreamSourceProvider:
         Automatically falls back to simulation if hardware/network drops.
         """
         return self._fallback_handler.read_frame()
+
+    def pause_playback(self) -> None:
+        """Exclude selection/idle time from the uploaded video's playback clock."""
+        active = self._state.active_source
+        if active is not None and hasattr(active, "pause_playback"):
+            active.pause_playback()
 
     def close(self) -> None:
         """Release all capture handles cleanly."""

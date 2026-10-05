@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Dict, Any
 
-from app.core.config import BASE_DIR, ROOT_DIR, GROUND_MODEL_NAME, AERIAL_MODEL_NAME
+from app.core.config import BASE_DIR, ROOT_DIR, GROUND_MODEL_NAME, AERIAL_MODEL_NAME, AERIAL_DETECTION_PROFILE
 
 MODELS_DIR = Path(BASE_DIR) / "models"
 if not MODELS_DIR.exists():
@@ -16,18 +16,18 @@ REGISTRY_FILE = MODELS_DIR / "registry.json"
 
 DEFAULT_PROFILES: Dict[str, Any] = {
     "ground": {
-        "name": "Ground View (YOLO26s MOT20 Pedestrian)",
-        "architecture": "YOLO26s",
-        "dataset": "MOT20",
+        "name": "Ground View (YOLO26n Person)",
+        "architecture": "YOLO26n",
+        "dataset": "COCO",
         "filename": GROUND_MODEL_NAME,
-        "recommended_imgsz": 1280,
-        "confidence": 0.25,
+        "recommended_imgsz": 640,
+        "confidence": 0.35,
         "iou": 0.50,
         "person_classes": [0],
         "person_labels": ["person"],
         "tracker": "bytetrack.yaml",
-        "engine": "YOLO26s + ByteTrack",
-        "description": "Halftom's YOLO26s checkpoint fine-tuned for pedestrian detection in dense ground-level MOT20 scenes."
+        "engine": "YOLO26n + ByteTrack",
+        "description": "General-purpose person detection for ground cameras and uploaded videos."
     },
     "aerial": {
         "name": "Aerial Drone View (YOLO11n VisDrone Person)",
@@ -77,4 +77,10 @@ def load_inference_profiles() -> Dict[str, Any]:
             profiles["aerial"].pop("sha256", None)
             profiles["aerial"].pop("size_bytes", None)
 
+    if AERIAL_DETECTION_PROFILE == "general":
+        # Keep matching weights, classes and checksum together. The perspective
+        # stays aerial; this profile suits nearby/elevated views of larger people.
+        profiles["aerial"] = dict(profiles["ground"])
+        profiles["aerial"]["name"] = "Aerial / Elevated View (General Person)"
+        profiles["aerial"]["description"] = "General person detection for nearby or elevated footage; evaluate high-altitude footage separately."
     return profiles

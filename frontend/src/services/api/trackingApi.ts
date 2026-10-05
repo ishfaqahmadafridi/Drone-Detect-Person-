@@ -1,29 +1,21 @@
+import type { FrozenSelection, TrackingModeResponse, TargetSelectResponse } from "@/types";
 import { apiClient } from "./client";
 
-export interface TrackingModeResponse {
-  status: string;
-  mode: "auto" | "manual";
-  selected_ids: number[];
-}
-
-export interface TargetSelectResponse {
-  status: string;
-  mode: string;
-  selected_ids: number[];
-  toggled_id?: number;
-}
-
 export const trackingApi = {
+  freeze: async (channel?: "ground" | "aerial"): Promise<FrozenSelection> => (await apiClient.post<FrozenSelection>("/tracking/freeze", {}, { params: { channel } })).data,
+  commit: async (token: string, selectedIds: number[], channel?: "ground" | "aerial"): Promise<TrackingModeResponse> =>
+    (await apiClient.post<TrackingModeResponse>("/tracking/commit", { token, selected_ids: selectedIds }, { params: { channel } })).data,
+  resume: async (token: string, channel?: "ground" | "aerial"): Promise<void> => { await apiClient.post("/tracking/resume", { token }, { params: { channel } }); },
   getTrackingStatus: async (): Promise<{ mode: "auto" | "manual"; selected_ids: number[] }> => {
     const { data } = await apiClient.get<{ mode: "auto" | "manual"; selected_ids: number[] }>("/tracking/status");
     return data;
   },
 
-  setMode: async (mode: "auto" | "manual", selectedIds?: number[]): Promise<TrackingModeResponse> => {
+  setMode: async (mode: "auto" | "manual", selectedIds?: number[], channel?: "ground" | "aerial"): Promise<TrackingModeResponse> => {
     const { data } = await apiClient.post<TrackingModeResponse>("/tracking/mode", {
       mode,
       selected_ids: selectedIds,
-    });
+    }, { params: { channel } });
     return data;
   },
 

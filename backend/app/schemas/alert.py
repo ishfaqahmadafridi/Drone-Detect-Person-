@@ -10,7 +10,6 @@ class IncidentAlertItem(BaseModel):
     threat_level: str
     total_persons: str
     intruders_count: str
-    gathering_clusters: str
     person_ids: str
     snapshot_path: str
 

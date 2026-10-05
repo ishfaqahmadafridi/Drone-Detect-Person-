@@ -35,8 +35,8 @@ class EvidenceRecorder:
         self.last_snapshot_time = 0.0
         self.alert_history: List[Dict] = []
         
-        self.log_file_csv = os.path.join(self.logs_dir, "intrusion_events.csv")
-        self.log_file_json = os.path.join(self.logs_dir, "intrusion_events.json")
+        self.log_file_csv = os.path.join(self.logs_dir, "person_events.csv")
+        self.log_file_json = os.path.join(self.logs_dir, "person_events.json")
         self.init_csv()
 
     def init_csv(self):
@@ -50,7 +50,6 @@ class EvidenceRecorder:
                     "threat_level",
                     "total_persons",
                     "intruders_count",
-                    "gathering_clusters",
                     "person_ids",
                     "snapshot_path"
                 ])
@@ -62,7 +61,7 @@ class EvidenceRecorder:
         details: Dict
     ) -> Optional[str]:
         now = time.time()
-        is_active_alert = threat_level in [AlertLevel.INTRUSION, AlertLevel.MULTI_PERSON]
+        is_active_alert = threat_level == AlertLevel.INTRUSION
         
         snapshot_saved_path = None
         if is_active_alert and (now - self.last_snapshot_time >= self.snapshot_cooldown):
@@ -87,7 +86,7 @@ class EvidenceRecorder:
                     thumbnail_url=f"/snapshots/{filename}",
                     view_mode=view_mode,
                     threat_level=threat_level,
-                    threat_type="ZONE INTRUSION" if threat_level == AlertLevel.INTRUSION else "MULTI-PERSON GATHERING",
+                    threat_type="ZONE INTRUSION",
                     duration_seconds=0.0,
                     file_size_kb=file_size_kb,
                     created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -121,7 +120,6 @@ class EvidenceRecorder:
                     details_copy['threat_level'],
                     details_copy['total_persons'],
                     details_copy['intruders_count'],
-                    details_copy['gathering_pairs'],
                     str(details_copy['person_ids']),
                     filepath
                 ])

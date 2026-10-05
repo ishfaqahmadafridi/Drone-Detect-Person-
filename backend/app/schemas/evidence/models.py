@@ -13,7 +13,7 @@ class EvidenceRecordBase(BaseModel):
     url: str = Field(..., description="Relative HTTP endpoint path")
     thumbnail_url: Optional[str] = Field(None, description="URL for video preview thumbnail or self for image")
     view_mode: str = Field("aerial", description="'aerial' or 'ground'")
-    threat_level: str = Field("CLEAR", description="Alert Level: INTRUSION, MULTI_PERSON, MONITORING, CLEAR")
+    threat_level: str = Field("CLEAR", description="Alert Level: INTRUSION, MONITORING, CLEAR")
     threat_type: str = Field("SECURITY ALERT", description="Descriptive classification e.g. ZONE INTRUSION")
     duration_seconds: float = Field(0.0, description="Duration in seconds (for video recordings)")
     file_size_kb: float = Field(0.0, description="File size on disk in Kilobytes")

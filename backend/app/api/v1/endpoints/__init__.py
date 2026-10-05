@@ -2,16 +2,8 @@
 API v1 Endpoints Package.
 """
 
-from app.api.v1.endpoints import (
-    alerts,
-    config,
-    drone,
-    evidence,
-    recordings,
-    snapshots,
-    stream,
-    ws,
-)
+# Router aggregation belongs in router.py; importing the ReID endpoints should
+# not initialize unrelated video models or camera sources.
 
 __all__ = [
     "alerts",
@@ -22,4 +14,5 @@ __all__ = [
     "snapshots",
     "stream",
     "ws",
+    "reid",
 ]

@@ -12,13 +12,16 @@ from app.services.stream_service import stream_service
 class TestTrackingModes(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
+        self.previous_view = stream_service.config.view_mode
+        stream_service.set_view_mode("ground")
         # Ensure clean initial state
         stream_service.set_tracking_mode("auto")
 
     def tearDown(self):
         stream_service.set_tracking_mode("auto")
+        stream_service.set_view_mode(self.previous_view)
 
-    def test_target_overlay_manual_mode_filtering(self):
+    def test_target_overlay_keeps_all_people_visible(self):
         cfg_auto = DetectionConfig(tracking_mode="auto", selected_target_ids=[])
         theme = TacticalAnnotationTheme()
         frame_auto = np.zeros((720, 1280, 3), dtype=np.uint8)
@@ -33,7 +36,6 @@ class TestTrackingModes(unittest.TestCase):
             annotated=frame_auto,
             detected_persons=persons,
             intruders=[],
-            clustered_ids=[],
             track_history=None,
             config=cfg_auto,
             theme=theme
@@ -41,35 +43,34 @@ class TestTrackingModes(unittest.TestCase):
         non_zero_auto = np.count_nonzero(frame_auto)
         self.assertGreater(non_zero_auto, 0)
 
-        # In Manual Mode with no selections: 0 boxes drawn
+        # Selecting no suspects still draws every person
         cfg_manual_empty = DetectionConfig(tracking_mode="manual", selected_target_ids=[])
         frame_manual_empty = np.zeros((720, 1280, 3), dtype=np.uint8)
         draw_detections_and_trails(
             annotated=frame_manual_empty,
             detected_persons=persons,
             intruders=[],
-            clustered_ids=[],
             track_history=None,
             config=cfg_manual_empty,
             theme=theme
         )
-        self.assertEqual(np.count_nonzero(frame_manual_empty), 0)
+        self.assertGreater(np.count_nonzero(frame_manual_empty), 0)
 
-        # In Manual Mode with ID 10 selected: only ID 10 drawn
+        # Selected ID 10 is highlighted; unselected ID 20 stays boxed
         cfg_manual_selected = DetectionConfig(tracking_mode="manual", selected_target_ids=[10])
         frame_manual_selected = np.zeros((720, 1280, 3), dtype=np.uint8)
         draw_detections_and_trails(
             annotated=frame_manual_selected,
             detected_persons=persons,
             intruders=[],
-            clustered_ids=[],
             track_history=None,
             config=cfg_manual_selected,
             theme=theme
         )
         non_zero_single = np.count_nonzero(frame_manual_selected)
         self.assertGreater(non_zero_single, 0)
-        self.assertLess(non_zero_single, non_zero_auto)
+        self.assertGreater(np.count_nonzero(frame_manual_selected[50:201, 300:401]), 0)
+        self.assertFalse(np.array_equal(frame_manual_selected[50:201, 50:151], frame_auto[50:201, 50:151]))
 
     def test_tracking_service_mode_switch(self):
         res = stream_service.set_tracking_mode("manual", [10, 20])

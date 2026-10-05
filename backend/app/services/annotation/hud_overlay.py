@@ -20,7 +20,6 @@ def draw_hud_banner(
     alert_msg: str,
     total_people: int,
     intruder_count: int,
-    gathering_count: int,
     fps: float,
     config: DetectionConfig,
     theme: TacticalAnnotationTheme
@@ -44,13 +43,11 @@ def draw_hud_banner(
     else:
         if threat_level == "INTRUSION":
             hud_bg = (20, 20, 50)
-        elif threat_level == "MULTI_PERSON":
-            hud_bg = (20, 35, 55)
         else:
             hud_bg = (14, 18, 24)
 
         status_title = f"Surveillance Feed  |  {alert_msg}"
-        telemetry_info = f"Tracks: {total_people}  •  Clusters: {gathering_count}  •  {fps:.1f} FPS"
+        telemetry_info = f"Persons: {total_people} | {fps:.1f} FPS"
 
     hud_overlay = annotated.copy()
     cv2.rectangle(hud_overlay, (0, 0), (w, hud_h), hud_bg, -1)

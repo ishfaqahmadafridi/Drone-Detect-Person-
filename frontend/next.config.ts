@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Include multipart overhead above the 500 MB application upload limit.
+    proxyClientMaxBodySize: "501mb",
+    proxyTimeout: 600_000,
+  },
   async rewrites() {
     return [
       {

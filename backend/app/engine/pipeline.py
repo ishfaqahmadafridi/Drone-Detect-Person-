@@ -12,7 +12,7 @@ from app.engine.annotator import TacticalFrameAnnotator
 
 class DetectionPipeline:
     """
-    High-performance pipeline coordinating detection, zone tracking, gathering logic, and annotation.
+    High-performance pipeline coordinating detection, zone tracking, and annotation.
     """
     def __init__(self, config: Optional[DetectionConfig] = None):
         self.config = config or DetectionConfig()
@@ -22,7 +22,6 @@ class DetectionPipeline:
             output_dir=self.config.output_dir,
             snapshots_dir=self.config.snapshots_dir,
             logs_dir=self.config.logs_dir,
-            multi_person_threshold=self.config.multi_person_threshold,
             snapshot_cooldown=self.config.snapshot_cooldown_seconds,
             enable_audio=self.config.enable_audio_alert
         )
@@ -48,17 +47,10 @@ class DetectionPipeline:
         # 2. Check intrusion in polygon
         intruders = self.zone_monitor.check_intrusions(detected_persons)
 
-        # 3. Compute gathering proximities
-        gatherings, clustered_ids = self.zone_monitor.compute_gatherings(
-            detected_persons,
-            proximity_threshold_px=self.config.proximity_alert_distance_px
-        )
-
         # 4. Evaluate threat level & alerts
         threat_level, alert_msg, details = self.alert_manager.evaluate_state(
             detected_persons=detected_persons,
             intruders=intruders,
-            gatherings=gatherings,
             frame_idx=frame_idx
         )
 
@@ -67,8 +59,6 @@ class DetectionPipeline:
             frame=frame,
             detected_persons=detected_persons,
             intruders=intruders,
-            gatherings=gatherings,
-            clustered_ids=clustered_ids,
             zone_polygon=self.zone_monitor.pixel_polygon,
             threat_level=threat_level,
             alert_msg=alert_msg,
@@ -88,7 +78,6 @@ class DetectionPipeline:
             "alert_msg": alert_msg,
             "total_persons": len(detected_persons),
             "intruders_count": len(intruders),
-            "gathering_pairs": len(gatherings),
             "fps": self.detector.fps,
             "frame_idx": frame_idx,
             "detections": detected_persons,

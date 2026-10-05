@@ -1,17 +1,16 @@
 """
-Zone Monitor Service: Coordinates restricted zone intrusion detection and gatherings.
+Zone Monitor Service: Coordinates restricted zone intrusion detection .
 """
 
 from typing import List, Tuple, Dict, Optional
 import numpy as np
 
 from app.services.zone.geometry import normalized_to_pixel_polygon, is_point_in_polygon
-from app.services.zone.gathering import compute_proximity_gatherings
 
 
 class ZoneMonitorService:
     """
-    Monitors polygonal restricted geofence zones and multi-person clustering.
+    Monitors polygonal restricted geofence zones .
     """
     def __init__(
         self,
@@ -67,10 +66,3 @@ class ZoneMonitorService:
                 person['is_intruder'] = False
 
         return intruders
-
-    def compute_gatherings(
-        self,
-        detected_persons: List[Dict],
-        proximity_threshold_px: int = 120
-    ) -> Tuple[List[Tuple[int, int, float]], List[int]]:
-        return compute_proximity_gatherings(detected_persons, proximity_threshold_px)

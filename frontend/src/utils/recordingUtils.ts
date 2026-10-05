@@ -30,7 +30,6 @@ export function getPerspectiveBadgeClass(perspective?: string): string {
 export function parseThreatType(filename: string = ""): string {
   const lower = filename.toLowerCase();
   if (lower.includes("intrusion")) return "ZONE INTRUSION";
-  if (lower.includes("multi") || lower.includes("gathering")) return "MULTI-PERSON GATHERING";
   if (lower.includes("perimeter")) return "PERIMETER TRIPWIRE";
   return "SECURITY ALERT";
 }
@@ -39,9 +38,6 @@ export function getThreatBadgeClass(threatType: string = ""): string {
   const upper = threatType.toUpperCase();
   if (upper.includes("INTRUSION")) {
     return "bg-rose-500/20 text-rose-300 border-rose-500/40";
-  }
-  if (upper.includes("MULTI") || upper.includes("GATHERING")) {
-    return "bg-amber-500/20 text-amber-300 border-amber-500/40";
   }
   return "bg-cyan-500/20 text-cyan-300 border-cyan-500/40";
 }

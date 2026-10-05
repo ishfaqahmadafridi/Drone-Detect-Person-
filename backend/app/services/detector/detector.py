@@ -12,8 +12,8 @@ except ImportError:
     cv2 = None
 
 from app.core.config import DetectionConfig
-from app.services.inference_service import inference_service
-from app.services.tracking_service import tracking_service
+from app.services.inference_service import inference_service, MultiViewInferenceService
+from app.services.tracking_service import tracking_service, TargetTrackerService
 from app.services.annotation_service import TacticalFrameAnnotator
 from app.services.detector.profiler import FPSProfiler
 
@@ -25,13 +25,17 @@ class DronePersonDetectorService:
     def __init__(
         self,
         config: Optional[DetectionConfig] = None,
-        annotator: Optional[TacticalFrameAnnotator] = None
+        annotator: Optional[TacticalFrameAnnotator] = None,
+        isolated: bool = False
     ):
         self.config = config or DetectionConfig()
+        self.inference = MultiViewInferenceService(device=self.config.device) if isolated else inference_service
+        self.tracks = TargetTrackerService() if isolated else tracking_service
         self.active_view = getattr(self.config, "view_mode", "aerial") or "aerial"
+        self.untracked_detections = []
         
         # Pre-warm default view model
-        self.model = inference_service.get_model(self.active_view)
+        self.model = self.inference.get_model(self.active_view)
         self._apply_profile(preserve_overrides=True)
         
         # FPS Profiler
@@ -53,7 +57,7 @@ class DronePersonDetectorService:
         self._profiler.current_fps = val
 
     def _apply_profile(self, preserve_overrides: bool = False):
-        profile = inference_service.get_profile(self.active_view)
+        profile = self.inference.get_profile(self.active_view)
         self.config.view_mode = self.active_view
         self.config.model_name = profile.get("filename", "")
         self.config.target_classes = list(profile.get("person_classes", [0]))
@@ -66,16 +70,16 @@ class DronePersonDetectorService:
 
     def reset_tracking(self):
         self.track_history.clear()
-        tracking_service.reset()
-        if hasattr(inference_service, "reset_tracking"):
-            inference_service.reset_tracking()
+        self.tracks.reset()
+        if hasattr(self.inference, "reset_tracking"):
+            self.inference.reset_tracking()
 
     def set_view(self, view: str) -> str:
         if view == self.active_view:
             return self.active_view
-        inference_service.set_active_view(view, preload=True)
+        self.inference.set_active_view(view, preload=True)
         self.active_view = view
-        self.model = inference_service.get_model(self.active_view)
+        self.model = self.inference.get_model(self.active_view)
         self._apply_profile(preserve_overrides=False)
         self.reset_tracking()
         return self.active_view
@@ -95,7 +99,7 @@ class DronePersonDetectorService:
             self.set_view(view)
         current_view = self.active_view
         model = self.model
-        profile = inference_service.get_profile(current_view)
+        profile = self.inference.get_profile(current_view)
 
         conf_thresh = (
             self.config.confidence_threshold
@@ -134,6 +138,7 @@ class DronePersonDetectorService:
             )
 
         detected_persons: List[Dict] = []
+        self.untracked_detections = []
         if not results or len(results) == 0:
             return detected_persons
 
@@ -146,7 +151,15 @@ class DronePersonDetectorService:
             x1, y1, x2, y2 = map(int, xyxy)
             conf = float(box.conf[0].cpu().numpy())
             
-            track_id = int(box.id[0].cpu().numpy()) if (box.id is not None and len(box.id) > 0) else (idx + 1)
+            has_track_id = box.id is not None and len(box.id) > 0
+            # An unconfirmed detection must never borrow a stable suspect ID.
+            if use_tracking and not has_track_id:
+                self.untracked_detections.append({
+                    "id": None, "bbox": [x1, y1, x2, y2], "conf": conf,
+                    "is_intruder": False,
+                })
+                continue
+            track_id = int(box.id[0].cpu().numpy()) if has_track_id else (idx + 1)
             cx = int((x1 + x2) / 2)
             cy = int((y1 + y2) / 2)
             fx = cx
@@ -165,15 +178,13 @@ class DronePersonDetectorService:
                 'is_intruder': False
             })
 
-        return tracking_service.update_tracks(detected_persons)
+        return self.tracks.update_tracks(detected_persons)
 
     def draw_annotations(
         self,
         frame: np.ndarray,
         detected_persons: List[Dict],
         intruders: List[Dict],
-        gatherings: List[Tuple[int, int, float]],
-        clustered_ids: List[int],
         zone_polygon: Optional[np.ndarray],
         threat_level: str,
         alert_msg: str
@@ -185,8 +196,6 @@ class DronePersonDetectorService:
             frame=frame,
             detected_persons=detected_persons,
             intruders=intruders,
-            gatherings=gatherings,
-            clustered_ids=clustered_ids,
             zone_polygon=zone_polygon,
             threat_level=threat_level,
             alert_msg=alert_msg,

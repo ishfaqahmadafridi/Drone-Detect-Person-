@@ -2,11 +2,10 @@
 
 import React from "react";
 import { IncidentItemProps } from "@/types";
-import { isThreatDanger, isThreatWarning, getThreatBadgeStyle } from "@/utils/threatUtils";
+import { isThreatDanger, getThreatBadgeStyle } from "@/utils/threatUtils";
 
 export const IncidentItem: React.FC<IncidentItemProps> = ({ alert }) => {
   const isDanger = isThreatDanger(alert.threat_level);
-  const isWarning = isThreatWarning(alert.threat_level);
   const badgeStyle = getThreatBadgeStyle(alert.threat_level);
 
   return (
@@ -14,8 +13,6 @@ export const IncidentItem: React.FC<IncidentItemProps> = ({ alert }) => {
       className={`p-2.5 rounded-lg border text-xs flex items-center justify-between transition-colors ${
         isDanger
           ? "bg-red-950/20 border-red-500/40 hover:bg-red-950/40"
-          : isWarning
-          ? "bg-amber-950/20 border-amber-500/40 hover:bg-amber-950/40"
           : "bg-slate-900/50 border-slate-800 hover:bg-slate-800/50"
       }`}
     >
@@ -27,7 +24,7 @@ export const IncidentItem: React.FC<IncidentItemProps> = ({ alert }) => {
           <span className="text-slate-300 font-medium">
             {isDanger
               ? `${alert.intruders_count || 1} Intruder(s) in Restricted Zone`
-              : `${alert.total_persons} Persons Gathering Detected`}
+              : `${alert.total_persons} Persons Detected`}
           </span>
         </div>
         <span className="font-mono-code text-[10px] text-slate-500">{alert.timestamp}</span>

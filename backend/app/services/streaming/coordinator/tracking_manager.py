@@ -100,7 +100,7 @@ class TargetTrackingManager:
             if (x1 - 35) <= px <= (x2 + 35) and (y1 - 35) <= py <= (y2 + 35):
                 return det.get("id")
 
-            # Calculate distance to bounding box centroid for proximity matching
+            # Calculate distance to bounding box centroid for nearest-box matching
             cx = (x1 + x2) / 2.0
             cy = (y1 + y2) / 2.0
             dist = ((px - cx) ** 2 + (py - cy) ** 2) ** 0.5

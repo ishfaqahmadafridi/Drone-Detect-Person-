@@ -27,6 +27,10 @@ class TestModelSelection(unittest.TestCase):
         # Patch MODELS_DIR across inference modules
         self.enterContext(patch("app.services.inference.profiles.MODELS_DIR", self.models_dir))
         self.enterContext(patch("app.services.inference.dispatcher.MODELS_DIR", self.models_dir))
+        # These tests verify the registry defaults, independently of local .env choices.
+        self.enterContext(patch("app.services.inference.profiles.GROUND_MODEL_NAME", "yolo26n.pt"))
+        self.enterContext(patch("app.services.inference.profiles.AERIAL_MODEL_NAME", "visdrone_person_best.pt"))
+        self.enterContext(patch("app.services.inference.profiles.AERIAL_DETECTION_PROFILE", "visdrone"))
 
         self.service = MultiViewInferenceService()
         for view, profile in self.service.profiles.items():
@@ -56,7 +60,15 @@ class TestModelSelection(unittest.TestCase):
         self.assertIs(aerial, self.service.get_model("aerial"))
         self.assertEqual(self.yolo.call_count, 2)
         paths = [Path(call.args[0]).name for call in self.yolo.call_args_list]
-        self.assertEqual(paths, ["visdrone_person_best.pt", "mot20_yolo26s_pedestrian.pt"])
+        self.assertEqual(paths, ["visdrone_person_best.pt", "yolo26n.pt"])
+
+    def test_general_aerial_profile_keeps_weights_checksum_and_classes_together(self):
+        from app.services.inference.profiles import load_inference_profiles
+        with patch("app.services.inference.profiles.AERIAL_DETECTION_PROFILE", "general"):
+            profiles = load_inference_profiles()
+        for key in ("filename", "sha256", "person_classes", "recommended_imgsz", "tracker"):
+            self.assertEqual(profiles["aerial"][key], profiles["ground"][key])
+        self.assertIsNot(profiles["aerial"], profiles["ground"])
 
     def test_missing_checkpoint_never_falls_back(self):
         (self.models_dir / self.service.get_profile("ground")["filename"]).unlink()
@@ -101,11 +113,11 @@ class TestModelSelection(unittest.TestCase):
         ground_options = ground.track.call_args.kwargs
         self.assertEqual(ground_options["tracker"], "bytetrack.yaml")
         self.assertEqual(ground_options["classes"], [0])
-        self.assertEqual(ground_options["imgsz"], 1280)
-        self.assertEqual(ground_options["conf"], 0.25)
+        self.assertEqual(ground_options["imgsz"], 640)
+        self.assertEqual(ground_options["conf"], 0.35)
         self.assertEqual(ground_options["iou"], 0.50)
-        self.assertEqual(detector.config.model_name, "mot20_yolo26s_pedestrian.pt")
-        self.assertEqual(detector.engine, "YOLO26s + ByteTrack")
+        self.assertEqual(detector.config.model_name, "yolo26n.pt")
+        self.assertEqual(detector.engine, "YOLO26n + ByteTrack")
         self.assertFalse(detector.track_history)
         self.tracking.reset.assert_called_once()
 
