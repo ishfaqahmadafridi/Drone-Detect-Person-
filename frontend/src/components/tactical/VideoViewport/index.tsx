@@ -32,6 +32,9 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger,
     handleStreamError,
     handleStreamLoad,
     selectedTargetIds,
+    trackingMode,
+    handleTrackingModeChange,
+    handleClearSelectedTargets,
     error,
     replay,
     videoFinished,
@@ -46,8 +49,12 @@ export const VideoViewport: React.FC<VideoViewportProps> = ({ onSnapshotTrigger,
       <ViewportHeader
         sourceType={sourceType}
         viewMode={viewMode}
+        trackingMode={trackingMode}
+        selectedCount={selectedTargetIds.length}
         layoutMode={viewportLayout}
         onLayoutChange={handleLayoutChange}
+        onTrackingModeChange={handleTrackingModeChange}
+        onClearSelectedTargets={handleClearSelectedTargets}
         onSnapshotTrigger={onSnapshotTrigger}
         onToggleFullscreen={toggleFullscreen}
       />
