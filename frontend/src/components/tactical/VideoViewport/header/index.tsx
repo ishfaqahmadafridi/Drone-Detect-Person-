@@ -5,24 +5,35 @@ import { ViewportHeaderProps } from "@/types";
 import { SensorTitleCluster } from "./SensorTitleCluster";
 import { SourceBadge } from "./SourceBadge";
 import { PerspectiveBadge } from "./PerspectiveBadge";
+import { DetectionModeToggle } from "./DetectionModeToggle";
 import { ViewportLayoutSelector } from "./ViewportLayoutSelector";
 import { ViewportHeaderActions } from "./ViewportHeaderActions";
 
 export const ViewportHeader: React.FC<ViewportHeaderProps> = ({
   sourceType,
   viewMode = "aerial",
+  trackingMode = "auto",
+  selectedCount = 0,
   layoutMode = "single",
   onLayoutChange,
+  onTrackingModeChange,
+  onClearSelectedTargets,
   onSnapshotTrigger,
   onToggleFullscreen,
 }) => {
   return (
     <div className="flex flex-wrap gap-3 items-center justify-between p-3 px-4 bg-slate-950/60 border-b border-slate-700/60">
       {/* Primary Optical Sensor Telemetry Cluster */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5 flex-wrap">
         <SensorTitleCluster />
         <SourceBadge sourceType={sourceType} />
         <PerspectiveBadge viewMode={viewMode} />
+        <DetectionModeToggle
+          trackingMode={trackingMode}
+          selectedCount={selectedCount}
+          onTrackingModeChange={onTrackingModeChange}
+          onClearSelectedTargets={onClearSelectedTargets}
+        />
       </div>
 
       {/* Viewport Layout Mode Selector & Action Controls */}

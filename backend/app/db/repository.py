@@ -3,12 +3,13 @@ Evidence Repository: Persistent SQLite storage operations for tactical recording
 """
 
 import os
-import json
-from typing import List, Optional, Any
+from typing import List, Optional
 
 from app.db.connection import db_manager
 from app.db.schema import initialize_schema
 from app.db.syncer import FilesystemSyncer
+from app.db.mappers import row_to_evidence_record, encode_metadata_json
+from app.db.query_builder import build_list_query, build_count_query
 from app.schemas.evidence import EvidenceRecord, EvidenceRecordCreate
 
 
@@ -22,7 +23,7 @@ class EvidenceRepository:
 
     def insert(self, record: EvidenceRecordCreate) -> EvidenceRecord:
         """Persist a new evidence record into SQLite."""
-        meta_str = json.dumps(record.metadata_json or {})
+        meta_str = encode_metadata_json(record.metadata_json)
         with db_manager.session() as conn:
             cursor = conn.execute(
                 """
@@ -66,35 +67,19 @@ class EvidenceRepository:
         offset: int = 0,
     ) -> List[EvidenceRecord]:
         """Query evidence records with optional filtering and pagination."""
-        clauses = []
-        params: List[Any] = []
-
-        if view_mode and view_mode.lower() != "all":
-            clauses.append("view_mode = ?")
-            params.append(view_mode.lower().strip())
-
-        if media_type and media_type.lower() != "all":
-            clauses.append("media_type = ?")
-            params.append(media_type.lower().strip())
-
-        if threat_level and threat_level.upper() != "ALL":
-            clauses.append("threat_level = ?")
-            params.append(threat_level.upper().strip())
-
-        where_sql = f"WHERE {' AND '.join(clauses)}" if clauses else ""
-        query = f"""
-            SELECT * FROM evidence_records
-            {where_sql}
-            ORDER BY CASE WHEN media_type = 'video' THEN 0 ELSE 1 END, created_at DESC, id DESC
-            LIMIT ? OFFSET ?;
-        """
-        params.extend([limit, offset])
+        query, params = build_list_query(
+            view_mode=view_mode,
+            media_type=media_type,
+            threat_level=threat_level,
+            limit=limit,
+            offset=offset,
+        )
 
         with db_manager.session() as conn:
             cursor = conn.execute(query, params)
             rows = cursor.fetchall()
 
-        return [self._row_to_model(row) for row in rows]
+        return [row_to_evidence_record(row) for row in rows if row]
 
     def count_records(
         self,
@@ -103,23 +88,11 @@ class EvidenceRepository:
         threat_level: Optional[str] = None,
     ) -> int:
         """Count total matching records for pagination metadata."""
-        clauses = []
-        params: List[Any] = []
-
-        if view_mode and view_mode.lower() != "all":
-            clauses.append("view_mode = ?")
-            params.append(view_mode.lower().strip())
-
-        if media_type and media_type.lower() != "all":
-            clauses.append("media_type = ?")
-            params.append(media_type.lower().strip())
-
-        if threat_level and threat_level.upper() != "ALL":
-            clauses.append("threat_level = ?")
-            params.append(threat_level.upper().strip())
-
-        where_sql = f"WHERE {' AND '.join(clauses)}" if clauses else ""
-        query = f"SELECT COUNT(*) AS total FROM evidence_records {where_sql};"
+        query, params = build_count_query(
+            view_mode=view_mode,
+            media_type=media_type,
+            threat_level=threat_level,
+        )
 
         with db_manager.session() as conn:
             cursor = conn.execute(query, params)
@@ -131,14 +104,14 @@ class EvidenceRepository:
         with db_manager.session() as conn:
             cursor = conn.execute("SELECT * FROM evidence_records WHERE id = ?;", (record_id,))
             row = cursor.fetchone()
-        return self._row_to_model(row) if row else None
+        return row_to_evidence_record(row)
 
     def get_by_filename(self, filename: str) -> Optional[EvidenceRecord]:
         """Fetch a single record by filename."""
         with db_manager.session() as conn:
             cursor = conn.execute("SELECT * FROM evidence_records WHERE filename = ?;", (filename,))
             row = cursor.fetchone()
-        return self._row_to_model(row) if row else None
+        return row_to_evidence_record(row)
 
     def delete(self, record_id: int) -> bool:
         """Remove a record by ID and unlink its underlying file from storage."""
@@ -160,34 +133,6 @@ class EvidenceRepository:
     def sync_filesystem_records(self) -> int:
         """Manual trigger to synchronize filesystem files into SQLite."""
         return FilesystemSyncer.sync(self)
-
-    def _row_to_model(self, row: Any) -> EvidenceRecord:
-        """Convert a sqlite3.Row to an EvidenceRecord model."""
-        meta = {}
-        if row["metadata_json"]:
-            try:
-                meta = json.loads(row["metadata_json"])
-            except Exception:
-                meta = {}
-
-        return EvidenceRecord(
-            id=row["id"],
-            media_type=row["media_type"],
-            filename=row["filename"],
-            file_path=row["file_path"],
-            url=row["url"],
-            thumbnail_url=row["thumbnail_url"],
-            view_mode=row["view_mode"],
-            threat_level=row["threat_level"],
-            threat_type=row["threat_type"],
-            duration_seconds=float(row["duration_seconds"] or 0.0),
-            file_size_kb=float(row["file_size_kb"] or 0.0),
-            width=int(row["width"] or 1280),
-            height=int(row["height"] or 720),
-            fps=float(row["fps"] or 25.0),
-            created_at=str(row["created_at"]),
-            metadata_json=meta,
-        )
 
 
 evidence_repository = EvidenceRepository()
