@@ -1,6 +1,5 @@
 """
-Frame Streamer: Dedicated real-time streaming generator loop.
-Pulls from source provider, runs vision pipeline, updates telemetry store, and yields multipart MJPEG chunks.
+Frame Streamer subpackage.
 """
 
 from app.services.streaming.frame_streamer.worker import FrameStreamWorker

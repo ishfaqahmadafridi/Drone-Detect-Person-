@@ -23,6 +23,7 @@ class PipelineResult:
     def empty_fallback(cls, frame: np.ndarray, source_type: str = "synthetic", view_mode: str = "aerial") -> "PipelineResult":
         """
         Generates a safe fallback result when a frame is corrupt or pipeline encounters transient errors.
+        Guarantees all expected telemetry keys are present.
         """
         if frame is not None and isinstance(frame, np.ndarray) and getattr(frame, "size", 0) > 0 and len(frame.shape) == 3:
             fallback_frame = frame
@@ -41,6 +42,15 @@ class PipelineResult:
                 "detections": [],
                 "source_type": source_type,
                 "view_mode": view_mode,
+                "model_name": "",
+                "engine": "",
+                "multi_person_threshold": 3,
+                "confidence_threshold": 0.25,
+                "proximity_distance_px": 80,
+                "zone_polygon": [],
+                "avionics": {},
+                "tracking_mode": "auto",
+                "selected_target_ids": [],
             },
             threat_level="CLEAR",
             alert_msg="FRAME DROP / STANDBY",

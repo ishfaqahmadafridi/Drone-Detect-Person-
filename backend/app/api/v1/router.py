@@ -14,12 +14,14 @@ from app.api.v1.endpoints import (
     evidence,
     tracking,
     cameras,
+    generative,
 )
 
 api_router = APIRouter()
 
 api_router.include_router(cameras.router)
 api_router.include_router(stream.router, tags=["Stream & Video"])
+api_router.include_router(generative.router, tags=["Generative Aerial Diffusion"])
 api_router.include_router(tracking.router, tags=["Targeting & Detection Mode"])
 api_router.include_router(drone.router, tags=["Drone Flight & Avionics"])
 api_router.include_router(ws.router, tags=["WebSocket Telemetry"])

@@ -2,17 +2,16 @@
 Inference Profiles & Registry Loader for Multi-View Computer Vision.
 """
 
-import json
-from pathlib import Path
 from typing import Dict, Any
-
-from app.core.config import BASE_DIR, ROOT_DIR, GROUND_MODEL_NAME, AERIAL_MODEL_NAME
-
-MODELS_DIR = Path(BASE_DIR) / "models"
-if not MODELS_DIR.exists():
-    MODELS_DIR = Path(ROOT_DIR) / "models"
-REGISTRY_FILE = MODELS_DIR / "registry.json"
-
+from app.core.config import GROUND_MODEL_NAME, AERIAL_MODEL_NAME
+from app.services.inference.registry_loader import (
+    MODELS_DIR,
+    REGISTRY_FILE,
+    resolve_models_dir,
+    resolve_registry_path,
+    load_registry_file,
+    apply_profile_overrides,
+)
 
 DEFAULT_PROFILES: Dict[str, Any] = {
     "ground": {
@@ -20,7 +19,7 @@ DEFAULT_PROFILES: Dict[str, Any] = {
         "architecture": "YOLO26s",
         "dataset": "MOT20",
         "filename": GROUND_MODEL_NAME,
-        "recommended_imgsz": 1280,
+        "recommended_imgsz": 640,
         "confidence": 0.25,
         "iou": 0.50,
         "person_classes": [0],
@@ -34,13 +33,13 @@ DEFAULT_PROFILES: Dict[str, Any] = {
         "architecture": "YOLO11n",
         "dataset": "VisDrone",
         "filename": AERIAL_MODEL_NAME,
-        "recommended_imgsz": 1280,
+        "recommended_imgsz": 640,
         "confidence": 0.25,
         "iou": 0.45,
         "person_classes": [0],
         "person_labels": ["person"],
-        "tracker": "botsort.yaml",
-        "engine": "YOLO11n + BoT-SORT",
+        "tracker": "bytetrack.yaml",
+        "engine": "YOLO11n + ByteTrack",
         "description": "pratap424's YOLO11n checkpoint fine-tuned on VisDrone, merging pedestrian and people into a single person class."
     }
 }
@@ -52,29 +51,18 @@ def load_inference_profiles() -> Dict[str, Any]:
     falling back to DEFAULT_PROFILES, and applies any environment overrides.
     """
     profiles = {k: dict(v) for k, v in DEFAULT_PROFILES.items()}
-    if REGISTRY_FILE.exists():
-        try:
-            with open(REGISTRY_FILE, "r") as f:
-                data = json.load(f)
-                loaded_profiles = data.get("profiles", {})
-                for k, v in loaded_profiles.items():
-                    profiles[k] = dict(v)
-        except Exception as e:
-            print(f"[WARN] Failed to read {REGISTRY_FILE}: {e}")
+    loaded = load_registry_file(REGISTRY_FILE)
+    for k, v in loaded.items():
+        profiles[k] = dict(v)
 
-    # Allow environment variable overrides for custom model filenames
-    if "ground" in profiles and GROUND_MODEL_NAME:
-        original = profiles["ground"].get("filename")
-        if original != GROUND_MODEL_NAME:
-            profiles["ground"]["filename"] = GROUND_MODEL_NAME
-            profiles["ground"].pop("sha256", None)
-            profiles["ground"].pop("size_bytes", None)
+    return apply_profile_overrides(profiles)
 
-    if "aerial" in profiles and AERIAL_MODEL_NAME:
-        original = profiles["aerial"].get("filename")
-        if original != AERIAL_MODEL_NAME:
-            profiles["aerial"]["filename"] = AERIAL_MODEL_NAME
-            profiles["aerial"].pop("sha256", None)
-            profiles["aerial"].pop("size_bytes", None)
 
-    return profiles
+__all__ = [
+    "MODELS_DIR",
+    "REGISTRY_FILE",
+    "DEFAULT_PROFILES",
+    "resolve_models_dir",
+    "resolve_registry_path",
+    "load_inference_profiles",
+]

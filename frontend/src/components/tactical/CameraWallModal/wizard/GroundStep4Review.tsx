@@ -57,7 +57,7 @@ export const GroundStep4Review: React.FC<GroundStep4ReviewProps> = ({
       {/* Standalone Link Reachability & Latency Prober Component */}
       <StreamLinkProber
         constructedUrl={constructedUrl}
-        sourceType={isWall && !isWired && config.wirelessSubtype === "ap_direct" ? "rtsp" : "rtsp"}
+        sourceType={config.deviceCategory === "mobile_phone" ? "http" : "rtsp"}
         host={config.host}
         port={config.port}
         streamPath={config.streamPath}

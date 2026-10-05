@@ -44,7 +44,9 @@ export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
 
         <div className="flex items-center justify-between text-slate-400">
           <span>Last sync</span>
-          <span className="text-slate-200">{displaySync}</span>
+          <span className="text-slate-200" suppressHydrationWarning>
+            {displaySync}
+          </span>
         </div>
       </div>
     </div>

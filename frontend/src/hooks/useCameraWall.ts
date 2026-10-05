@@ -71,15 +71,17 @@ export function useCameraWall() {
     setIsOpen(false);
   };
 
-  const connectRtsp = async (rtspUrl: string, viewMode: "aerial" | "ground" = "ground") => {
+  const connectRtsp = async (url: string, viewMode: "aerial" | "ground" = "ground") => {
+    const isHttp = url.startsWith("http://") || url.startsWith("https://");
+    const sourceType: StreamSourceType = isHttp ? "http" : "rtsp";
     dispatch(
       setActiveCamera({
         id: "CAM-02",
-        name: "Custom RTSP Sensor",
-        location: "Perimeter Stream Link",
+        name: isHttp ? "Mobile IP Camera" : "Custom RTSP Sensor",
+        location: isHttp ? "Smartphone Patrol Link" : "Perimeter Stream Link",
       })
     );
-    await switchSource.mutateAsync({ sourceType: "rtsp", sourcePath: rtspUrl });
+    await switchSource.mutateAsync({ sourceType, sourcePath: url });
     await switchView.mutateAsync(viewMode);
     setIsOpen(false);
   };

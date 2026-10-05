@@ -86,9 +86,9 @@ class TestModelSelection(unittest.TestCase):
         aerial = detector.model
         detector.process_frame(frame)
         aerial_options = aerial.track.call_args.kwargs
-        self.assertEqual(aerial_options["tracker"], "botsort.yaml")
+        self.assertEqual(aerial_options["tracker"], "bytetrack.yaml")
         self.assertEqual(aerial_options["classes"], [0])
-        self.assertEqual(aerial_options["imgsz"], 1280)
+        self.assertEqual(aerial_options["imgsz"], 640)
         self.assertEqual(aerial_options["iou"], 0.45)
         detector.config.confidence_threshold = 0.42
         detector.process_frame(frame, use_tracking=False)
@@ -101,7 +101,7 @@ class TestModelSelection(unittest.TestCase):
         ground_options = ground.track.call_args.kwargs
         self.assertEqual(ground_options["tracker"], "bytetrack.yaml")
         self.assertEqual(ground_options["classes"], [0])
-        self.assertEqual(ground_options["imgsz"], 1280)
+        self.assertEqual(ground_options["imgsz"], 640)
         self.assertEqual(ground_options["conf"], 0.25)
         self.assertEqual(ground_options["iou"], 0.50)
         self.assertEqual(detector.config.model_name, "mot20_yolo26s_pedestrian.pt")

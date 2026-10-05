@@ -1,10 +1,13 @@
 """
 Core Detection Configuration and Environment Settings.
+Consolidates modular paths, environment parameters, hardware device selection,
+and detection dataclass settings.
 """
 
-import os
 from dataclasses import dataclass, field
 from typing import List, Tuple, Optional
+
+# Constants
 from app.core.constants import (
     DEFAULT_ZONE_POLYGON,
     DEFAULT_CONFIDENCE_THRESHOLD,
@@ -15,49 +18,43 @@ from app.core.constants import (
     DEFAULT_AERIAL_MODEL_NAME,
 )
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-ROOT_DIR = os.path.dirname(BASE_DIR)
-RUNS_DIR = os.path.join(ROOT_DIR, "runs")
-OUTPUT_DIR = os.path.join(RUNS_DIR, "output")
-SNAPSHOTS_DIR = os.path.join(OUTPUT_DIR, "snapshots")
-LOGS_DIR = os.path.join(OUTPUT_DIR, "logs")
-RECORDINGS_DIR = os.path.join(OUTPUT_DIR, "recordings")
-DATABASE_PATH = os.path.join(OUTPUT_DIR, "evidence.db")
-UPLOADS_DIR = os.path.join(BASE_DIR, "uploads")
-SYNTHETIC_VIDEO_PATH = os.path.join(BASE_DIR, "test_drone.mp4")
-DEFAULT_ZONE_NORMALIZED = DEFAULT_ZONE_POLYGON
+# Modular Path Resolution
+from app.core.paths import (
+    BASE_DIR,
+    ROOT_DIR,
+    RUNS_DIR,
+    OUTPUT_DIR,
+    SNAPSHOTS_DIR,
+    LOGS_DIR,
+    RECORDINGS_DIR,
+    DATABASE_PATH,
+    UPLOADS_DIR,
+    SYNTHETIC_VIDEO_PATH,
+    DEFAULT_ZONE_NORMALIZED,
+    ensure_storage_directories,
+)
 
-def _load_env_file(filepath: str):
-    if os.path.exists(filepath):
-        try:
-            with open(filepath, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if line and not line.startswith("#") and "=" in line:
-                        key, val = line.split("=", 1)
-                        key = key.strip()
-                        val = val.strip().strip('"').strip("'")
-                        if key and key not in os.environ:
-                            os.environ[key] = val
-        except Exception as e:
-            print(f"[WARN] Failed to read env file {filepath}: {e}")
+# Modular Environment Variables
+from app.core.env import (
+    REPLICATE_API_TOKEN,
+    GROUND_MODEL_NAME,
+    AERIAL_MODEL_NAME,
+    load_env_file,
+    load_environment,
+)
 
-_load_env_file(os.path.join(BASE_DIR, ".env"))
-_load_env_file(os.path.join(ROOT_DIR, ".env"))
+# Modular Hardware Device Selection
+from app.core.device import get_optimal_device
 
-REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN", "")
-
-GROUND_MODEL_NAME = os.getenv("GROUND_MODEL_NAME", DEFAULT_GROUND_MODEL_NAME)
-AERIAL_MODEL_NAME = os.getenv("AERIAL_MODEL_NAME", DEFAULT_AERIAL_MODEL_NAME)
-
-os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
-os.makedirs(RECORDINGS_DIR, exist_ok=True)
-os.makedirs(LOGS_DIR, exist_ok=True)
-os.makedirs(UPLOADS_DIR, exist_ok=True)
+# Initialize storage paths
+ensure_storage_directories()
 
 
 @dataclass
 class DetectionConfig:
+    """
+    Central operational configuration for detection, tracking, zoning, and alerts.
+    """
     # Model parameters
     view_mode: str = "aerial"
     model_name: str = ""
@@ -65,7 +62,7 @@ class DetectionConfig:
     confidence_threshold: Optional[float] = None
     iou_threshold: Optional[float] = None
     target_classes: List[int] = field(default_factory=lambda: [0])  # 0 = person
-    device: str = "cpu"
+    device: str = field(default_factory=get_optimal_device)
     img_size: Optional[int] = None
 
     # Multi-person gathering alert rules

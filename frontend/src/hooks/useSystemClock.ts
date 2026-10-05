@@ -1,19 +1,30 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { formatUtcTime } from "@/utils";
 
-export const useSystemClock = () => {
-  const [utcTime, setUtcTime] = useState<string>(() => formatUtcTime());
+export const useSystemClock = (placeholder = "--:--:--") => {
+  const [utcTime, setUtcTime] = useState<string>(placeholder);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
-    const updateClock = () => {
-      setUtcTime(formatUtcTime());
-    };
+    setIsMounted(true);
+    setUtcTime(formatUtcTime());
 
-    const timer = setInterval(updateClock, 1000);
+    const timer = setInterval(() => {
+      setUtcTime(formatUtcTime());
+    }, 1000);
+
     return () => clearInterval(timer);
   }, []);
 
-  return { utcTime, timeStr: utcTime };
+  const displayTime = isMounted ? utcTime : placeholder;
+
+  return {
+    utcTime: displayTime,
+    timeStr: displayTime,
+    isMounted,
+  };
 };
 
 export default useSystemClock;

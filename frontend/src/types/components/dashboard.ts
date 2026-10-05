@@ -41,3 +41,7 @@ export interface TacticalOverlaysProps {
     setLayout: (mode: "single" | "dual" | "quad") => void;
   };
 }
+
+export interface DroneDashboardProps {
+  initialTab?: TacticalNavTab;
+}

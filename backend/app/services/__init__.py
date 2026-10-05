@@ -9,6 +9,7 @@ from app.services.inference_service import MultiViewInferenceService, inference_
 from app.services.stream_service import DroneStreamService, drone_stream_service
 from app.services.tracking_service import TargetTrackerService, tracking_service
 from app.services.zone_service import ZoneMonitorService
+from app.services.generative_service import AerialDiffusionService, generative_service
 
 __all__ = [
     "AlertManagerService",
@@ -23,4 +24,6 @@ __all__ = [
     "TargetTrackerService",
     "tracking_service",
     "ZoneMonitorService",
+    "AerialDiffusionService",
+    "generative_service",
 ]

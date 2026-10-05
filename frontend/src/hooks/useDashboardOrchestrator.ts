@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { ALERTS_QUERY_KEY } from "@/services/queries/useAlertsQuery";
 import { SNAPSHOTS_QUERY_KEY } from "@/services/queries/useSnapshotsQuery";
@@ -12,11 +13,25 @@ import { useAppSelector } from "@/store";
 import { useStreamMutation } from "@/services/queries/useStreamMutation";
 import { streamApi } from "@/services/api/streamApi";
 import { TacticalNavTab } from "@/types";
+import { TAB_ROUTE_MAP, ROUTE_TAB_MAP } from "@/constants";
 
-
-export function useDashboardOrchestrator() {
+export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<TacticalNavTab>("airspace");
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Resolve initial active tab from explicit prop, current pathname, or default to airspace
+  const getTabFromPath = useCallback((path: string | null): TacticalNavTab => {
+    if (!path) return "airspace";
+    const cleanPath = path.toLowerCase().replace(/\/$/, "") || "/";
+    return ROUTE_TAB_MAP[cleanPath] || "airspace";
+  }, []);
+
+  const [activeTab, setActiveTab] = useState<TacticalNavTab>(() => {
+    if (initialTab) return initialTab;
+    return getTabFromPath(pathname);
+  });
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const { view_mode } = useAppSelector((state) => state.telemetry);
@@ -26,6 +41,14 @@ export function useDashboardOrchestrator() {
   const { isMuted, toggleMute } = useAudioAlert();
   const flight = useDroneFlight();
   const wall = useCameraWall();
+
+  // Sync state when browser navigation occurs (back/forward)
+  useEffect(() => {
+    if (pathname) {
+      const routeTab = getTabFromPath(pathname);
+      setActiveTab((current) => (current !== routeTab ? routeTab : current));
+    }
+  }, [pathname, getTabFromPath]);
 
   const handleManualRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ALERTS_QUERY_KEY });
@@ -46,17 +69,26 @@ export function useDashboardOrchestrator() {
     setIsSidebarCollapsed((prev) => !prev);
   };
 
-  const handleTabChange = (tab: TacticalNavTab) => {
-    setActiveTab(tab);
-    if (tab === "cameras") {
-      wall.openWall();
-    }
-  };
+  const handleTabChange = useCallback(
+    (tab: TacticalNavTab) => {
+      setActiveTab(tab);
+      const targetRoute = TAB_ROUTE_MAP[tab] || "/drone";
+      
+      // Update browser URL seamlessly without reload
+      if (pathname !== targetRoute) {
+        router.push(targetRoute);
+      }
+
+      if (tab === "cameras") {
+        wall.openWall();
+      }
+    },
+    [pathname, router, wall]
+  );
 
   const handleViewSelect = async (view: "aerial" | "ground") => {
     await switchView.mutateAsync(view);
   };
-
 
   return {
     activeTab,
@@ -75,7 +107,5 @@ export function useDashboardOrchestrator() {
     handleViewSelect,
   };
 }
-
-
 
 export default useDashboardOrchestrator;
