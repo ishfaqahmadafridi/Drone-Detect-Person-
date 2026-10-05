@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { ALERTS_QUERY_KEY } from "@/services/queries/useAlertsQuery";
@@ -31,10 +31,9 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
     return ROUTE_TAB_MAP[cleanPath] || "airspace";
   }, []);
 
-  const [activeTab, setActiveTab] = useState<TacticalNavTab>(() => {
-    if (initialTab) return initialTab;
-    return getTabFromPath(pathname);
-  });
+  const routeTab = getTabFromPath(pathname);
+  const [selectedTab, setSelectedTab] = useState<TacticalNavTab | null>(initialTab || null);
+  const activeTab = selectedTab ?? routeTab;
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const { view_mode, primary_camera_ids, connected_camera_ids } = useAppSelector((state) => state.telemetry);
@@ -45,14 +44,6 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
   const { isMuted, toggleMute } = useAudioAlert();
   const flight = useDroneFlight();
   const wall = useCameraWall();
-
-  // Sync state when browser navigation occurs (back/forward)
-  useEffect(() => {
-    if (pathname) {
-      const routeTab = getTabFromPath(pathname);
-      setActiveTab((current) => (current !== routeTab ? routeTab : current));
-    }
-  }, [pathname, getTabFromPath]);
 
   const handleManualRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ALERTS_QUERY_KEY });
@@ -73,11 +64,25 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
     setIsSidebarCollapsed((prev) => !prev);
   };
 
+  const handleViewSelect = useCallback(
+    async (view: "aerial" | "ground") => {
+      await switchView.mutateAsync(view);
+      const camera = cameras.find((cam) => cam.id === primary_camera_ids[view]);
+      if (camera) dispatch(setActiveCamera(camera));
+      const count = cameras.filter(
+        (cam) => cam.viewMode === view && connected_camera_ids.includes(cam.id)
+      ).length;
+      dispatch(setViewportLayout(count > 1 ? "dual" : "single"));
+      setSelectedTab("airspace");
+    },
+    [cameras, connected_camera_ids, dispatch, primary_camera_ids, switchView]
+  );
+
   const handleTabChange = useCallback(
     (tab: TacticalNavTab) => {
-      setActiveTab(tab);
+      setSelectedTab(tab);
       const targetRoute = TAB_ROUTE_MAP[tab] || "/drone";
-      
+
       // Update browser URL seamlessly without reload
       if (pathname !== targetRoute) {
         router.push(targetRoute);
@@ -89,21 +94,12 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
         void handleViewSelect("aerial");
       }
     },
-    [pathname, router, wall]
+    [handleViewSelect, pathname, router, wall]
   );
-
-  const handleViewSelect = async (view: "aerial" | "ground") => {
-    await switchView.mutateAsync(view);
-    const camera = cameras.find(camera => camera.id === primary_camera_ids[view]);
-    if (camera) dispatch(setActiveCamera(camera));
-    const count = cameras.filter(camera => camera.viewMode === view && connected_camera_ids.includes(camera.id)).length;
-    dispatch(setViewportLayout(count > 1 ? "dual" : "single"));
-    setActiveTab("airspace");
-  };
 
   return {
     activeTab,
-    setActiveTab,
+    setActiveTab: handleTabChange,
     handleTabChange,
     isSidebarCollapsed,
     toggleSidebar,

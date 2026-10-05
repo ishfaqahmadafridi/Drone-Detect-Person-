@@ -1,28 +1,43 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { formatUtcTime } from "@/utils";
 
-export const useSystemClock = (placeholder = "--:--:--") => {
-  const [utcTime, setUtcTime] = useState<string>(placeholder);
-  const [isMounted, setIsMounted] = useState<boolean>(false);
+let listeners: Array<() => void> = [];
+let intervalId: ReturnType<typeof setInterval> | null = null;
 
-  useEffect(() => {
-    setIsMounted(true);
-    setUtcTime(formatUtcTime());
-
-    const timer = setInterval(() => {
-      setUtcTime(formatUtcTime());
+function subscribe(callback: () => void) {
+  listeners.push(callback);
+  if (listeners.length === 1 && typeof window !== "undefined") {
+    intervalId = setInterval(() => {
+      listeners.forEach((l) => l());
     }, 1000);
+  }
+  return () => {
+    listeners = listeners.filter((l) => l !== callback);
+    if (listeners.length === 0 && intervalId !== null) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+}
 
-    return () => clearInterval(timer);
-  }, []);
+export const useSystemClock = (placeholder = "--:--:--") => {
+  const utcTime = useSyncExternalStore(
+    subscribe,
+    () => formatUtcTime(),
+    () => placeholder
+  );
 
-  const displayTime = isMounted ? utcTime : placeholder;
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   return {
-    utcTime: displayTime,
-    timeStr: displayTime,
+    utcTime,
+    timeStr: utcTime,
     isMounted,
   };
 };
