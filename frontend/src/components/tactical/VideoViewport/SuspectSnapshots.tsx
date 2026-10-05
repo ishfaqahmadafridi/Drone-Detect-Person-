@@ -11,12 +11,27 @@ export function SuspectSnapshots({ portraits, reference = false }: SuspectSnapsh
         <div className="flex gap-3 overflow-x-auto py-2">
           {portraits.map(person => (
             <figure key={person.id} className={VIDEO_TESTING.portraitCardClass}>
-              <a href={person.image} download={`suspect-${person.id}-${person.capturedAt.replaceAll(":", "-")}.jpg`} title={`Download suspect #${person.id} snapshot`}>
+              <a
+                href={person.image}
+                download={`suspect-${person.id}-${person.capturedAt.replaceAll(":", "-")}.jpg`}
+                title={`Download suspect #${person.id} snapshot`}
+                className="block overflow-hidden rounded border border-slate-700 bg-slate-900"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={person.image} alt={`Selected suspect #${person.id}`} className="w-32 h-36 object-contain rounded border" />
+                <img
+                  src={person.image}
+                  alt={`Selected suspect #${person.id}`}
+                  className="w-full h-36 object-contain"
+                />
               </a>
-              <figcaption className="text-xs mt-1">Suspect #{person.id}</figcaption>
-              <a className={VIDEO_TESTING.buttonClass} href={person.image} download={`suspect-${person.id}.jpg`}>Download image</a>
+              <figcaption className="text-xs font-semibold text-slate-300">Suspect #{person.id}</figcaption>
+              <a
+                className={`${VIDEO_TESTING.buttonClass} w-full text-center`}
+                href={person.image}
+                download={`suspect-${person.id}.jpg`}
+              >
+                Download Crop
+              </a>
             </figure>
           ))}
         </div>

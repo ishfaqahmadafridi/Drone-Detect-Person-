@@ -19,11 +19,6 @@ def get_optimal_device() -> str:
 
         if torch.cuda.is_available():
             return "cuda"
-
-        if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-            # Enable MPS fallback to CPU for operations not natively supported in MPS (e.g., torchvision NMS)
-            os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
-            return "mps"
     except Exception:
         pass
 

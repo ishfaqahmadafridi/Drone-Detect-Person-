@@ -196,7 +196,7 @@ export const VIDEO_TESTING = {
   maxBytes: 500 * 1024 * 1024,
   uploadTimeoutMs: 10 * 60 * 1000,
   panelClass: "flex flex-wrap items-center gap-3 p-3 border-t border-slate-700 bg-slate-950 text-slate-200",
-  buttonClass: "rounded border border-cyan-700 bg-slate-900 px-3 py-2 text-sm text-cyan-100 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed",
+  buttonClass: "inline-flex items-center justify-center rounded border border-cyan-700/80 bg-slate-900 px-3 py-1.5 text-xs font-medium text-cyan-200 hover:bg-slate-800 hover:border-cyan-500 whitespace-nowrap cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
   dialogBackdropClass: "fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4",
   dialogClass: "w-full max-w-5xl max-h-[95vh] overflow-auto rounded-xl border border-slate-600 bg-slate-950 p-4 space-y-3 text-slate-100",
   boxClass: "absolute border-2 border-cyan-400 bg-transparent hover:bg-cyan-400/20",
