@@ -100,7 +100,7 @@ class TestModelSelection(unittest.TestCase):
         aerial_options = aerial.track.call_args.kwargs
         self.assertEqual(aerial_options["tracker"], "botsort.yaml")
         self.assertEqual(aerial_options["classes"], [0])
-        self.assertEqual(aerial_options["imgsz"], 1280)
+        self.assertEqual(aerial_options["imgsz"], 640)
         self.assertEqual(aerial_options["iou"], 0.45)
         detector.config.confidence_threshold = 0.42
         detector.process_frame(frame, use_tracking=False)

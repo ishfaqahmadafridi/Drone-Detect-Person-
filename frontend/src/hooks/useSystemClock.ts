@@ -1,19 +1,45 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useSyncExternalStore } from "react";
 import { formatUtcTime } from "@/utils";
 
-export const useSystemClock = () => {
-  const [utcTime, setUtcTime] = useState<string>(() => formatUtcTime());
+let listeners: Array<() => void> = [];
+let intervalId: ReturnType<typeof setInterval> | null = null;
 
-  useEffect(() => {
-    const updateClock = () => {
-      setUtcTime(formatUtcTime());
-    };
+function subscribe(callback: () => void) {
+  listeners.push(callback);
+  if (listeners.length === 1 && typeof window !== "undefined") {
+    intervalId = setInterval(() => {
+      listeners.forEach((l) => l());
+    }, 1000);
+  }
+  return () => {
+    listeners = listeners.filter((l) => l !== callback);
+    if (listeners.length === 0 && intervalId !== null) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+}
 
-    const timer = setInterval(updateClock, 1000);
-    return () => clearInterval(timer);
-  }, []);
+export const useSystemClock = (placeholder = "--:--:--") => {
+  const utcTime = useSyncExternalStore(
+    subscribe,
+    () => formatUtcTime(),
+    () => placeholder
+  );
 
-  return { utcTime, timeStr: utcTime };
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+
+  return {
+    utcTime,
+    timeStr: utcTime,
+    isMounted,
+  };
 };
 
 export default useSystemClock;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, RefObject } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DEFAULT_RESTRICTED_ZONE } from "@/constants/tactical";
 import { UseZoneCanvasProps } from "@/types";
 

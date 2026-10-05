@@ -14,7 +14,16 @@ class VideoEndTests(unittest.TestCase):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
         self.path = Path(self.directory.name) / "short.mp4"
-        writer = cv2.VideoWriter(str(self.path), cv2.VideoWriter_fourcc(*"mp4v"), 25, (40, 40))
+        writer = None
+        for fourcc_str, ext in [("avc1", "mp4"), ("mp4v", "mp4"), ("MJPG", "avi")]:
+            test_path = Path(self.directory.name) / f"short.{ext}"
+            w = cv2.VideoWriter(str(test_path), cv2.VideoWriter_fourcc(*fourcc_str), 25, (40, 40))
+            if w.isOpened():
+                self.path = test_path
+                writer = w
+                break
+            w.release()
+        self.assertIsNotNone(writer)
         self.assertTrue(writer.isOpened())
         for value in (30, 90, 180):
             writer.write(np.full((40, 40, 3), value, dtype=np.uint8))

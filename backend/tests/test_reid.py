@@ -235,7 +235,7 @@ class ReIDTests(unittest.TestCase):
         worker = ModelWorker(replace(self.settings, device="cpu", checkpoint="missing-test-checkpoint.pth",
                                      worker_timeout_seconds=30))
         try:
-            with self.assertRaisesRegex(RuntimeError, "checkpoint missing"):
+            with self.assertRaisesRegex(RuntimeError, "(?:checkpoint|source) missing"):
                 worker.start()
             process = worker.process
         finally:

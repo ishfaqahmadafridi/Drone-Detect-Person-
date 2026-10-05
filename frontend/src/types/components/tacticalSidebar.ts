@@ -42,6 +42,7 @@ export interface SidebarNavListProps {
 export interface NavItemConfig {
   id: TacticalNavTab;
   label: string;
+  href?: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 

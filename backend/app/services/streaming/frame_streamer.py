@@ -109,3 +109,6 @@ class FrameStreamer:
         finally:
             with self._condition:
                 self._subscribers -= 1
+
+
+__all__ = ["FrameStreamer"]

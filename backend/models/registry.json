@@ -8,12 +8,8 @@
       "recommended_imgsz": 640,
       "confidence": 0.35,
       "iou": 0.5,
-      "person_classes": [
-        0
-      ],
-      "person_labels": [
-        "person"
-      ],
+      "person_classes": [0],
+      "person_labels": ["person"],
       "tracker": "bytetrack.yaml",
       "engine": "YOLO26n + ByteTrack",
       "source_url": "https://docs.ultralytics.com/models/yolo26/",
@@ -28,15 +24,11 @@
       "architecture": "YOLO11n",
       "dataset": "VisDrone",
       "filename": "visdrone_person_best.pt",
-      "recommended_imgsz": 1280,
+      "recommended_imgsz": 640,
       "confidence": 0.25,
       "iou": 0.45,
-      "person_classes": [
-        0
-      ],
-      "person_labels": [
-        "person"
-      ],
+      "person_classes": [0],
+      "person_labels": ["person"],
       "tracker": "botsort.yaml",
       "engine": "YOLO11n + BoT-SORT",
       "source_url": "https://github.com/pratap424/visdrone_mot",

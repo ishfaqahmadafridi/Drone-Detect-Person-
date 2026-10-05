@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useStreamMutation } from "@/services/queries/useStreamMutation";
 import { useAppDispatch, useAppSelector } from "@/store";
@@ -52,10 +52,18 @@ export function useCameraWall() {
   };
 
   const connectRtsp = async (url: string, viewMode: "aerial" | "ground" = "ground") => {
-    const camera = await cameraApi.registerCamera({ name: `Ground camera ${cameras.filter(camera => camera.viewMode === "ground").length + 1}`,
-      location: "Ground perimeter", source_type: "rtsp", view_mode: viewMode, stream_url: url, device_type: "poe_cctv" });
+    const isHttp = url.startsWith("http://") || url.startsWith("https://");
+    const sourceType: StreamSourceType = isHttp ? "http" : "rtsp";
+    const camera = await cameraApi.registerCamera({
+      name: isHttp ? "Mobile IP Camera" : `Ground camera ${cameras.filter(camera => camera.viewMode === "ground").length + 1}`,
+      location: isHttp ? "Smartphone Patrol Link" : "Ground perimeter",
+      source_type: sourceType,
+      view_mode: viewMode,
+      stream_url: url,
+      device_type: isHttp ? "mobile_phone" : "poe_cctv",
+    });
     await queryClient.invalidateQueries({ queryKey: CAMERA_FLEET_QUERY_KEY });
-    await selectFeed("rtsp", viewMode, camera);
+    await selectFeed(sourceType, viewMode, camera);
     dispatch(setViewportLayout("dual"));
   };
 

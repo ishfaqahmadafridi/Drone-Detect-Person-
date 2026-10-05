@@ -41,3 +41,7 @@ export interface TacticalOverlaysProps {
     connectRtsp: (url: string) => void;
   };
 }
+
+export interface DroneDashboardProps {
+  initialTab?: TacticalNavTab;
+}

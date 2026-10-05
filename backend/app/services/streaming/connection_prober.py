@@ -109,11 +109,19 @@ class StreamConnectionProberService:
                                 app_success = False
                                 app_message = f"Camera reached at {host}:{target_port}, but stream path not found (404 Not Found)."
                     elif proto == "http":
+                        import base64
                         path = f"/{req.stream_path.lstrip('/')}" if req.stream_path else "/"
+                        auth_header_line = ""
+                        if req.username:
+                            pwd = req.password or ""
+                            token = base64.b64encode(f"{req.username}:{pwd}".encode("utf-8")).decode("ascii")
+                            auth_header_line = f"Authorization: Basic {token}\r\n"
+
                         head_cmd = (
                             f"HEAD {path} HTTP/1.1\r\n"
                             f"Host: {host}:{target_port}\r\n"
                             f"User-Agent: AERO-GUARD-PROBER\r\n"
+                            f"{auth_header_line}"
                             f"Connection: close\r\n\r\n"
                         )
                         sock.sendall(head_cmd.encode("utf-8"))

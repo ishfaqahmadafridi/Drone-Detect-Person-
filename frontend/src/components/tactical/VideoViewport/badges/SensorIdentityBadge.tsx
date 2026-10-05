@@ -17,7 +17,10 @@ export const SensorIdentityBadge: React.FC<SensorIdentityBadgeProps> = ({
       <div className="px-2 py-0.5 rounded bg-slate-950/85 backdrop-blur-sm border border-slate-700/60 font-mono-code text-[10px] text-slate-200 font-semibold tracking-wider uppercase shadow-md">
         {sensorTag}
       </div>
-      <div className="px-1 text-[10px] font-mono-code text-slate-400 tracking-wide">
+      <div
+        className="px-1 text-[10px] font-mono-code text-slate-400 tracking-wide"
+        suppressHydrationWarning
+      >
         {utcTime} UTC
       </div>
     </div>

@@ -3,7 +3,7 @@
 // ==============================================================================
 
 export type ThreatLevel = "CLEAR" | "MONITORING" | "INTRUSION" | "MANUAL";
-export type StreamSourceType = "synthetic" | "webcam" | "file" | "rtsp";
+export type StreamSourceType = "synthetic" | "webcam" | "file" | "rtsp" | "http";
 export type TacticalNavTab = "airspace" | "cameras" | "incidents" | "recordings" | "settings";
 export type TrackingMode = "auto" | "manual";
 

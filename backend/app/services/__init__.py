@@ -18,6 +18,8 @@ _LAZY_EXPORTS = {
     "DroneStreamService": "stream_service",
     "drone_stream_service": "stream_service",
     "ZoneMonitorService": "zone_service",
+    "AerialDiffusionService": "generative_service",
+    "generative_service": "generative_service",
 }
 
 
@@ -28,6 +30,7 @@ def __getattr__(name):
     value = getattr(import_module(f"app.services.{_LAZY_EXPORTS[name]}"), name)
     globals()[name] = value
     return value
+
 
 __all__ = [
     "AlertManagerService",
@@ -42,4 +45,6 @@ __all__ = [
     "TargetTrackerService",
     "tracking_service",
     "ZoneMonitorService",
+    "AerialDiffusionService",
+    "generative_service",
 ]
