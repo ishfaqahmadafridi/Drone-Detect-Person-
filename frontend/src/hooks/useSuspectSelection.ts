@@ -88,6 +88,54 @@ export function useSuspectSelection({ channel, sourceType, selectedTargetIds }: 
     finally { setPending(false); busy.current = false; }
   };
 
+  const autoSelectSuspect = async (targetId?: number) => {
+    if (busy.current) return;
+    busy.current = true;
+    setPending(true);
+    setError("");
+    try {
+      const frame = await trackingApi.freeze(channel);
+      let chosenId = targetId;
+      if (chosenId === undefined || chosenId === null) {
+        if (frame.detections.length > 0) {
+          // Sort by confidence or use highest confidence detection
+          const sorted = [...frame.detections].sort((a, b) => (b.conf ?? 0) - (a.conf ?? 0));
+          chosenId = sorted[0].id;
+        }
+      }
+      if (chosenId !== undefined && chosenId !== null && frame.detections.some(d => d.id === chosenId)) {
+        const crops = await cropSuspectSnapshots(frame, [chosenId]);
+        const result = await trackingApi.commit(frame.token, [chosenId], channel);
+        dispatch(setSuspectPortraits(crops.filter(person => result.selected_ids.includes(person.id))));
+        if (!channel) dispatch(setTelemetryData({ tracking_mode: result.mode, selected_target_ids: result.selected_ids }));
+      } else {
+        await trackingApi.resume(frame.token, channel);
+        setError("No detected person found on the current frame to capture.");
+      }
+      activeToken.current = null;
+      setSnapshot(null);
+    } catch (err) {
+      setError(apiErrorMessage(err));
+    } finally {
+      setPending(false);
+      busy.current = false;
+    }
+  };
+
   const toggle = (id: number) => setSelectedIds(ids => ids.includes(id) ? ids.filter(item => item !== id) : [...ids, id]);
-  return { isGround: view_mode === "ground", snapshot, portraits, selectedIds, selectedCount: Math.max(selected_target_ids?.length ?? 0, portraits.length), pending, error, freeze, finish, clear, toggle };
+  return {
+    isGround: view_mode === "ground",
+    snapshot,
+    portraits,
+    selectedIds,
+    selectedCount: Math.max(selected_target_ids?.length ?? 0, portraits.length),
+    liveDetections: legacy.detections ?? [],
+    pending,
+    error,
+    freeze,
+    autoSelectSuspect,
+    finish,
+    clear,
+    toggle,
+  };
 }
