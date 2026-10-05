@@ -22,7 +22,10 @@ def execute_flight_command(req: DroneCommandRequest):
     """
     Executes flight operations (takeoff, patrol, hover, return to launch, camera connect).
     """
-    valid_actions = ["takeoff", "launch", "patrol", "hover", "rtl", "return_to_launch", "land", "connect_drone", "connect_webcam"]
+    valid_actions = [
+        "takeoff", "launch", "patrol", "hover", "rtl", "return_to_launch", "land",
+        "connect_drone", "connect_webcam", "preset_gate", "preset_patrol", "ir_filter", "reboot_sensor"
+    ]
     action_clean = req.action.lower().strip()
     if action_clean not in valid_actions:
         raise HTTPException(

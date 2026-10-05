@@ -58,7 +58,7 @@ STREAM_IDLE_WAIT_SECONDS = 0.1
 PREVIEW_MAX_EDGE = int(os.getenv("PREVIEW_MAX_EDGE", 1280))
 DEFAULT_VIDEO_FPS = 25.0
 VIDEO_PLAYBACK_MODE = os.getenv("VIDEO_PLAYBACK_MODE", "realtime")
-VIDEO_END_BEHAVIOR = os.getenv("VIDEO_END_BEHAVIOR", "hold")
+VIDEO_END_BEHAVIOR = os.getenv("VIDEO_END_BEHAVIOR", "loop")
 if VIDEO_END_BEHAVIOR not in {"hold", "loop"}:
     raise ValueError("VIDEO_END_BEHAVIOR must be hold or loop")
 STREAM_ASYNC_PREVIEW = os.getenv("STREAM_ASYNC_PREVIEW", "true").lower() == "true"

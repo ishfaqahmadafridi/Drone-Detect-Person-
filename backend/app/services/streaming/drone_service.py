@@ -93,6 +93,18 @@ class DroneAvionicsManager:
                 self.flight_state = "STANDBY"
                 msg = "Avionics telemetry link established with ground command."
 
+            elif action_clean == "preset_gate":
+                msg = "Perimeter security gate locked."
+
+            elif action_clean == "preset_patrol":
+                msg = "PTZ perimeter 360-degree sweep initiated."
+
+            elif action_clean == "ir_filter":
+                msg = "Optical IR cut filter toggled."
+
+            elif action_clean == "reboot_sensor":
+                msg = "Perimeter sensor PTZ alignment recalibrated."
+
             else:
                 msg = f"Executed directive: {action}"
 
