@@ -23,8 +23,7 @@ class TestPipelineProcessor(unittest.TestCase):
 
     def test_pipeline_processor_config_and_view(self):
         processor = VisionPipelineProcessor()
-        processor.update_config(multi_person_thresh=5, conf_thresh=0.6)
-        self.assertEqual(processor.config.multi_person_threshold, 5)
+        processor.update_config(conf_thresh=0.6)
         self.assertEqual(processor.config.confidence_threshold, 0.6)
 
         active_view = processor.set_view("ground")

@@ -38,12 +38,12 @@ class FilesystemSyncer:
                     threat_level = (
                         "INTRUSION"
                         if "intrusion" in fname.lower()
-                        else ("MULTI_PERSON" if "multi" in fname.lower() else "CLEAR")
+                        else "CLEAR"
                     )
                     threat_type = (
                         "ZONE INTRUSION"
                         if threat_level == "INTRUSION"
-                        else ("MULTI-PERSON GATHERING" if threat_level == "MULTI_PERSON" else "SECURITY ALERT")
+                        else "PERSON DETECTION"
                     )
                     created_at = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -79,7 +79,7 @@ class FilesystemSyncer:
                     threat_level = (
                         "INTRUSION"
                         if "intrusion" in fname.lower()
-                        else ("MULTI_PERSON" if "multi" in fname.lower() else "MONITORING")
+                        else "MONITORING"
                     )
                     threat_type = "EVIDENTIARY VIDEO RECORDING"
                     created_at = datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")

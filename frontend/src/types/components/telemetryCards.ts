@@ -44,10 +44,6 @@ export interface IntrudersMetricCardProps {
   count: number;
 }
 
-export interface GatheringsMetricCardProps {
-  count: number;
-  threshold: number;
-}
 
 export interface SpeedMetricCardProps {
   fps: number;

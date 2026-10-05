@@ -6,13 +6,11 @@ Preserves backward compatibility with legacy scripts and tests.
 from app.services.zone import (
     normalized_to_pixel_polygon,
     is_point_in_polygon,
-    compute_proximity_gatherings,
     ZoneMonitorService
 )
 
 __all__ = [
     "normalized_to_pixel_polygon",
     "is_point_in_polygon",
-    "compute_proximity_gatherings",
     "ZoneMonitorService"
 ]

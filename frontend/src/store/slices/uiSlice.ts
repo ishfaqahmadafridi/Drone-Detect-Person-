@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SnapshotItem } from "@/types";
+import { SnapshotItem, SuspectSnapshot } from "@/types";
 
 interface UIState {
   isEditingZone: boolean;
   selectedSnapshot: SnapshotItem | null;
   activeSourceTab: "synthetic" | "webcam" | "file" | "rtsp";
   sirenMuted: boolean;
+  suspectPortraits: SuspectSnapshot[];
 }
 
 const initialState: UIState = {
@@ -13,12 +14,16 @@ const initialState: UIState = {
   selectedSnapshot: null,
   activeSourceTab: "synthetic",
   sirenMuted: false,
+  suspectPortraits: [],
 };
 
 export const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
+    setSuspectPortraits: (state, action: PayloadAction<SuspectSnapshot[]>) => {
+      state.suspectPortraits = action.payload;
+    },
     setIsEditingZone: (state, action: PayloadAction<boolean>) => {
       state.isEditingZone = action.payload;
     },
@@ -34,5 +39,5 @@ export const uiSlice = createSlice({
   },
 });
 
-export const { setIsEditingZone, setSelectedSnapshot, setActiveSourceTab, setSirenMuted } = uiSlice.actions;
+export const { setIsEditingZone, setSelectedSnapshot, setActiveSourceTab, setSirenMuted, setSuspectPortraits } = uiSlice.actions;
 export default uiSlice.reducer;

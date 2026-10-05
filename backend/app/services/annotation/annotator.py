@@ -13,7 +13,6 @@ except ImportError:
 from app.core.config import DetectionConfig
 from app.services.annotation.theme import TacticalAnnotationTheme
 from app.services.annotation.zone_overlay import draw_zone_polygon
-from app.services.annotation.proximity_overlay import draw_proximity_lines
 from app.services.annotation.target_overlay import draw_detections_and_trails
 from app.services.annotation.hud_overlay import draw_hud_banner
 
@@ -35,8 +34,6 @@ class TacticalFrameAnnotator:
         frame: np.ndarray,
         detected_persons: List[Dict],
         intruders: List[Dict],
-        gatherings: List[Tuple[int, int, float]],
-        clustered_ids: List[int],
         zone_polygon: Optional[np.ndarray],
         threat_level: str,
         alert_msg: str,
@@ -57,21 +54,11 @@ class TacticalFrameAnnotator:
                 theme=self.theme
             )
 
-        # 2. Gathering Proximity Connectors
-        if self.config.show_proximity_lines and gatherings:
-            draw_proximity_lines(
-                annotated=annotated,
-                detected_persons=detected_persons,
-                gatherings=gatherings,
-                theme=self.theme
-            )
-
         # 3. Target Bounding Boxes & Trails
         draw_detections_and_trails(
             annotated=annotated,
             detected_persons=detected_persons,
             intruders=intruders,
-            clustered_ids=clustered_ids,
             track_history=track_history,
             config=self.config,
             theme=self.theme
@@ -85,7 +72,6 @@ class TacticalFrameAnnotator:
                 alert_msg=alert_msg,
                 total_people=len(detected_persons),
                 intruder_count=len(intruders),
-                gathering_count=len(gatherings),
                 fps=fps,
                 config=self.config,
                 theme=self.theme

@@ -37,8 +37,8 @@ export interface TacticalOverlaysProps {
     selectFeed: CameraWallModalProps["onSelectFeed"];
     toggleConnect: (cameraId: string) => void;
     connectAll: () => void;
+    setLayout: (layout: "single" | "dual" | "quad") => void;
     connectRtsp: (url: string) => void;
-    setLayout: (mode: "single" | "dual" | "quad") => void;
   };
 }
 

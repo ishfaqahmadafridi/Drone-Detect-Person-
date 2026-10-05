@@ -1,8 +1,7 @@
-import { ThreatLevel, TacticalCameraChannel, ViewportLayoutOption, ClassificationLegendItem } from "@/types";
+import { ThreatLevel, TacticalCameraChannel, ClassificationLegendItem, ViewportLayoutOption } from "@/types";
 
 export const THREAT_RIBBON_STYLES: Record<ThreatLevel, string> = {
   INTRUSION: "bg-red-950/30 border-red-500/50 text-red-300",
-  MULTI_PERSON: "bg-amber-950/30 border-amber-500/50 text-amber-300",
   MONITORING: "bg-blue-950/30 border-blue-500/40 text-blue-300",
   CLEAR: "bg-emerald-950/30 border-emerald-500/40 text-emerald-300",
   MANUAL: "bg-slate-900/80 border-slate-700 text-slate-300",
@@ -52,7 +51,7 @@ export const CCTV_CAMERA_CONFIG = {
   name: "PERIMETER CCTV SENSOR",
   location: "Sector North Perimeter - Post 03",
   mountHeight: "2.8m Fixed Wall Mount",
-  lens: "3.6mm Fixed Focal (110° FOV)",
+  lens: "3.6mm Fixed Focal (110Ãƒâ€šÃ‚Â° FOV)",
   powerSource: "PoE+ 48V (IEEE 802.3at) / Mains",
   powerStatus: "100% STABLE (12.4W Nominal)",
   voltage: "48.2V PoE",
@@ -70,9 +69,9 @@ export const PERIMETER_ZOOM_PRESETS = [
 ] as const;
 
 export const DEFAULT_AERIAL_MODEL_NAME = "visdrone_person_best.pt";
-export const DEFAULT_GROUND_MODEL_NAME = "mot20_yolo26s_pedestrian.pt";
+export const DEFAULT_GROUND_MODEL_NAME = "yolo26n.pt";
 export const DEFAULT_AERIAL_ENGINE = "YOLO11n + BoT-SORT";
-export const DEFAULT_GROUND_ENGINE = "YOLO26s + ByteTrack";
+export const DEFAULT_GROUND_ENGINE = "YOLO26n + ByteTrack";
 
 export const DEFAULT_TACTICAL_CAMERAS: readonly TacticalCameraChannel[] = [
   {
@@ -141,31 +140,18 @@ export const DEFAULT_TACTICAL_CAMERAS: readonly TacticalCameraChannel[] = [
   },
 ] as const;
 
-export const DEFAULT_CONNECTED_CAMERA_IDS = ["CAM-01", "CAM-02"] as const;
+export const DEFAULT_CONNECTED_CAMERA_IDS = ["CAM-01"] as const;
 
 export const VIEWPORT_LAYOUT_OPTIONS: readonly ViewportLayoutOption[] = [
-  {
-    mode: "single",
-    label: "1-UP",
-    tooltip: "Single Sensor Focus (Maximized HUD)",
-  },
-  {
-    mode: "dual",
-    label: "2-UP",
-    tooltip: "Dual Split: Aerial Drone + Ground CCTV Live",
-  },
-  {
-    mode: "quad",
-    label: "4-UP",
-    tooltip: "Quad Grid: 4 Simultaneous Live Cameras",
-  },
-] as const;
+  { mode: "single", label: "1-UP", tooltip: "Single Sensor Focus (Maximized HUD)" },
+  { mode: "dual", label: "2-UP", tooltip: "Connected cameras side by side" },
+  { mode: "quad", label: "4-UP", tooltip: "Connected camera grid" },
+];
+
 
 export const CLASSIFICATION_LEGEND_ITEMS: readonly ClassificationLegendItem[] = [
-  { label: "Safe", dotClass: "bg-emerald-400" },
-  { label: "Gathering", dotClass: "bg-amber-400" },
-  { label: "Intrusion", dotClass: "bg-red-400" },
-  { label: "Restricted zone", dotClass: "border border-blue-400" },
+  { label: "Person", dotClass: "bg-emerald-400" },
+  { label: "Selected suspect", dotClass: "bg-amber-400" },
 ] as const;
 
 export const TACTICAL_FEED_PREVIEW_TOKENS = {
@@ -192,12 +178,42 @@ export const TACTICAL_FEED_PREVIEW_TOKENS = {
     timestampFont: "9px monospace",
   },
   labels: {
-    liveAiDetect: "LIVE • AI DETECT",
+    liveAiDetect: "LIVE ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ AI DETECT",
     feedReestablishing: "FEED RE-ESTABLISHING...",
     liveCoverageSuffix: "LIVE COVERAGE",
-    promoteHint: "Promote to Tactical Viewport",
     defaultFpsResolution: "1080p @ 25 FPS",
   },
 } as const;
 
 
+
+export const VIDEO_TESTING = {
+  referenceBoxClass: "w-full rounded-xl border border-slate-700 bg-slate-900/60 p-4 text-slate-200",
+  portraitCardClass: "shrink-0 w-40 rounded-lg border border-slate-600 bg-slate-950 p-3 space-y-2",
+  cameraInputClass: "min-w-0 flex-1 rounded border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100",
+  cameraQueryStaleMs: 15000,
+  extensions: [".mp4", ".avi", ".mov", ".mkv", ".webm", ".m4v"] as string[],
+  maxBytes: 500 * 1024 * 1024,
+  uploadTimeoutMs: 10 * 60 * 1000,
+  panelClass: "flex flex-wrap items-center gap-3 p-3 border-t border-slate-700 bg-slate-950 text-slate-200",
+  buttonClass: "rounded border border-cyan-700 bg-slate-900 px-3 py-2 text-sm text-cyan-100 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed",
+  dialogBackdropClass: "fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4",
+  dialogClass: "w-full max-w-5xl max-h-[95vh] overflow-auto rounded-xl border border-slate-600 bg-slate-950 p-4 space-y-3 text-slate-100",
+  boxClass: "absolute border-2 border-cyan-400 bg-transparent hover:bg-cyan-400/20",
+  selectedBoxClass: "absolute border-4 border-amber-400 bg-amber-400/20",
+  boxLabelClass: "absolute top-0 left-0 whitespace-nowrap bg-slate-950 text-xs text-white px-1",
+} as const;
+
+export const REID_UI = {
+  panelClass: "rounded-xl border border-slate-700 bg-slate-950 p-4 text-slate-200 space-y-4",
+  mutedClass: "text-sm text-slate-400",
+  errorClass: "text-sm text-amber-300",
+  cardClass: "rounded-lg border border-slate-700 bg-slate-900 p-3 space-y-2",
+  portraitClass: "h-40 w-20 object-contain rounded bg-slate-950",
+  stateLabels: {
+    collecting: "Collecting clear ground frames",
+    searching: "Waiting for complete aerial tracks and matching results",
+    candidates: "Possible aerial matches — review visually",
+    no_match: "No candidate meets the configured similarity threshold",
+  },
+} as const;

@@ -17,7 +17,7 @@ from app.simulator.osd import TelemetryOsdRenderer
 class SyntheticVideoGenerator:
     """
     Generates realistic overhead drone aerial simulation videos with moving people,
-    gathering behaviour (2+ people), and restricted zone entry events.
+    independent walking paths and restricted-zone entry events.
 
     Single responsibility: file-to-disk codec pipeline only.
     For in-memory real-time frames use LiveSimulationStream.

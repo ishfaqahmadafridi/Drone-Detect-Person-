@@ -24,8 +24,6 @@ class CLIDetectionExecutor:
         source: str = "synthetic",
         model_name: Optional[str] = None,
         confidence: float = 0.35,
-        multi_person_threshold: int = 2,
-        proximity_dist_px: int = 120,
         save_video: bool = False,
         output_video_path: str = "runs/output/annotated_output.mp4",
         headless: bool = False,
@@ -34,8 +32,6 @@ class CLIDetectionExecutor:
         self.source = source
         self.model_name = model_name or AERIAL_MODEL_NAME
         self.confidence = confidence
-        self.multi_person_threshold = multi_person_threshold
-        self.proximity_dist_px = proximity_dist_px
         self.save_video = save_video
         self.output_video_path = output_video_path
         self.headless = headless
@@ -46,8 +42,6 @@ class CLIDetectionExecutor:
             source=self.source,
             model_name=self.model_name,
             confidence=self.confidence,
-            multi_thresh=self.multi_person_threshold,
-            proximity_dist_px=self.proximity_dist_px,
             headless=self.headless
         )
         source_meta = resolve_video_source(self.source)
@@ -56,8 +50,6 @@ class CLIDetectionExecutor:
         config = DetectionConfig(
             model_name=self.model_name,
             confidence_threshold=self.confidence,
-            multi_person_threshold=self.multi_person_threshold,
-            proximity_alert_distance_px=self.proximity_dist_px
         )
 
         pipeline = DetectionPipeline(config)

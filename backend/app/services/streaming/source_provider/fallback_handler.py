@@ -19,6 +19,7 @@ class FallbackHandler:
     def __init__(self, fallback_source: SyntheticFrameSource, state: SourceState) -> None:
         self._fallback = fallback_source
         self._state = state
+        self.using_fallback = False
 
     @property
     def fallback_source(self) -> SyntheticFrameSource:
@@ -33,10 +34,12 @@ class FallbackHandler:
             try:
                 ret, frame = active.read_frame()
                 if ret and frame is not None:
+                    self.using_fallback = False
                     return True, frame
             except Exception as exc:
                 print(f"[FALLBACK_HANDLER] Active source read failed ({exc}) — falling back to simulation.")
 
+        self.using_fallback = True
         return self._fallback.read_frame()
 
     def get_simulated_targets(self) -> List[dict]:

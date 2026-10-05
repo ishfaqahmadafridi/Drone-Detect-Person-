@@ -17,11 +17,11 @@ class TestInferenceAndZones(unittest.TestCase):
         self.assertEqual(switched, "ground")
         self.assertEqual(svc.active_view, "ground")
 
-    def test_zone_intrusion_and_gatherings(self):
+    def test_zone_intrusion(self):
         # 1000x1000 zone polygon from (200, 200) to (800, 800)
         norm_zone = [(0.2, 0.2), (0.8, 0.2), (0.8, 0.8), (0.2, 0.8)]
         zone = ZoneMonitorService(1000, 1000, norm_zone)
-        alert_mgr = AlertManagerService(multi_person_threshold=2)
+        alert_mgr = AlertManagerService()
 
         # Person 1 inside zone (foot at 500, 500)
         p1 = {"id": 1, "center": (500, 450), "foot": (500, 500), "bbox": [480, 400, 520, 500]}
@@ -37,10 +37,8 @@ class TestInferenceAndZones(unittest.TestCase):
         self.assertFalse(p2["is_intruder"])
         self.assertTrue(p3["is_intruder"])
 
-        gatherings, clustered_ids = zone.compute_gatherings(persons, proximity_threshold_px=120)
-        self.assertGreaterEqual(len(gatherings), 1)  # p1 and p3 form a gathering cluster
 
-        threat, msg, details = alert_mgr.evaluate_state(persons, intruders, gatherings)
+        threat, msg, details = alert_mgr.evaluate_state(persons, intruders)
         self.assertEqual(threat, AlertLevel.INTRUSION)
 
 if __name__ == "__main__":

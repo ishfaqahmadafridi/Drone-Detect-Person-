@@ -21,39 +21,38 @@ class TestAlertSubsystem(unittest.TestCase):
         shutil.rmtree(self.test_dir, ignore_errors=True)
 
     def test_state_evaluator_clear(self):
-        evaluator = ThreatStateEvaluator(multi_person_threshold=2)
-        threat, msg, details = evaluator.evaluate([], [], [])
+        evaluator = ThreatStateEvaluator()
+        threat, msg, details = evaluator.evaluate([], [])
         self.assertEqual(threat, AlertLevel.CLEAR)
         self.assertEqual(details["total_persons"], 0)
         self.assertEqual(details["intruders_count"], 0)
 
     def test_state_evaluator_monitoring(self):
-        evaluator = ThreatStateEvaluator(multi_person_threshold=2)
+        evaluator = ThreatStateEvaluator()
         p1 = {"id": 1}
-        threat, msg, details = evaluator.evaluate([p1], [], [])
+        threat, msg, details = evaluator.evaluate([p1], [])
         self.assertEqual(threat, AlertLevel.MONITORING)
         self.assertEqual(details["total_persons"], 1)
 
-    def test_state_evaluator_multi_person(self):
-        evaluator = ThreatStateEvaluator(multi_person_threshold=2)
+    def test_multiple_people_remain_monitoring(self):
+        evaluator = ThreatStateEvaluator()
         persons = [{"id": 1}, {"id": 2}]
-        threat, msg, details = evaluator.evaluate(persons, [], [(1, 2, 45.0)])
-        self.assertEqual(threat, AlertLevel.MULTI_PERSON)
+        threat, msg, details = evaluator.evaluate(persons, [])
+        self.assertEqual(threat, AlertLevel.MONITORING)
         self.assertEqual(details["total_persons"], 2)
 
     def test_state_evaluator_intrusion(self):
-        evaluator = ThreatStateEvaluator(multi_person_threshold=2)
+        evaluator = ThreatStateEvaluator()
         intruders = [{"id": 1}]
-        threat, msg, details = evaluator.evaluate([{"id": 1}], intruders, [])
+        threat, msg, details = evaluator.evaluate([{"id": 1}], intruders)
         self.assertEqual(threat, AlertLevel.INTRUSION)
-        self.assertIn("RESTRICTED ZONE BREACH", msg)
+        self.assertIn("RESTRICTED ZONE", msg)
 
     def test_evidence_recorder_and_manager(self):
         alert_mgr = AlertManagerService(
             output_dir=self.test_dir,
             snapshots_dir=self.snapshots_dir,
             logs_dir=self.logs_dir,
-            multi_person_threshold=2,
             snapshot_cooldown=1.0
         )
 
@@ -63,7 +62,6 @@ class TestAlertSubsystem(unittest.TestCase):
             "threat_level": AlertLevel.INTRUSION,
             "total_persons": 1,
             "intruders_count": 1,
-            "gathering_pairs": 0,
             "person_ids": [1],
         }
 

@@ -9,9 +9,7 @@ from fastapi import WebSocket
 
 from app.core.constants import (
     DEFAULT_ZONE_POLYGON,
-    DEFAULT_MULTI_PERSON_THRESHOLD,
     DEFAULT_CONFIDENCE_THRESHOLD,
-    DEFAULT_PROXIMITY_ALERT_DISTANCE_PX,
 )
 
 class TelemetryStateStore:
@@ -26,16 +24,13 @@ class TelemetryStateStore:
             "alert_msg": "SYSTEM INITIALIZING",
             "total_persons": 0,
             "intruders_count": 0,
-            "gathering_pairs": 0,
             "fps": 0.0,
             "frame_idx": 0,
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "detections": [],
             "source_type": "synthetic",
             "view_mode": "aerial",
-            "multi_person_threshold": DEFAULT_MULTI_PERSON_THRESHOLD,
             "confidence_threshold": DEFAULT_CONFIDENCE_THRESHOLD,
-            "proximity_distance_px": DEFAULT_PROXIMITY_ALERT_DISTANCE_PX,
             "zone_polygon": [list(pt) for pt in DEFAULT_ZONE_POLYGON]
         }
 

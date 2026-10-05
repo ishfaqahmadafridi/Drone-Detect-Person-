@@ -8,3 +8,6 @@ export * from "./telemetry";
 export * from "./incidents";
 export * from "./models";
 export * from "./components";
+
+export * from "./videoTesting";
+export * from "./reid";

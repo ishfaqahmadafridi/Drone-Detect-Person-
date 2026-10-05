@@ -3,13 +3,12 @@ import { IncidentAlert } from "@/types";
 export const exportAlertsToCsv = (alerts: IncidentAlert[], filenamePrefix = "drone_incident_report") => {
   if (!alerts || alerts.length === 0) return;
 
-  const headers = ["Timestamp", "Threat Level", "Total Persons", "Intruders", "Gatherings", "Snapshot Path"];
+  const headers = ["Timestamp", "Threat Level", "Total Persons", "Intruders", "Snapshot Path"];
   const rows = alerts.map((a) => [
     a.timestamp,
     a.threat_level,
     a.total_persons,
     a.intruders_count,
-    a.gathering_clusters,
     a.snapshot_path,
   ]);
 

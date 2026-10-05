@@ -44,14 +44,11 @@ class TelemetryFormatter:
         alert_msg: str,
         detected_persons: List[Dict],
         intruders: List[Dict],
-        gatherings: List[Any],
         fps: float,
         frame_idx: int,
         source_type: str,
         view_mode: str,
-        multi_person_threshold: int,
         confidence_threshold: float,
-        proximity_distance_px: int,
         zone_polygon: List[Any],
         avionics_snapshot: Optional[Dict[str, Any]] = None,
         tracking_mode: str = "auto",
@@ -64,14 +61,13 @@ class TelemetryFormatter:
         """
         selected_ids = selected_target_ids or []
         is_manual = tracking_mode == "manual"
-        total_people = len(selected_ids) if is_manual else len(detected_persons)
+        total_people = len(detected_persons)
 
         return {
             "threat_level": threat_level,
             "alert_msg": alert_msg,
             "total_persons": total_people,
             "intruders_count": len(intruders),
-            "gathering_pairs": len(gatherings),
             "fps": round(float(fps), 1),
             "frame_idx": int(frame_idx),
             "detections": cls.format_detections(
@@ -83,9 +79,7 @@ class TelemetryFormatter:
             "view_mode": view_mode,
             "model_name": model_name,
             "engine": engine,
-            "multi_person_threshold": multi_person_threshold,
             "confidence_threshold": round(float(confidence_threshold), 2),
-            "proximity_distance_px": proximity_distance_px,
             "zone_polygon": zone_polygon,
             "avionics": avionics_snapshot or {},
             "tracking_mode": tracking_mode,

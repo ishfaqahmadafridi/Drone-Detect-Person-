@@ -19,8 +19,8 @@ class VisionPipelineProcessor:
     Delegates configuration lifecycle to PipelineConfigManager and frame execution to PipelineFrameOrchestrator.
     """
 
-    def __init__(self, config: Optional[DetectionConfig] = None):
-        self._services = PipelineServicesContainer(config)
+    def __init__(self, config: Optional[DetectionConfig] = None, isolated: bool = False):
+        self._services = PipelineServicesContainer(config, isolated=isolated)
         self._config_mgr = PipelineConfigManager(
             config=self._services.config,
             detector=self._services.detector,
@@ -54,22 +54,22 @@ class VisionPipelineProcessor:
     # Public Lifecycle Operations
     # -------------------------------------------------------------------------
 
+    def set_frame_observer(self, observer):
+        """Install a sampled clean-frame consumer without another video loop."""
+        self._services.frame_observer = observer
+
     def set_view(self, view_mode: str) -> str:
         """Switches vision detection profiles between aerial drone and ground CCTV."""
         return self._config_mgr.set_view(view_mode)
 
     def update_config(
         self,
-        multi_person_thresh: Optional[int] = None,
         conf_thresh: Optional[float] = None,
-        prox_dist: Optional[int] = None,
         zone_polygon: Optional[List[Tuple[float, float]]] = None
     ) -> None:
         """Thread-safely updates live detection thresholds and restricted perimeter boundaries."""
         self._config_mgr.update_config(
-            multi_person_thresh=multi_person_thresh,
             conf_thresh=conf_thresh,
-            prox_dist=prox_dist,
             zone_polygon=zone_polygon
         )
 

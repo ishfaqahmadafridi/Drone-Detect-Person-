@@ -20,7 +20,7 @@ export const ViewportSplitGrid: React.FC<ViewportSplitGridProps> = ({
   } = useViewportSplitGrid({ layoutMode, onSelectCamera });
 
   return (
-    <div className={`w-full h-full p-2 gap-2 bg-[#02050e] ${gridClass}`}>
+    <div className={`w-full p-2 gap-2 bg-[#02050e] ${gridClass}`}>
       {channelsToDisplay.map((cam) => {
         const isCamActive = activeCameraId === cam.id;
 

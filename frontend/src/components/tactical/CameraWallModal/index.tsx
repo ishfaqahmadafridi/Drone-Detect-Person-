@@ -4,7 +4,8 @@ import React from "react";
 import { CameraWallModalProps } from "@/types";
 import { CameraWallModalDialog } from "./dialog";
 import { GroundSensorModal } from "./wizard/GroundSensorModal";
-import { DEFAULT_TACTICAL_CAMERAS } from "@/constants/tactical";
+import { useCameraFleet } from "@/hooks/useCameraFleet";
+import { useAppSelector } from "@/store";
 import { useCameraWallModal } from "@/hooks";
 
 export const CameraWallModal: React.FC<CameraWallModalProps> = ({
@@ -19,6 +20,9 @@ export const CameraWallModal: React.FC<CameraWallModalProps> = ({
   onConnectRtsp,
   onSetLayout,
 }) => {
+  const { cameras } = useCameraFleet();
+  const viewMode = useAppSelector(state => state.telemetry.view_mode);
+  const currentCameras = cameras.filter(camera => camera.viewMode === viewMode);
   const {
     isWizardOpen,
     setIsWizardOpen,
@@ -33,8 +37,8 @@ export const CameraWallModal: React.FC<CameraWallModalProps> = ({
       {/* 1. Tactical Camera Wall Matrix Dialog */}
       <CameraWallModalDialog
         onClose={onClose}
-        connectedCount={connectedCameraIds.length}
-        totalCount={DEFAULT_TACTICAL_CAMERAS.length}
+        connectedCount={currentCameras.filter(camera => connectedCameraIds.includes(camera.id)).length}
+        totalCount={currentCameras.length}
         onConnectAll={onConnectAll}
         onLaunchSplit={handleLaunchSplit}
         activeSource={activeSource}

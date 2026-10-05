@@ -17,6 +17,20 @@ export interface TacticalCameraChannel {
   resolution?: string;
 }
 
+export interface CameraWireModel {
+  id: string;
+  channel_num: string;
+  name: string;
+  location: string;
+  device_type: TacticalCameraChannel["deviceType"];
+  view_mode: TacticalCameraChannel["viewMode"];
+  source_type: TacticalCameraChannel["sourceType"];
+  stream_url?: string | null;
+  ip_address?: string | null;
+  status: TacticalCameraChannel["status"];
+  resolution?: string | null;
+}
+
 export interface CameraWallModalProps {
   isOpen: boolean;
   activeSource: string;

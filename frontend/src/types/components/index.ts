@@ -16,3 +16,6 @@ export * from "./tacticalSidebar";
 export * from "./views";
 export * from "./recordings";
 export * from "./dashboard";
+
+export * from "./videoTesting";
+export * from "./reid";

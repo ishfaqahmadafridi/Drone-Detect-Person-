@@ -1,11 +1,40 @@
 import unittest
 import numpy as np
+from collections import defaultdict, deque
+from types import SimpleNamespace
+from unittest.mock import Mock
 from app.core.config import DetectionConfig
 from app.services.annotation_service import TacticalAnnotationTheme, TacticalFrameAnnotator
 from app.services.detector_service import DronePersonDetectorService, FPSProfiler
 
 
 class TestDetectorAndAnnotation(unittest.TestCase):
+    def test_pending_detections_are_visible_without_fabricated_track_ids(self):
+        detector = DronePersonDetectorService.__new__(DronePersonDetectorService)
+        detector.config = DetectionConfig(confidence_threshold=.25, iou_threshold=.45, img_size=1280)
+        detector.active_view = "aerial"
+        detector._profiler = Mock()
+        detector.inference = Mock()
+        detector.inference.get_profile.return_value = {"person_classes": [0]}
+        detector.tracks = Mock()
+        detector.tracks.update_tracks.side_effect = lambda persons: persons
+        detector.track_history = defaultdict(deque)
+        coords, score = Mock(), Mock()
+        coords.cpu.return_value.numpy.return_value = np.array([5, 5, 40, 70])
+        score.cpu.return_value.numpy.return_value = np.array(.8)
+        box = SimpleNamespace(xyxy=[coords], conf=[score], id=None)
+        detector.model = Mock()
+        detector.model.track.return_value = [SimpleNamespace(boxes=[box])]
+        frame = np.zeros((80, 80, 3), dtype=np.uint8)
+        self.assertEqual(detector.process_frame(frame), [])
+        self.assertIsNone(detector.untracked_detections[0]["id"])
+        rendered = TacticalFrameAnnotator(DetectionConfig()).draw_annotations(
+            frame, detector.untracked_detections, [], None, "CLEAR", "")
+        self.assertGreater(np.count_nonzero(rendered), 0)
+        detector.model.track.return_value = []
+        detector.process_frame(frame)
+        self.assertEqual(detector.untracked_detections, [])
+
     def test_fps_profiler(self):
         profiler = FPSProfiler(window_seconds=0.01)
         self.assertEqual(profiler.current_fps, 0.0)
@@ -33,15 +62,12 @@ class TestDetectorAndAnnotation(unittest.TestCase):
             {"id": 2, "bbox": [220, 100, 320, 300], "conf": 0.92, "center": (270, 200), "foot": (270, 300)},
         ]
         intruders = [persons[0]]
-        gatherings = [(1, 2, 120.0)]
         zone_polygon = np.array([[50, 50], [400, 50], [400, 400], [50, 400]])
 
         annotated = annotator.draw_annotations(
             frame=frame,
             detected_persons=persons,
             intruders=intruders,
-            gatherings=gatherings,
-            clustered_ids=[1, 2],
             zone_polygon=zone_polygon,
             threat_level="INTRUSION",
             alert_msg="CRITICAL: 1 INTRUDERS IN RESTRICTED ZONE!",
@@ -62,8 +88,6 @@ class TestDetectorAndAnnotation(unittest.TestCase):
             frame=frame,
             detected_persons=persons,
             intruders=[],
-            gatherings=[],
-            clustered_ids=[],
             zone_polygon=None,
             threat_level="CLEAR",
             alert_msg="AIRSPACE & ZONE SECURE"

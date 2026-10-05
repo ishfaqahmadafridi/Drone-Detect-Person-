@@ -18,8 +18,6 @@ class PipelineHudAnnotator:
         frame: np.ndarray,
         detected_persons: List[Dict],
         intruders: List[Dict],
-        gatherings: List[Any],
-        clustered_ids: Set[int],
         threat_level: str,
         alert_msg: str
     ) -> np.ndarray:
@@ -30,8 +28,6 @@ class PipelineHudAnnotator:
             frame=frame,
             detected_persons=detected_persons,
             intruders=intruders,
-            gatherings=gatherings,
-            clustered_ids=clustered_ids,
             zone_polygon=zone_monitor.pixel_polygon,
             threat_level=threat_level,
             alert_msg=alert_msg

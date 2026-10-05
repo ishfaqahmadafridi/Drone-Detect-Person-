@@ -23,12 +23,13 @@ class PipelineServicesContainer:
     Instantiates and encapsulates all sub-services and atomic pipeline stage handlers.
     """
 
-    def __init__(self, config: Optional[DetectionConfig] = None):
+    def __init__(self, config: Optional[DetectionConfig] = None, isolated: bool = False):
         self.config = config or DetectionConfig()
         self.lock = threading.Lock()
+        self.frame_observer = None  # Optional clean-frame consumer, set only for named channels.
 
         # Core microservices
-        self.detector = DronePersonDetectorService(self.config)
+        self.detector = DronePersonDetectorService(self.config, isolated=isolated)
         self.zone_monitor = ZoneMonitorService(
             DEFAULT_FRAME_WIDTH,
             DEFAULT_FRAME_HEIGHT,
@@ -38,10 +39,10 @@ class PipelineServicesContainer:
             output_dir=self.config.output_dir,
             snapshots_dir=self.config.snapshots_dir,
             logs_dir=self.config.logs_dir,
-            multi_person_threshold=self.config.multi_person_threshold,
             snapshot_cooldown=self.config.snapshot_cooldown_seconds,
             enable_audio=self.config.enable_audio_alert
         )
+
 
         # Atomic Stage Handlers
         self.tracker = PipelineTargetTracker()

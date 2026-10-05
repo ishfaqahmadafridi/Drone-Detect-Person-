@@ -32,27 +32,12 @@ class SimulatedPerson:
         height: int
     ) -> None:
         """
-        Updates pedestrian kinematics and triggers intentional 2+ gathering behavior.
+        Updates independent pedestrian movement with boundary reflection.
         """
-        # In frames 60..260, guide persons 0 and 1 towards each other to trigger gathering
-        if 60 < frame_idx < 260 and person_idx < 2:
-            target_x = width // 2 + (person_idx * 40 - 20)
-            target_y = height // 2
-            dx = target_x - self.x
-            dy = target_y - self.y
-            dist = math.hypot(dx, dy)
-            if dist > 5:
-                self.vx = (dx / dist) * 2.0
-                self.vy = (dy / dist) * 2.0
-            else:
-                self.vx = random.uniform(-0.3, 0.3)
-                self.vy = random.uniform(-0.3, 0.3)
-        else:
-            # Standard perimeter bounce
-            if self.x < 100 or self.x > width - 100:
-                self.vx *= -1
-            if self.y < 100 or self.y > height - 100:
-                self.vy *= -1
+        if self.x < 100 or self.x > width - 100:
+            self.vx *= -1
+        if self.y < 100 or self.y > height - 100:
+            self.vy *= -1
 
         self.x += self.vx
         self.y += self.vy

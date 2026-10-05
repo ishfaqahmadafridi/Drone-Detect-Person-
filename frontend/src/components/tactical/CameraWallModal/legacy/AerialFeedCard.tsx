@@ -4,8 +4,10 @@ import React from "react";
 import { AerialFeedCardProps } from "@/types";
 import { CheckCircle2 } from "lucide-react";
 import { getVideoStreamUrl } from "@/constants/network";
+import { useVideoStreamUrl } from "@/hooks/useVideoStreamUrl";
 
 export const AerialFeedCard: React.FC<AerialFeedCardProps> = ({ isActive, onSelect }) => {
+  const streamUrl = useVideoStreamUrl(getVideoStreamUrl());
   return (
     <div
       onClick={onSelect}
@@ -32,7 +34,7 @@ export const AerialFeedCard: React.FC<AerialFeedCardProps> = ({ isActive, onSele
       <div className="relative aspect-video bg-black/90 flex items-center justify-center overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={getVideoStreamUrl()}
+          src={streamUrl}
           alt="Aerial Drone Feed"
           className="w-full h-full object-contain pointer-events-none"
         />

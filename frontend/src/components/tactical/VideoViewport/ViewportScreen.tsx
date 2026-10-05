@@ -19,8 +19,6 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
   layoutMode = "single",
   onStreamLoad,
   onStreamError,
-  trackingMode = "auto",
-  onSelectTargetAt,
   onCanvasMouseDown,
   onCanvasMouseMove,
   onCanvasMouseUp,
@@ -31,7 +29,7 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-video bg-[#02050e] overflow-hidden flex items-center justify-center border-y border-slate-700/60 select-none"
+      className={`relative w-full bg-[#02050e] flex items-center justify-center border-y border-slate-700/60 select-none ${layoutMode === "single" ? "aspect-video overflow-hidden" : "min-h-0"}`}
     >
       {layoutMode && layoutMode !== "single" ? (
         <ViewportSplitGrid

@@ -1,98 +1,66 @@
-# Computer Vision Model Registry & Technical Architecture (FYP Defense Guide)
+# Detection model registry
 
-This document provides the formal academic and engineering justification for the specialized deep learning vision weights employed in the **AERO-GUARD** Drone Aerial Surveillance and Intrusion Detection System.
+`registry.json` records each active model's filename, architecture, source URL, checksum, input size, person class IDs and tracker. The loader checks checkpoint integrity and class labels before inference.
 
----
+| Perspective | Default checkpoint | Input edge | Person class | Tracker |
+| --- | --- | --- | --- | --- |
+| Ground | `yolo26n.pt` (COCO) | 640 | 0 | ByteTrack |
+| Aerial | `visdrone_person_best.pt` (VisDrone) | 1280 | 0 | BoT-SORT |
 
-## 1. Executive Summary & Problem Formulation
+The ground default is the official [Ultralytics YOLO26n](https://docs.ultralytics.com/models/yolo26/) checkpoint, downloaded from the v8.4.0 assets release. It is intended for general eye-level footage and reduces CPU inference work compared with the previous 1280-pixel MOT20 model. The previous `mot20_yolo26s_pedestrian.pt` checkpoint is retained on disk but is not the active default.
 
-Standard generic object detectors (e.g., standard YOLOv8 pre-trained on Microsoft COCO) are unsuitable for mission-critical aerial surveillance and perimeter defense for two critical reasons:
+Detection is restricted to the model's person class. Other COCO classes are not drawn. Every detected person gets a box; selected ground suspects use a different color. A model can still miss occluded people or produce false positives. Confidence scores are not measured accuracy. Evaluate representative labeled footage before making accuracy claims.
 
-1. **The Aerial Nadir Problem (Top-Down UAV Distortion)**:
-   - COCO images are captured at human eye level with prominent leg/torso features.
-   - Drones operate at 20–100m altitudes looking down obliquely or directly nadir. Human targets appear as tiny blobs (10–30 pixels) showing only head and shoulders, with perspective foreshortening and high UAV camera motion blur.
-   - Standard COCO models suffer **>45% false negative rates** on high-altitude drone footage.
-2. **The Dense Crowd Occlusion Problem (Perimeter CCTV)**:
-   - In perimeter security and facility monitoring, pedestrians cluster and occlude one another.
-   - Standard detectors group multiple individuals into a single bounding box or lose tracks when people overlap by more than 50%.
+The aerial panel supports two explicit profiles in `backend/.env`:
 
-To solve these domain challenges, AERO-GUARD utilizes **two purpose-built, domain-adapted models** selected for their specialized training datasets:
+```dotenv
+# Small/distant people in high-altitude drone footage:
+AERIAL_DETECTION_PROFILE=visdrone
+# Larger/nearby people in elevated or closer footage:
+# AERIAL_DETECTION_PROFILE=general
+```
 
----
+`general` uses the ground registry's verified YOLO26n checkpoint, class mapping,
+640-pixel input and ByteTrack settings while retaining the aerial channel. The
+local environment currently selects `general` because the uploaded courtyard
+clip contains nearby people: on three sampled frames, it produced 9-10 person
+boxes versus 0-4 from VisDrone. These counts are a diagnostic comparison, not
+measured accuracy. Use VisDrone again when evaluating actual high-altitude video.
+Restart the backend after changing the profile.
 
-## 2. Model Specifications & Comparison Matrix
+Detections awaiting tracker confirmation are drawn as `Person (pending ID)`.
+Only confirmed IDs are selectable or used for ReID. Pending boxes do not receive
+invented IDs. Telemetry includes them separately as `untracked_detections`.
 
-| Metric / Dimension | Ground CCTV / Perimeter | Aerial Drone / UAV Airspace |
-|---|---|---|
-| **Operational Perspective** | Eye-Level & Fixed Mount Perimeter CCTV | Top-Down & Oblique UAV Drone Flight |
-| **Model Filename** | `mot20_yolo26s_pedestrian.pt` | `visdrone_person_best.pt` |
-| **Architecture** | YOLO26s (Small) | YOLO11n (Nano) |
-| **Training Dataset** | **MOT20** (Multiple Object Tracking 2020) | **VisDrone** (UAV Drone Benchmark) |
-| **Source Repository** | [Halftom Hugging Face](https://huggingface.co/Halftom/mot20-yolo26s-pedestrian) | [pratap424/visdrone_mot GitHub](https://github.com/pratap424/visdrone_mot) |
-| **Target Classes** | Class `0`: `person` (Single-class focused) | Class `0`: `person` (Merged pedestrian + people) |
-| **Tracking Engine** | ByteTrack (`bytetrack.yaml`) | BoT-SORT (`botsort.yaml`) |
-| **Inference Resolution** | 1280x1280 (High resolution for crowds) | 1280x1280 (High resolution for tiny targets) |
-| **Checkpoint Size** | 20,371,909 bytes (~19.4 MB) | 5,534,611 bytes (~5.3 MB) |
-| **Cryptographic SHA-256** | `f24d5aa4af4948f2d0357baef34d8dcea03e4b0caef4fee5c0471de9297d30e4` | `e3ada842a2bf94dd420c45ab34669c874a180160fa302bab3a2d6e7a44e263a2` |
+Uploaded previews resize frames to a maximum edge of 1280 pixels while preserving aspect ratio. `PREVIEW_MAX_EDGE` overrides this setting. The source resolution remains unchanged on disk. By default, preview capture runs independently of detection at up to 25 FPS; detection consumes the latest frame. Live boxes show sampled detection age, while selection freezes the exact detected snapshot. Use `STREAM_ASYNC_PREVIEW=false` with `VIDEO_PLAYBACK_MODE=sequential` to process every displayed frame, accepting slower playback on CPU.
 
----
+To download a missing registered checkpoint, run `python scripts/download_models.py --view ground` or `--view aerial` from `backend`.
 
-## 3. Detailed Justification for Model Selection
+## Person re-identification (module 3)
 
-### 3.1 Ground Model: `mot20_yolo26s_pedestrian.pt`
-- **Trained by**: Halftom (Hugging Face)
-- **Dataset Context**: MOT20 consists of 8 outdoor and indoor video sequences with an average density of **246 pedestrians per frame**, exhibiting extreme crowd gatherings and severe occlusions.
-- **Why It Was Selected**:
-  - Fine-tuned strictly for human pedestrians, eliminating false positives from non-human COCO categories (bicycles, backpacks, benches).
-  - Paired with **ByteTrack**, which retains low-confidence detection boxes to recover tracks across continuous severe occlusions.
-  - Ideal for facility gates, restricted building corridors, and perimeter fences.
+X-TFCLIP is an optional, separate appearance model. It uses clean person crops
+from the existing ground/aerial trackers and returns up to four ranked aerial
+candidates for each selected ground person. It does not replace either detector.
 
-### 3.2 Aerial Model: `visdrone_person_best.pt`
-- **Trained by**: Pratap (GitHub: `pratap424/visdrone_mot`)
-- **Dataset Context**: VisDrone is the international benchmark for aerial drone computer vision collected by the AISKYEYE team from drone platforms across 14 cities in China under various altitudes, weather conditions, and camera angles.
-- **Why It Was Selected**:
-  - The model merges VisDrone's distinct `pedestrian` and `people` labels into a single robust `person` class.
-  - Optimized for tiny object detection where bounding box areas are often $< 32^2$ pixels.
-  - Paired with **BoT-SORT** with camera motion compensation (CMC), preventing track ID switches caused by drone yaw and pitch drift.
+The pretrained weights are installed locally at **`xtfclip.pth.tar`** (434 MB).
+The model adapter is `backend/app/services/reid/encoder.py`, and its pinned
+upstream architecture lives in `.runtime/X-TFCLIP/`. Weights and downloaded source
+are ignored by Git. Reinstall them on another machine from `backend` with:
 
----
+```bash
+python scripts/setup_reid.py --install-source --download-weights
+```
 
-## 4. Code Architecture & Traceability in the Repository
+The local `.env` and provided template enable CPU inference. Real CPU inference
+has passed: about 7-8 seconds per eight-frame sequence on this machine. This
+verifies execution, not identification accuracy. GPU use requires CUDA-enabled
+PyTorch and `REID_DEVICE=cuda:0`; detection has its own `DETECTION_DEVICE` setting.
 
-The models are integrated using clean, decoupled architectural patterns with zero hardcoded values:
+The official checkpoint SHA-256 is
+`7371584d202e57cc3f27404f37d2a61678be071881ec4ffbe13ebff32d08bd07`.
+Setup and loading verify integrity. Missing or incompatible assets produce an
+explicit error rather than simulated matches.
 
-1. **Model Registry Definition** ([`registry.json`](file:///Users/mc/Documents/Drone_FYP/backend/models/registry.json)):
-   - Defines source URLs, cryptographic checksums, recommended image resolutions, and tracker configurations.
-2. **Automated Downloader & Integrity Verifier** ([`scripts/download_models.py`](file:///Users/mc/Documents/Drone_FYP/backend/scripts/download_models.py)):
-   - Downloads checkpoints atomically via HTTP/HTTPS and verifies SHA-256 digests before placing them into `models/`.
-   - Command: `python scripts/download_models.py --verify-only`
-3. **Environment & App Configuration** ([`app/core/config.py`](file:///Users/mc/Documents/Drone_FYP/backend/app/core/config.py)):
-   - Model filenames are loaded via `os.getenv("GROUND_MODEL_NAME")` and `os.getenv("AERIAL_MODEL_NAME")`, allowing custom weights without editing code.
-4. **Dynamic Inference Dispatcher** ([`app/services/inference/dispatcher.py`](file:///Users/mc/Documents/Drone_FYP/backend/app/services/inference/dispatcher.py)):
-   - Lazily loads models into memory on first perspective activation.
-   - Provides `/api/v1/stream/models/status` returning complete diagnostics for the frontend UI.
-5. **Detection Coordinator** ([`app/services/detector/detector.py`](file:///Users/mc/Documents/Drone_FYP/backend/app/services/detector/detector.py)):
-   - Executes multi-object tracking (`model.track()`) using the respective profile's tracker (`bytetrack.yaml` for ground, `botsort.yaml` for aerial).
-
----
-
-## 5. Demonstration & Presentation Guide
-
-During an FYP evaluation or project defense:
-
-1. **Live Model Status Inspection**:
-   - Send `GET http://localhost:8000/api/v1/stream/models/status` to show evaluators that both models are cryptographically verified, loaded in memory, and mapped to their respective architectures.
-2. **Real-time Perspective Switching**:
-   - In the Tactical HUD, switch from **Aerial Drone** to **Ground CCTV**.
-   - Observe the Top-Right HUD Badge immediately update from `ENGINE: YOLO11n + BoT-SORT` to `ENGINE: YOLO26s + ByteTrack`.
-   - Show that track IDs reset cleanly without state corruption.
-3. **Verification Command**:
-   ```bash
-   cd backend
-   .venv/bin/python3 scripts/download_models.py --verify-only
-   ```
-   Outputs:
-   ```
-   [OK] Verified ground: mot20_yolo26s_pedestrian.pt
-   [OK] Verified aerial: visdrone_person_best.pt
-   ```
+See [the module guide](../../docs/person-reidentification.md) for the code map,
+CPU/GPU setup, configuration, API and benchmark commands. GPU performance and
+ground-to-aerial accuracy on your volunteers' recordings still require validation.

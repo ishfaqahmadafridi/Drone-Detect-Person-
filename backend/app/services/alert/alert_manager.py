@@ -14,19 +14,16 @@ class AlertManagerService:
         output_dir: str = "runs/output",
         snapshots_dir: str = "runs/output/snapshots",
         logs_dir: str = "runs/output/logs",
-        multi_person_threshold: int = 2,
         snapshot_cooldown: float = 3.0,
         enable_audio: bool = False
     ):
         self.output_dir = output_dir
         self.snapshots_dir = snapshots_dir
         self.logs_dir = logs_dir
-        self.multi_person_threshold = multi_person_threshold
         self.snapshot_cooldown = snapshot_cooldown
         self.enable_audio = enable_audio
 
         self.state_evaluator = ThreatStateEvaluator(
-            multi_person_threshold=multi_person_threshold
         )
         self.evidence_recorder = EvidenceRecorder(
             output_dir=output_dir,
@@ -64,14 +61,12 @@ class AlertManagerService:
         self,
         detected_persons: List[Dict],
         intruders: List[Dict],
-        gatherings: List[Tuple[int, int, float]],
         frame_idx: int = 0,
         view_mode: str = "aerial"
     ) -> Tuple[str, str, Dict]:
         threat_level, alert_msg, details = self.state_evaluator.evaluate(
             detected_persons=detected_persons,
             intruders=intruders,
-            gatherings=gatherings,
             frame_idx=frame_idx,
             view_mode=view_mode
         )

@@ -15,11 +15,13 @@ from app.api.v1.endpoints import (
     tracking,
     cameras,
     generative,
+    reid,
 )
 
 api_router = APIRouter()
 
 api_router.include_router(cameras.router)
+api_router.include_router(reid.router)
 api_router.include_router(stream.router, tags=["Stream & Video"])
 api_router.include_router(generative.router, tags=["Generative Aerial Diffusion"])
 api_router.include_router(tracking.router, tags=["Targeting & Detection Mode"])
@@ -30,4 +32,3 @@ api_router.include_router(alerts.router, tags=["Incident Alerts"])
 api_router.include_router(snapshots.router, tags=["Evidence Snapshots"])
 api_router.include_router(recordings.router, tags=["Video Recordings & Clips"])
 api_router.include_router(evidence.router, tags=["Evidence Database Archive"])
-

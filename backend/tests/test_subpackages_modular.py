@@ -12,7 +12,6 @@ from app.services.tracking import TargetTrackerService, tracking_service
 from app.services.zone import (
     normalized_to_pixel_polygon,
     is_point_in_polygon,
-    compute_proximity_gatherings,
     ZoneMonitorService
 )
 from app.services.inference import (
@@ -25,7 +24,6 @@ from app.services.annotation import (
     TacticalAnnotationTheme,
     TacticalFrameAnnotator,
     draw_zone_polygon,
-    draw_proximity_lines,
     draw_detections_and_trails,
     draw_hud_banner
 )
@@ -63,9 +61,6 @@ class TestModularSubpackages(unittest.TestCase):
             {"id": 1, "center": (50, 50)},
             {"id": 2, "center": (60, 60)}
         ]
-        gatherings, clustered_ids = compute_proximity_gatherings(persons, proximity_threshold_px=100)
-        self.assertEqual(len(gatherings), 1)
-        self.assertEqual(set(clustered_ids), {1, 2})
 
     def test_inference_subpackage(self):
         profiles = load_inference_profiles()
@@ -84,8 +79,6 @@ class TestModularSubpackages(unittest.TestCase):
             frame=frame,
             detected_persons=[],
             intruders=[],
-            gatherings=[],
-            clustered_ids=[],
             zone_polygon=None,
             threat_level="CLEAR",
             alert_msg="ALL CLEAR"

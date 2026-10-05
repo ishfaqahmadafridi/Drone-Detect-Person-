@@ -42,8 +42,6 @@ class PipelineFrameOrchestrator:
             # 2. Thread-safe configuration snapshot & zone resolution synchronization
             with self.services.lock:
                 cfg = self.services.config
-                prox_dist = cfg.proximity_alert_distance_px
-                multi_thresh = cfg.multi_person_threshold
                 conf_thresh = cfg.confidence_threshold
                 zone_norm = cfg.default_zone_normalized
                 active_view = getattr(self.services.detector, "active_view", "aerial")
@@ -56,23 +54,31 @@ class PipelineFrameOrchestrator:
                 sim_targets=sim_targets
             )
             detected_persons = detected_persons if isinstance(detected_persons, list) else []
+            pending_persons = getattr(self.services.detector, "untracked_detections", []) if source_type != "synthetic" else []
+            pending_persons = pending_persons if isinstance(pending_persons, list) else []
 
-            # 4. Stage: Spatial Hazard Evaluation
-            intruders, gatherings, clustered_ids = self.services.hazard_evaluator.evaluate(
+            # ReID sees clean crops before annotation and never runs CUDA here.
+            observer = getattr(self.services, "frame_observer", None)
+            if observer is not None:
+                try:
+                    observer(norm_frame, detected_persons, frame_idx, source_type,
+                             list(self.services.config.selected_target_ids))
+                except Exception:
+                    import logging
+                    logging.exception("ReID crop collection failed; detection continues")
+
+            # 4. Stage: Restricted-zone evaluation
+            intruders = self.services.hazard_evaluator.evaluate(
                 zone_monitor=self.services.zone_monitor,
                 detected_persons=detected_persons,
-                proximity_distance_px=prox_dist
             )
             intruders = intruders if isinstance(intruders, list) else []
-            gatherings = gatherings if isinstance(gatherings, list) else []
-            clustered_ids = clustered_ids if isinstance(clustered_ids, set) else set()
 
             # 5. Stage: Threat Classification
             raw_threat_level, raw_alert_msg, details = self.services.threat_classifier.evaluate_state(
                 alert_manager=self.services.alert_manager,
                 detected_persons=detected_persons,
                 intruders=intruders,
-                gatherings=gatherings,
                 frame_idx=frame_idx,
                 active_view=active_view
             )
@@ -89,10 +95,8 @@ class PipelineFrameOrchestrator:
                 detector=self.services.detector,
                 zone_monitor=self.services.zone_monitor,
                 frame=norm_frame,
-                detected_persons=detected_persons,
+                detected_persons=detected_persons + pending_persons,
                 intruders=intruders,
-                gatherings=gatherings,
-                clustered_ids=clustered_ids,
                 threat_level=threat_level,
                 alert_msg=alert_msg
             )
@@ -125,14 +129,11 @@ class PipelineFrameOrchestrator:
                 alert_msg=alert_msg,
                 detected_persons=detected_persons,
                 intruders=intruders,
-                gatherings=gatherings,
                 fps=current_fps,
                 frame_idx=frame_idx,
                 source_type=source_type,
                 view_mode=active_view,
-                multi_person_threshold=multi_thresh,
                 confidence_threshold=conf_thresh,
-                proximity_distance_px=prox_dist,
                 zone_polygon=zone_norm,
                 avionics_snapshot=avionics_snapshot,
                 tracking_mode=tracking_mode,
@@ -140,6 +141,7 @@ class PipelineFrameOrchestrator:
                 model_name=getattr(getattr(self.services.detector, "config", None), "model_name", "") or getattr(self.services.config, "model_name", ""),
                 engine=getattr(self.services.detector, "engine", "YOLO + ByteTrack")
             )
+            telemetry_payload["untracked_detections"] = pending_persons
 
             return PipelineResult(
                 annotated_frame=annotated_frame,

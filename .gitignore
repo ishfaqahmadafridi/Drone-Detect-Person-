@@ -29,6 +29,8 @@ MANIFEST
 # PyTorch & YOLO Weights / Large model checkpoints
 *.pt
 *.pth
+*.pth.tar
+*.pth.tar.part
 *.onnx
 *.engine
 *.tflite
@@ -78,3 +80,10 @@ out/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Local runtime dependencies and uploaded test media
+.runtime/
+.npm-cache/
+backend/uploads/
+
+!backend/models/yolo26n.pt

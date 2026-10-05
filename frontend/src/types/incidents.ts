@@ -7,7 +7,6 @@ export interface IncidentAlert {
   threat_level: string;
   total_persons: string;
   intruders_count: string;
-  gathering_clusters: string;
   person_ids: string;
   snapshot_path: string;
 }

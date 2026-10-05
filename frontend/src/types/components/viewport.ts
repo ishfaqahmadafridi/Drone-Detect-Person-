@@ -7,6 +7,11 @@ import { TacticalCameraChannel } from "./cameraWall";
 // ==========================================
 export interface VideoViewportProps {
   onSnapshotTrigger?: () => void;
+  onManageCameras?: () => void;
+}
+
+export interface GroundCameraConnectionsProps {
+  onManageCameras?: () => void;
 }
 
 export type ViewportLayoutMode = "single" | "dual" | "quad";

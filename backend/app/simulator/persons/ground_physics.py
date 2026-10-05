@@ -54,15 +54,10 @@ class GroundPedestrianPhysics:
         """
         Advance kinematics by one frame.
 
-        Implements gathering behaviour for agents 0 and 1 between
-        gathering_start_frame and gathering_end_frame (from config).
-        All other agents wrap at frame boundaries.
+        Each pedestrian follows an independent patrol path.
         """
         k = self._k
-        if k.gathering_start_frame < frame_idx < k.gathering_end_frame and person_idx < 2:
-            self._gathering_step(width, height, person_idx)
-        else:
-            self._patrol_step(width, height, horizon_y)
+        self._patrol_step(width, height, horizon_y)
 
         self.x += self.vx
         self.y += self.vy
@@ -71,22 +66,6 @@ class GroundPedestrianPhysics:
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
-
-    def _gathering_step(self, width: int, height: int, person_idx: int) -> None:
-        """Guide primary pair toward each other at the gathering point."""
-        k = self._k
-        # Gathering convergence: agents 0 and 1 meet at centre ±offset
-        target_x = width // 2 + (person_idx * 55 - 25)
-        target_y = int(height * 0.70)
-        dx = target_x - self.x
-        dy = target_y - self.y
-        dist = math.hypot(dx, dy)
-        if dist > 8.0:
-            self.vx = (dx / dist) * k.gathering_speed
-            self.vy = (dy / dist) * 1.0
-        else:
-            self.vx = random.uniform(-0.2, 0.2)
-            self.vy = random.uniform(-0.1, 0.1)
 
     def _patrol_step(self, width: int, height: int, horizon_y: int) -> None:
         """Wrap horizontal boundaries and clamp vertical to the ground plane."""
