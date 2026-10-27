@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { Film, Maximize2 } from "lucide-react";
@@ -16,7 +18,7 @@ export const PreviewViewport: React.FC<PreviewViewportProps> = ({
     return (
       <div
         onClick={onOpenModal}
-        className="relative flex-1 bg-black flex items-center justify-center overflow-hidden cursor-pointer group"
+        className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className}
       >
         {selectedSnapshot.url ? (
           isVideo ? (
@@ -37,27 +39,27 @@ export const PreviewViewport: React.FC<PreviewViewportProps> = ({
             />
           )
         ) : (
-          <div className="text-slate-600 text-xs font-mono-code flex flex-col items-center gap-2">
-            <Film className="w-10 h-10 text-slate-700" />
+          <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_2}>
+            <Film className={TACTICAL_VIEW_STYLES.PreviewViewport_Film_className} />
             <span>IMAGE / VIDEO FEED UNAVAILABLE</span>
           </div>
         )}
 
       {/* Corner HUD Reticles */}
-      <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-cyan-400/60 pointer-events-none" />
-      <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-cyan-400/60 pointer-events-none" />
-      <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-cyan-400/60 pointer-events-none" />
-      <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-cyan-400/60 pointer-events-none" />
+      <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_3} />
+      <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_4} />
+      <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_5} />
+      <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_6} />
 
       {/* Tactical Watermark / OSD */}
-      <div className="absolute bottom-4 left-4 flex items-center gap-2 px-2.5 py-1 rounded bg-black/70 backdrop-blur-md border border-slate-800 text-[10px] font-mono-code text-slate-300 pointer-events-none">
-        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+      <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_7}>
+        <span className={TACTICAL_VIEW_STYLES.PreviewViewport_span_className} />
         <span>EVIDENCE CAPTURE · {perspectiveLabel}</span>
       </div>
 
       {/* Click-to-expand overlay hint */}
-      <div className="absolute inset-0 bg-cyan-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900/90 border border-cyan-500/50 text-cyan-300 font-mono-code text-xs font-bold shadow-xl backdrop-blur-md">
+      <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_8}>
+        <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_9}>
           <Maximize2 className="w-4 h-4" />
           <span>CLICK TO EXPAND INSPECTOR</span>
         </div>

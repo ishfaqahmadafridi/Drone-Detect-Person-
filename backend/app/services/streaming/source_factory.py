@@ -5,6 +5,7 @@ Decouples source construction logic from StreamSourceProvider's lifecycle manage
 All source-type routing lives here — StreamSourceProvider only calls build().
 """
 
+from app.core.config import STREAM_HTTP_TIMEOUT_SECONDS, STREAM_MAX_FRAME_WIDTH, BLOCKED_WEBCAM_DEVICE
 from app.services.streaming.sources import (
     BaseFrameSource,
     DeviceFrameSource,
@@ -30,9 +31,9 @@ class SourceFactory:
     def __init__(
         self,
         fallback_source: SyntheticFrameSource,
-        http_timeout: float = 2.5,
-        max_frame_width: int = 1280,
-        blocked_device: str = "0",
+        http_timeout: float = STREAM_HTTP_TIMEOUT_SECONDS,
+        max_frame_width: int = STREAM_MAX_FRAME_WIDTH,
+        blocked_device: str = BLOCKED_WEBCAM_DEVICE,
     ) -> None:
         self._fallback = fallback_source
         self._http_timeout = http_timeout

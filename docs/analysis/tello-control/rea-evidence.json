@@ -1,0 +1,159 @@
+{
+  "apk_sha256": "b55f2e62cd4dff960e855a549c978f611f82683e86134a4bc9f2092b3703a8af",
+  "rea_version": "6.8.0",
+  "jadx_version": "0.7.1",
+  "runtime_execution": "not-performed",
+  "method_inspections": [
+    {
+      "evidence_id": "ev_af6e92bb8d205051e084337310c1924185f2e7fda2ed14dbfe0a8f082d8895b4",
+      "operation": "inspect_android_method",
+      "class_name": "com.ryzerobotics.tello.gcs.engine.flight.rocker.RockerView",
+      "method": {
+        "name": "onTouchEvent",
+        "reported_signature": "onTouchEvent(android.view.MotionEvent): boolean",
+        "overload_index": 0,
+        "is_constructor": false,
+        "dex_descriptor": "(Landroid/view/MotionEvent;)Z"
+      },
+      "engine": {
+        "name": "jadx-headless-mcp",
+        "version": "0.7.1",
+        "artifact_sha256": "6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75",
+        "source_revision": "5844800a486d2248fa949b74c9896285f5b54de2",
+        "worker_count": 1,
+        "heap_limit_mib": 4096
+      },
+      "body_status": "available",
+      "source": {
+        "status": "complete",
+        "text": "    /* JADX WARN: Invalid debug info offset */\n    @Override // android.view.View\n    public boolean onTouchEvent(MotionEvent motionEvent) {\n        return false;\n    }",
+        "reported_total_bytes": null
+      }
+    },
+    {
+      "evidence_id": "ev_afde5204d5133f9fe37881b1e418bb6c718117ec121b2b804034c43873cb7b88",
+      "operation": "inspect_android_method",
+      "class_name": "com.ryzerobotics.tello.gcs.engine.flight.rocker.RockerRelativeLayout",
+      "method": {
+        "name": "onInterceptTouchEvent",
+        "reported_signature": "onInterceptTouchEvent(android.view.MotionEvent): boolean",
+        "overload_index": 0,
+        "is_constructor": false,
+        "dex_descriptor": "(Landroid/view/MotionEvent;)Z"
+      },
+      "engine": {
+        "name": "jadx-headless-mcp",
+        "version": "0.7.1",
+        "artifact_sha256": "6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75",
+        "source_revision": "5844800a486d2248fa949b74c9896285f5b54de2",
+        "worker_count": 1,
+        "heap_limit_mib": 4096
+      },
+      "body_status": "available",
+      "source": {
+        "status": "complete",
+        "text": "    /* JADX WARN: Invalid debug info offset */\n    @Override // android.view.ViewGroup\n    @SuppressLint({\"NewApi\"})\n    public boolean onInterceptTouchEvent(MotionEvent motionEvent) {\n        return false;\n    }",
+        "reported_total_bytes": null
+      }
+    },
+    {
+      "evidence_id": "ev_7ddb658f40d58abdcbd52d0e1192df83a89d165902ca390b56db04f3a522ffc7",
+      "operation": "inspect_android_method",
+      "class_name": "com.ryzerobotics.tello.gcs.engine.flight.a",
+      "method": {
+        "name": "<init>",
+        "reported_signature": "<init>(com.ryzerobotics.tello.common.base.MyApplication, com.ryzerobotics.tello.common.base.BaseCameraActivity, com.ryzerobotics.tello.gcs.engine.flight.rocker.RockerRelativeLayout, com.ryzerobotics.tello.gcs.engine.flight.rocker.RockerRelativeLayout, com.ryzerobotics.tello.gcs.engine.flight.rocker.RockerView, com.ryzerobotics.tello.gcs.engine.flight.rocker.RockerView): void",
+        "overload_index": 0,
+        "is_constructor": true,
+        "dex_descriptor": "(Lcom/ryzerobotics/tello/common/base/MyApplication;Lcom/ryzerobotics/tello/common/base/BaseCameraActivity;Lcom/ryzerobotics/tello/gcs/engine/flight/rocker/RockerRelativeLayout;Lcom/ryzerobotics/tello/gcs/engine/flight/rocker/RockerRelativeLayout;Lcom/ryzerobotics/tello/gcs/engine/flight/rocker/RockerView;Lcom/ryzerobotics/tello/gcs/engine/flight/rocker/RockerView;)V"
+      },
+      "engine": {
+        "name": "jadx-headless-mcp",
+        "version": "0.7.1",
+        "artifact_sha256": "6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75",
+        "source_revision": "5844800a486d2248fa949b74c9896285f5b54de2",
+        "worker_count": 1,
+        "heap_limit_mib": 4096
+      },
+      "body_status": "available",
+      "source": {
+        "status": "complete",
+        "text": "    /* JADX WARN: Invalid debug info offset */\n    public a(MyApplication myApplication, BaseCameraActivity baseCameraActivity, RockerRelativeLayout rockerRelativeLayout, RockerRelativeLayout rockerRelativeLayout2, RockerView rockerView, RockerView rockerView2) {\n    }",
+        "reported_total_bytes": null
+      }
+    },
+    {
+      "evidence_id": "ev_d2b5eec980069da34380ed0b144af833f730e5038b4c33e9e154acaa320e4a59",
+      "operation": "inspect_android_method",
+      "class_name": "com.ryzerobotics.tello.gcs.ui.activity.TelloCameraActivity$$ViewBinder",
+      "method": {
+        "name": "bind",
+        "reported_signature": "bind(butterknife.ButterKnife$Finder, T extends com.ryzerobotics.tello.gcs.ui.activity.TelloCameraActivity, java.lang.Object): void",
+        "overload_index": 0,
+        "is_constructor": false,
+        "dex_descriptor": "(Lbutterknife/ButterKnife$Finder;Lcom/ryzerobotics/tello/gcs/ui/activity/TelloCameraActivity;Ljava/lang/Object;)V"
+      },
+      "engine": {
+        "name": "jadx-headless-mcp",
+        "version": "0.7.1",
+        "artifact_sha256": "6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75",
+        "source_revision": "5844800a486d2248fa949b74c9896285f5b54de2",
+        "worker_count": 1,
+        "heap_limit_mib": 4096
+      },
+      "body_status": "available",
+      "source": {
+        "status": "complete",
+        "text": "    /* JADX WARN: Invalid debug info offset */\n    public void bind(ButterKnife.Finder finder, T t, Object obj) {\n    }",
+        "reported_total_bytes": null
+      }
+    },
+    {
+      "evidence_id": "ev_264b224f717a7dbce91fcb3da19fe6a8584c409ddadecb818f7ad32b875c7423",
+      "operation": "inspect_android_method",
+      "class_name": "com.ryzerobotics.tello.gcs.ui.activity.TelloCameraActivity",
+      "method": {
+        "name": "onTouch",
+        "reported_signature": "onTouch(android.view.View, android.view.MotionEvent): boolean",
+        "overload_index": 0,
+        "is_constructor": false,
+        "dex_descriptor": "(Landroid/view/View;Landroid/view/MotionEvent;)Z"
+      },
+      "engine": {
+        "name": "jadx-headless-mcp",
+        "version": "0.7.1",
+        "artifact_sha256": "6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75",
+        "source_revision": "5844800a486d2248fa949b74c9896285f5b54de2",
+        "worker_count": 1,
+        "heap_limit_mib": 4096
+      },
+      "body_status": "available",
+      "source": {
+        "status": "complete",
+        "text": "    /* JADX WARN: Invalid debug info offset */\n    @Override // android.view.View.OnTouchListener\n    public boolean onTouch(View view, MotionEvent motionEvent) {\n        return false;\n    }",
+        "reported_total_bytes": null
+      }
+    }
+  ],
+  "signature_inspection": {
+    "evidence_id": "ev_2a7c20fb506100185827b10de276011932503263f63f55a2146b835172490604",
+    "posture": {
+      "v1_only": false,
+      "schemes_agree_on_signer": true,
+      "signer_change_declared_by_rotation": false,
+      "v1_signers_match_block_signers": true,
+      "rotation_present": false,
+      "source_stamp_present": false,
+      "strongest_scheme": "v2",
+      "self_consistent": true
+    },
+    "official_vendor_identity_verified": false
+  },
+  "protection_artifacts_observed": [
+    "assets/ijiami.ajm",
+    "assets/ijm_lib/armeabi/libexec.so",
+    "assets/ijm_lib/arm64-v8a/libexec.so",
+    "assets/ijm_lib/x86/libexec.so",
+    "assets/ijm_lib/x86_64/libexec.so"
+  ]
+}

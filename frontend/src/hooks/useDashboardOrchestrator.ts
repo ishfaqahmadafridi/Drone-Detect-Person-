@@ -10,17 +10,13 @@ import { useCameraWall } from "./useCameraWall";
 import { useTelemetryMetrics } from "./useTelemetryMetrics";
 import { useAudioAlert } from "./useAudioAlert";
 import { useAppSelector } from "@/store";
-import { useStreamMutation } from "@/services/queries/useStreamMutation";
+import { usePerspectiveSelection } from "./usePerspectiveSelection";
 import { streamApi } from "@/services/api/streamApi";
-import { useAppDispatch } from "@/store";
-import { setActiveCamera, setViewportLayout } from "@/store/slices/telemetrySlice";
-import { useCameraFleet } from "./useCameraFleet";
 import { TacticalNavTab } from "@/types";
 import { TAB_ROUTE_MAP, ROUTE_TAB_MAP } from "@/constants";
 
 export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
   const queryClient = useQueryClient();
-  const dispatch = useAppDispatch();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -36,9 +32,8 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
   const activeTab = selectedTab ?? routeTab;
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  const { view_mode, primary_camera_ids, connected_camera_ids } = useAppSelector((state) => state.telemetry);
-  const { cameras } = useCameraFleet();
-  const { switchView } = useStreamMutation();
+  const { view_mode } = useAppSelector((state) => state.telemetry);
+  const selectPerspective = usePerspectiveSelection();
 
   const { threatLevel } = useTelemetryMetrics();
   const { isMuted, toggleMute } = useAudioAlert();
@@ -66,16 +61,10 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
 
   const handleViewSelect = useCallback(
     async (view: "aerial" | "ground") => {
-      await switchView.mutateAsync(view);
-      const camera = cameras.find((cam) => cam.id === primary_camera_ids[view]);
-      if (camera) dispatch(setActiveCamera(camera));
-      const count = cameras.filter(
-        (cam) => cam.viewMode === view && connected_camera_ids.includes(cam.id)
-      ).length;
-      dispatch(setViewportLayout(count > 1 ? "dual" : "single"));
+      await selectPerspective(view);
       setSelectedTab("airspace");
     },
-    [cameras, connected_camera_ids, dispatch, primary_camera_ids, switchView]
+    [selectPerspective]
   );
 
   const handleTabChange = useCallback(

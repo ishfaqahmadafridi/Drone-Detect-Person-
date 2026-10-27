@@ -2,6 +2,9 @@
 Alert Manager Service: High-level Coordinator of Threat Evaluation and Evidence Recording.
 """
 
+from app.core.config import OUTPUT_DIR, SNAPSHOTS_DIR, LOGS_DIR
+from app.core.constants import DEFAULT_SNAPSHOT_COOLDOWN_SECONDS
+
 from typing import List, Dict, Optional, Tuple, Any
 from app.core.constants import AlertLevel
 from app.services.alert.state_evaluator import ThreatStateEvaluator
@@ -11,10 +14,10 @@ from app.services.alert.evidence_recorder import EvidenceRecorder
 class AlertManagerService:
     def __init__(
         self,
-        output_dir: str = "runs/output",
-        snapshots_dir: str = "runs/output/snapshots",
-        logs_dir: str = "runs/output/logs",
-        snapshot_cooldown: float = 3.0,
+        output_dir: str = OUTPUT_DIR,
+        snapshots_dir: str = SNAPSHOTS_DIR,
+        logs_dir: str = LOGS_DIR,
+        snapshot_cooldown: float = DEFAULT_SNAPSHOT_COOLDOWN_SECONDS,
         enable_audio: bool = False
     ):
         self.output_dir = output_dir

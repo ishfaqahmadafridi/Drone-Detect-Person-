@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { StreamActionButtonsProps } from "@/types";
@@ -15,10 +17,10 @@ export const StreamActionButtons: React.FC<StreamActionButtonsProps> = ({
       {onSnapshotTrigger && (
         <button
           onClick={onSnapshotTrigger}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:bg-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] select-none"
+          className={TACTICAL_VIEW_STYLES.StreamActionButtons_button_className}
           title="Capture High-Resolution Forensic Snapshot"
         >
-          <Camera className="w-3.5 h-3.5 text-slate-400" />
+          <Camera className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_ArrowRight_className} />
           <span>Snapshot</span>
         </button>
       )}
@@ -27,10 +29,10 @@ export const StreamActionButtons: React.FC<StreamActionButtonsProps> = ({
       {onOpenEvidence && (
         <button
           onClick={onOpenEvidence}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:bg-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] select-none"
+          className={TACTICAL_VIEW_STYLES.StreamActionButtons_button_className}
           title="View Evidence Captures"
         >
-          <FolderArchive className="w-3.5 h-3.5 text-slate-400" />
+          <FolderArchive className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_ArrowRight_className} />
           <span>Evidence</span>
         </button>
       )}
@@ -39,7 +41,7 @@ export const StreamActionButtons: React.FC<StreamActionButtonsProps> = ({
       {onToggleFullscreen && (
         <button
           onClick={onToggleFullscreen}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] shadow-sm ml-auto select-none"
+          className={TACTICAL_VIEW_STYLES.StreamActionButtons_button_className_2}
           title="Toggle Fullscreen Optical Feed"
         >
           <Maximize2 className="w-3.5 h-3.5" />

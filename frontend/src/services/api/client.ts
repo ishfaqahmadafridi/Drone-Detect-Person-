@@ -1,8 +1,9 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosResponse } from "axios";
+import { NETWORK_CONFIG } from "@/constants/network";
 
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: "/api",
-  timeout: 15000,
+  baseURL: NETWORK_CONFIG.API_BASE_PATH,
+  timeout: NETWORK_CONFIG.API_TIMEOUT_MS,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -52,6 +53,9 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    if (axios.isCancel(error) || error?.code === "ERR_CANCELED" || error?.name === "CanceledError") {
+      return Promise.reject(error);
+    }
     const status = error.response?.status;
     // Safely extract message — response.data may contain circular DOM references
     // (e.g. SVGSVGElement with React Fiber nodes) that crash JSON.stringify

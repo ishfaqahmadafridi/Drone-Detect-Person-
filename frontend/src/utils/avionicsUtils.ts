@@ -1,12 +1,13 @@
+import { DOMAIN_BADGE_STYLES, BATTERY_THRESHOLDS } from "@/constants/tactical";
 import { DroneAvionics } from "@/types";
 
 /**
  * Returns tactical color styling tokens based on battery percentage level.
  */
 export const getBatteryColor = (level: number): string => {
-  if (level > 50) return "text-emerald-400 bg-emerald-500/20 border-emerald-500/40";
-  if (level > 20) return "text-amber-400 bg-amber-500/20 border-amber-500/40";
-  return "text-red-400 bg-red-500/20 border-red-500/40 animate-pulse";
+  if (level > BATTERY_THRESHOLDS.healthy) return DOMAIN_BADGE_STYLES.batteryHealthy;
+  if (level > BATTERY_THRESHOLDS.warning) return DOMAIN_BADGE_STYLES.batteryWarning;
+  return DOMAIN_BADGE_STYLES.batteryCritical;
 };
 
 /**
@@ -16,14 +17,14 @@ export const getFlightStateColor = (state: string): string => {
   switch (state.toUpperCase()) {
     case "AIRBORNE":
     case "PATROL":
-      return "bg-emerald-500/20 text-emerald-400 border-emerald-500/40";
+      return DOMAIN_BADGE_STYLES.flightActive;
     case "HOVER":
-      return "bg-cyan-500/20 text-cyan-400 border-cyan-500/40";
+      return DOMAIN_BADGE_STYLES.flightHover;
     case "RTL":
     case "LANDED":
-      return "bg-amber-500/20 text-amber-400 border-amber-500/40";
+      return DOMAIN_BADGE_STYLES.flightLanding;
     default:
-      return "bg-slate-800 text-slate-300 border-slate-700";
+      return DOMAIN_BADGE_STYLES.flightUnknown;
   }
 };
 
@@ -31,22 +32,23 @@ export const getFlightStateColor = (state: string): string => {
  * Normalizes avionics telemetry with safe defaults.
  */
 export const normalizeAvionicsMetrics = (avionics?: DroneAvionics) => {
-  const flightState = avionics?.flight_state || "AIRBORNE";
-  const battery = avionics?.battery_percent ?? 88;
+  const flightState = avionics?.flight_state || "UNKNOWN";
+  const battery = avionics?.battery_percent ?? 0;
 
   return {
     flightState,
     battery,
-    voltage: avionics?.battery_voltage ?? 24.8,
-    health: avionics?.battery_health_percent ?? 98,
-    altitude: avionics?.altitude_m ?? 42.5,
-    speed: avionics?.ground_speed_ms ?? 8.4,
-    sats: avionics?.gps_sats ?? 16,
-    flightTime: avionics?.flight_time_remaining_min ?? 24,
-    camOnline: avionics?.camera_online ?? true,
-    camDetecting: avionics?.camera_detecting ?? true,
+    voltage: avionics?.battery_voltage ?? 0,
+    health: avionics?.battery_health_percent ?? 0,
+    altitude: avionics?.altitude_m ?? 0,
+    speed: avionics?.ground_speed_ms ?? 0,
+    sats: avionics?.gps_sats ?? 0,
+    flightTime: avionics?.flight_time_remaining_min ?? 0,
+    resolution: avionics?.camera_resolution ?? "Unknown",
+    camOnline: avionics?.camera_online ?? false,
+    camDetecting: avionics?.camera_detecting ?? false,
     isAirborne: isFlightAirborne(flightState),
-    isBatteryLow: isBatteryCritical(battery),
+    isBatteryLow: Boolean(avionics) && isBatteryCritical(battery),
   };
 };
 
@@ -62,6 +64,6 @@ export const isFlightAirborne = (state: string): boolean => {
  * Checks if the battery is in a low/critical condition (< 25%).
  */
 export const isBatteryCritical = (percent: number): boolean => {
-  return percent < 25;
+  return percent < BATTERY_THRESHOLDS.critical;
 };
 

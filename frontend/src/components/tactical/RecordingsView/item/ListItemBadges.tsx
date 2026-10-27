@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { ListItemBadgesProps } from "@/types";
@@ -16,8 +18,8 @@ export const ListItemBadges: React.FC<ListItemBadgesProps> = ({ viewMode, filena
       <span
         className={`px-1.5 py-0.5 rounded text-[8px] font-mono-code font-bold tracking-wider border ${
           isVideo
-            ? "bg-purple-500/25 text-purple-300 border-purple-500/50 shadow-[0_0_8px_rgba(168,85,247,0.3)]"
-            : "bg-slate-800/80 text-slate-400 border-slate-700/60"
+            ? TACTICAL_VIEW_STYLES.ListItemBadges_span_className
+            : TACTICAL_VIEW_STYLES.ListItemBadges_span_className_2
         }`}
       >
         {isVideo ? "VIDEO (MP4)" : "SNAPSHOT (JPG)"}

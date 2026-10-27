@@ -13,7 +13,7 @@ class FrameNormalizer:
     """
 
     @staticmethod
-    def validate_and_normalize(frame: np.ndarray) -> Tuple[bool, Optional[np.ndarray], int, int]:
+    def validate_and_normalize(frame: np.ndarray, max_edge: Optional[int] = PREVIEW_MAX_EDGE) -> Tuple[bool, Optional[np.ndarray], int, int]:
         """
         Returns (is_valid, normalized_frame, height, width).
         """
@@ -31,9 +31,9 @@ class FrameNormalizer:
             frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
 
         h, w = frame.shape[:2]
-        if max(h, w) > PREVIEW_MAX_EDGE:
+        if max_edge is not None and max(h, w) > max_edge:
             import cv2
-            scale = PREVIEW_MAX_EDGE / max(h, w)
+            scale = max_edge / max(h, w)
             frame = cv2.resize(frame, (round(w * scale), round(h * scale)), interpolation=cv2.INTER_AREA)
             h, w = frame.shape[:2]
         return True, frame, h, w

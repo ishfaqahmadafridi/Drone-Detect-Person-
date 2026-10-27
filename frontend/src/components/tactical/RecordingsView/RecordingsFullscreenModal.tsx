@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { RecordingsFullscreenModalProps } from "@/types";
@@ -18,11 +20,11 @@ export const RecordingsFullscreenModal: React.FC<RecordingsFullscreenModalProps>
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/90 backdrop-blur-xl animate-in fade-in duration-200 cursor-pointer"
+      className={TACTICAL_VIEW_STYLES.RecordingsFullscreenModal_div_className}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-6xl h-[88vh] min-h-[540px] flex flex-col rounded-2xl bg-slate-950 border border-slate-700/80 shadow-[0_0_80px_rgba(0,0,0,0.95)] overflow-hidden cursor-default"
+        className={TACTICAL_VIEW_STYLES.RecordingsFullscreenModal_div_className_2}
       >
         {/* 1. Modal Top Bar */}
         <ModalHeader snapshot={snapshot} onClose={onClose} />

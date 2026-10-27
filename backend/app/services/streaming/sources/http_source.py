@@ -3,6 +3,7 @@ HTTP Stream Source: Acquires frames from network endpoints, IP webcams, and mobi
 Uses urllib with configurable timeouts, URL normalization, and downsampling.
 """
 
+from app.core.config import STREAM_HTTP_TIMEOUT_SECONDS, STREAM_MAX_FRAME_WIDTH
 import urllib.request
 from typing import Tuple, Optional
 import numpy as np
@@ -25,8 +26,8 @@ class HttpFrameSource(BaseFrameSource):
     def __init__(
         self,
         url: str,
-        timeout_seconds: float = 2.5,
-        max_width: int = 1280
+        timeout_seconds: float = STREAM_HTTP_TIMEOUT_SECONDS,
+        max_width: int = STREAM_MAX_FRAME_WIDTH
     ):
         self.raw_url = url
         self.timeout_seconds = timeout_seconds

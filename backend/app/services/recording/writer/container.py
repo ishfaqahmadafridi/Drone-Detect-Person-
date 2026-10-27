@@ -3,6 +3,8 @@ Video Container Writer: Facade coordinating path resolution, codec negotiation,
 frame scaling, thumbnail creation, and metric calculation.
 """
 
+from app.core.constants import DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT
+
 import time
 from typing import Optional, Tuple
 import cv2
@@ -36,7 +38,7 @@ class VideoContainerWriter:
         self._filename: Optional[str] = None
         self._filepath: Optional[str] = None
         self._thumbnail_path: Optional[str] = None
-        self._resolution: Tuple[int, int] = (1280, 720)
+        self._resolution: Tuple[int, int] = (DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT)
         self._frame_count: int = 0
         self._start_time: float = 0.0
 
@@ -67,8 +69,8 @@ class VideoContainerWriter:
     def open(
         self,
         view_mode: str = "aerial",
-        width: int = 1280,
-        height: int = 720,
+        width: int = DEFAULT_FRAME_WIDTH,
+        height: int = DEFAULT_FRAME_HEIGHT,
     ) -> str:
         """Initialize an MP4 container and prepare for writing."""
         filename, filepath = VideoFilePathResolver.resolve_recording_path(

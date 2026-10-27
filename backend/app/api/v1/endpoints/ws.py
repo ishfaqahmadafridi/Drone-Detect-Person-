@@ -3,6 +3,7 @@ WebSocket Endpoints: High-Frequency Telemetry Stream.
 """
 
 import asyncio
+from app.core.config import WS_TELEMETRY_INTERVAL_SECONDS
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.services.streaming.channels import get_stream_session, Channel
 from typing import Optional
@@ -22,6 +23,6 @@ async def websocket_telemetry(websocket: WebSocket, channel: Optional[Channel] =
                 session = current_session
                 session.telemetry_store.register_websocket(websocket)
             await websocket.send_json(session.latest_telemetry)
-            await asyncio.sleep(0.12)  # ~8 updates/sec
+            await asyncio.sleep(WS_TELEMETRY_INTERVAL_SECONDS)
     except (WebSocketDisconnect, Exception):
         session.telemetry_store.unregister_websocket(websocket)

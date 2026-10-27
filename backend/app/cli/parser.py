@@ -3,6 +3,8 @@ CLI Parser: Command-line arguments for aerial surveillance and intrusion detecti
 """
 
 import argparse
+from app.core.constants import DEFAULT_CONFIDENCE_THRESHOLD
+
 from app.core.config import AERIAL_MODEL_NAME
 
 
@@ -28,7 +30,7 @@ def build_cli_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--conf", "-c",
         type=float,
-        default=0.35,
+        default=DEFAULT_CONFIDENCE_THRESHOLD,
         help="Detection confidence threshold"
     )
     parser.add_argument(

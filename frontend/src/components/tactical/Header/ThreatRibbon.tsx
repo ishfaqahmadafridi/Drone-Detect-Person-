@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { ThreatRibbonProps } from "@/types";
@@ -7,12 +9,12 @@ export const ThreatRibbon: React.FC<ThreatRibbonProps> = ({ threatLevel, alertMs
   const isDanger = threatLevel === "INTRUSION";
 
   const dotColor = isDanger
-    ? "bg-red-400"
-    : "bg-emerald-400";
+    ? TACTICAL_VIEW_STYLES.BatteryHealthGauge_div_className_4
+    : TACTICAL_VIEW_STYLES.CardHeader_span_className_2;
 
   const pillStyle = isDanger
-    ? "border-red-500/40 bg-red-950/30 text-red-300"
-    : "border-emerald-500/30 bg-emerald-950/20 text-emerald-300";
+    ? TACTICAL_VIEW_STYLES.ThreatRibbon_color
+    : TACTICAL_VIEW_STYLES.ThreatRibbon_color_2;
 
   const displayLabel = isDanger
     ? "INTRUSION DETECTED"

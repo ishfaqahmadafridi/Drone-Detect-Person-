@@ -4,6 +4,38 @@ Pydantic Schemas for Drone Avionics, Flight Control Commands, and Camera Status.
 
 from typing import Optional
 from pydantic import BaseModel, Field
+from typing import Literal
+from uuid import UUID
+
+
+class DroneControlAxes(BaseModel):
+    left_right: int = Field(0, ge=-100, le=100, strict=True)
+    forward_back: int = Field(0, ge=-100, le=100, strict=True)
+    up_down: int = Field(0, ge=-100, le=100, strict=True)
+    yaw: int = Field(0, ge=-100, le=100, strict=True)
+
+
+class DroneControlInput(BaseModel):
+    session_id: UUID
+    sequence: int = Field(..., ge=0, strict=True)
+    axes: DroneControlAxes = Field(default_factory=DroneControlAxes)
+
+
+class DroneControlSession(BaseModel):
+    session_id: UUID
+
+
+class DroneControlAction(DroneControlSession):
+    action: Literal["takeoff", "land", "hover"]
+
+
+class DroneControlStatus(BaseModel):
+    mode: Literal["simulation", "tello"]
+    connected: bool
+    flight_state: Literal["landed", "airborne", "unknown"]
+    axes: DroneControlAxes
+    input_expired: bool
+    error: str
 
 class DroneCommandRequest(BaseModel):
     action: str = Field(..., description="takeoff, land, patrol, hover, rtl, connect_webcam, connect_drone")

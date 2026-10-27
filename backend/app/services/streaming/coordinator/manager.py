@@ -4,7 +4,7 @@ vision pipeline processing, target tracking modes, telemetry distribution, and M
 """
 
 from typing import List, Dict, Tuple, Optional, Generator
-from fastapi import WebSocket, HTTPException
+from fastapi import WebSocket
 
 from app.core.config import DetectionConfig, SYNTHETIC_VIDEO_PATH, STREAM_ASYNC_PREVIEW
 from app.services.streaming.source_provider import StreamSourceProvider
@@ -17,6 +17,9 @@ from app.services.streaming.preview_streamer import PreviewStreamer
 from app.services.streaming.coordinator.tracking_manager import TargetTrackingManager
 from app.services.streaming.coordinator.perspective_controller import PerspectiveController
 from app.services.streaming.coordinator.flight_controller import DroneFlightController
+from app.services.streaming.coordinator.lifecycle_controller import StreamLifecycleController
+from app.services.streaming.coordinator.selection_controller import TargetSelectionController
+from app.services.streaming.coordinator.reid_binding import bind_reid
 
 
 class StreamManagerService:
@@ -69,6 +72,15 @@ class StreamManagerService:
             telemetry_store=self.telemetry_store
         )
 
+        self.lifecycle_controller = StreamLifecycleController(
+            self.frame_streamer, self.perspective_controller, self.tracking_manager
+        )
+        self.selection_controller = TargetSelectionController(
+            self.tracking_manager, self.frame_streamer.selection
+        )
+        if not isolated:
+            bind_reid(self)
+
     # -------------------------------------------------------------------------
     # Core Subsystem Properties
     # -------------------------------------------------------------------------
@@ -118,20 +130,12 @@ class StreamManagerService:
     # -------------------------------------------------------------------------
 
     def set_view_mode(self, view_mode: str) -> str:
-        if getattr(self, "fixed_view", view_mode) != view_mode:
-            raise HTTPException(409, "This channel has a fixed perspective.")
-        with self.frame_streamer.selection.lock, self.frame_streamer.source_lock:
-            self.frame_streamer.invalidate()
-            self.tracking_manager.set_tracking_mode("auto")
-            return self.perspective_controller.set_view_mode(view_mode)
+        return self.lifecycle_controller.set_view_mode(
+            view_mode, fixed_view=getattr(self, "fixed_view", None)
+        )
 
     def set_source(self, source_type: str, source_path: Optional[str] = None, transport: str = "tcp"):
-        with self.frame_streamer.selection.lock, self.frame_streamer.source_lock:
-            self.frame_streamer.invalidate()
-            self.detector.reset_tracking()
-            self.tracking_manager.set_tracking_mode("auto")
-            self.telemetry_store.update(detections=[], video_finished=False)
-            self.perspective_controller.set_source(source_type, source_path, transport=transport)
+        self.lifecycle_controller.set_source(source_type, source_path, transport=transport)
 
     def update_config(
         self,
@@ -148,14 +152,7 @@ class StreamManagerService:
     # -------------------------------------------------------------------------
 
     def set_tracking_mode(self, mode: str, selected_ids: Optional[List[int]] = None) -> Dict:
-        with self.frame_streamer.selection.lock:
-            if mode == "manual" and self.config.view_mode != "ground":
-                raise HTTPException(409, "Manual suspect selection is ground-only.")
-            result = self.tracking_manager.set_tracking_mode(mode=mode, selected_ids=selected_ids)
-            callback = self.frame_streamer.selection.on_commit
-            if callback is not None:
-                callback(self.config.selected_target_ids)
-            return result
+        return self.selection_controller.set_tracking_mode(mode, selected_ids)
 
     def select_target(
         self,
@@ -163,22 +160,10 @@ class StreamManagerService:
         y: Optional[float] = None,
         target_id: Optional[int] = None
     ) -> Dict:
-        with self.frame_streamer.selection.lock:
-            if self.config.view_mode != "ground":
-                raise HTTPException(409, "Manual suspect selection is ground-only.")
-            result = self.tracking_manager.select_target(x=x, y=y, target_id=target_id)
-            callback = self.frame_streamer.selection.on_commit
-            if callback is not None:
-                callback(self.config.selected_target_ids)
-            return result
+        return self.selection_controller.select_target(x=x, y=y, target_id=target_id)
 
     def clear_manual_targets(self) -> Dict:
-        with self.frame_streamer.selection.lock:
-            result = self.tracking_manager.clear_manual_targets()
-            callback = self.frame_streamer.selection.on_commit
-            if callback is not None:
-                callback([])
-            return result
+        return self.selection_controller.clear_manual_targets()
 
     # -------------------------------------------------------------------------
     # Flight Directives & Frame Stream Generator

@@ -1,7 +1,9 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
-import { GroundWizardStepIndicatorProps, GroundWizardStep } from "@/types";
+import { GroundWizardStepIndicatorProps, GroundWizardStepOption } from "@/types";
 import { Check } from "lucide-react";
 
 export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps> = ({
@@ -9,7 +11,7 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
   maxStepReached,
   onStepClick,
 }) => {
-  const steps: { number: GroundWizardStep; title: string }[] = [
+  const steps: GroundWizardStepOption[] = [
     { number: 1, title: "DEVICE" },
     { number: 2, title: "UPLINK" },
     { number: 3, title: "CONFIG" },
@@ -17,7 +19,7 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
   ];
 
   return (
-    <div className="w-full flex items-center justify-between px-3 py-2 bg-[#0A0D14] rounded-xl border border-slate-700/60">
+    <div className={TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_div_className}>
       {steps.map((step, idx) => {
         const isCurrent = currentStep === step.number;
         const isCompleted = currentStep > step.number;
@@ -28,7 +30,7 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
             {idx > 0 && (
               <div
                 className={`flex-1 h-[2px] mx-2 transition-colors ${
-                  currentStep >= step.number ? "bg-blue-500/60" : "bg-slate-800"
+                  currentStep >= step.number ? TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_div_className_2 : TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_div_className_3
                 }`}
               />
             )}
@@ -43,10 +45,10 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
               <div
                 className={`w-5 h-5 rounded-full flex items-center justify-center font-mono-code text-[10px] font-bold transition-all ${
                   isCurrent
-                    ? "bg-blue-600 text-white shadow-[0_0_12px_rgba(59,130,246,0.5)] scale-110"
+                    ? TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_div_className_4
                     : isCompleted
-                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-                    : "bg-slate-800 text-slate-400 border border-slate-700"
+                    ? TACTICAL_VIEW_STYLES.GroundStep2Uplink_div_className
+                    : TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_div_className_5
                 }`}
               >
                 {isCompleted ? <Check className="w-3 h-3" /> : step.number}
@@ -54,10 +56,10 @@ export const GroundWizardStepIndicator: React.FC<GroundWizardStepIndicatorProps>
               <span
                 className={`font-display text-[10px] font-bold tracking-wider uppercase transition-colors ${
                   isCurrent
-                    ? "text-blue-400"
+                    ? TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_span_className
                     : isCompleted
-                    ? "text-emerald-400/80"
-                    : "text-slate-400"
+                    ? TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_span_className_2
+                    : TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_span_className_3
                 }`}
               >
                 {step.title}

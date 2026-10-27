@@ -8,7 +8,7 @@ from app.core.constants import (
     DEFAULT_GROUND_MODEL_NAME,
     DEFAULT_AERIAL_MODEL_NAME,
 )
-from app.core.paths import BASE_DIR, ROOT_DIR
+from app.core.constants import BASE_DIR, ROOT_DIR
 
 
 def load_env_file(filepath: str) -> None:

@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/store";
-import { setViewportLayout, setActiveCamera, setTrackingMode } from "@/store/slices/telemetrySlice";
-import { useStreamMutation } from "@/services/queries/useStreamMutation";
+import { setViewportLayout, setTrackingMode } from "@/store/slices/telemetrySlice";
+import { usePerspectiveSelection } from "./usePerspectiveSelection";
 import { trackingApi } from "@/services/api/trackingApi";
 import { useChannelPanel } from "./useChannelPanel";
 import type { ViewportLayoutMode, StreamChannel } from "@/types";
@@ -8,20 +8,13 @@ import { useCameraFleet } from "./useCameraFleet";
 
 export function useVideoViewport() {
   const dispatch = useAppDispatch();
-  const { view_mode, viewport_layout, connected_camera_ids, primary_camera_ids, tracking_mode } = useAppSelector(state => state.telemetry);
+  const { view_mode, viewport_layout, connected_camera_ids, tracking_mode } = useAppSelector(state => state.telemetry);
   const channel: StreamChannel = view_mode === "ground" ? "ground" : "aerial";
   const panel = useChannelPanel(channel);
   const { cameras } = useCameraFleet();
   const connectedCount = cameras.filter(camera => camera.viewMode === channel && connected_camera_ids.includes(camera.id)).length;
   const portraits = useAppSelector(state => state.ui.suspectPortraits);
-  const { switchView } = useStreamMutation();
-  const handleViewSelect = async (view: StreamChannel) => {
-    await switchView.mutateAsync(view);
-    const camera = cameras.find(camera => camera.id === primary_camera_ids[view]);
-    if (camera) dispatch(setActiveCamera(camera));
-    const count = cameras.filter(camera => camera.viewMode === view && connected_camera_ids.includes(camera.id)).length;
-    dispatch(setViewportLayout(count > 1 ? "dual" : "single"));
-  };
+  const handleViewSelect = usePerspectiveSelection();
 
   const handleTrackingModeChange = async (mode: "auto" | "manual") => {
     dispatch(setTrackingMode(mode));
@@ -34,7 +27,7 @@ export function useVideoViewport() {
 
   const handleClearSelectedTargets = async () => {
     try {
-      await trackingApi.clearTargets();
+      await trackingApi.clearTargets(channel);
       await trackingApi.setMode("auto", [], channel);
       dispatch(setTrackingMode("auto"));
     } catch {

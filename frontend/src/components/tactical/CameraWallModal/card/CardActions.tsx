@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { CameraCardActionsProps } from "@/types";
@@ -23,11 +25,11 @@ export const CardActions: React.FC<CameraCardActionsProps> = ({
             }}
             className={`flex-1 py-2 px-3 rounded-lg font-display text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all ${
               isActive
-                ? "bg-blue-600/30 border border-blue-500/60 text-blue-200 cursor-default"
-                : "bg-emerald-600/30 hover:bg-blue-600 text-emerald-200 hover:text-white border border-emerald-500/60 shadow-sm cursor-pointer"
+                ? TACTICAL_VIEW_STYLES.CardActions_button_className
+                : TACTICAL_VIEW_STYLES.CardActions_button_className_2
             }`}
           >
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300" />
+            <CheckCircle2 className={TACTICAL_VIEW_STYLES.CardActions_CheckCircle2_className} />
             <span>{isActive ? "ACTIVE PRIMARY" : "SET AS PRIMARY"}</span>
           </button>
 
@@ -38,7 +40,7 @@ export const CardActions: React.FC<CameraCardActionsProps> = ({
               onToggleConnect();
             }}
             title="Disconnect camera from simultaneous multi-view"
-            className="py-2 px-2.5 rounded-lg font-display text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-1 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-500/40 cursor-pointer transition-all"
+            className={TACTICAL_VIEW_STYLES.CardActions_button_className_3}
           >
             <XCircle className="w-3.5 h-3.5" />
             <span>UNLINK</span>
@@ -53,7 +55,7 @@ export const CardActions: React.FC<CameraCardActionsProps> = ({
               e.stopPropagation();
               onToggleConnect();
             }}
-            className="w-full py-2 px-3 rounded-lg font-display text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white border border-emerald-400 shadow-md cursor-pointer transition-all shadow-emerald-950/40"
+            className={TACTICAL_VIEW_STYLES.CardActions_button_className_4}
           >
             <PlusCircle className="w-4 h-4" />
             <span>CONNECT SENSOR (MULTI-LIVE)</span>

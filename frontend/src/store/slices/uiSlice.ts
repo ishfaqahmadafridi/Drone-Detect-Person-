@@ -1,13 +1,8 @@
+import type { UIState } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SnapshotItem, SuspectSnapshot } from "@/types";
 
-interface UIState {
-  isEditingZone: boolean;
-  selectedSnapshot: SnapshotItem | null;
-  activeSourceTab: "synthetic" | "webcam" | "file" | "rtsp";
-  sirenMuted: boolean;
-  suspectPortraits: SuspectSnapshot[];
-}
+
 
 const initialState: UIState = {
   isEditingZone: false,

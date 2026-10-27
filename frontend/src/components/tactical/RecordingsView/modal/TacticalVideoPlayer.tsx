@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { TacticalVideoPlayerProps } from "@/types";
@@ -9,7 +11,7 @@ export const TacticalVideoPlayer: React.FC<TacticalVideoPlayerProps> = ({ url })
   const player = useTacticalVideoPlayer(url);
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-full h-full bg-black select-none group">
+    <div className={TACTICAL_VIEW_STYLES.TacticalVideoPlayer_div_className}>
       {/* 1. Tactical Playback Ribbon */}
       <PlayerPlaybackRibbon />
 

@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { Volume2, VolumeX, Repeat, Maximize2 } from "lucide-react";
@@ -18,7 +20,7 @@ export const PlayerActionControls: React.FC<PlayerActionControlsProps> = ({
       {/* Speed Multiplier */}
       <button
         onClick={onCycleSpeed}
-        className="px-2.5 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-cyan-300 text-[10px] font-mono-code font-bold tracking-wider transition-all"
+        className={TACTICAL_VIEW_STYLES.PlayerActionControls_button_className}
         title="Playback Speed"
       >
         {playbackRate}x SPEED
@@ -29,8 +31,8 @@ export const PlayerActionControls: React.FC<PlayerActionControlsProps> = ({
         onClick={onToggleLoop}
         className={`flex items-center justify-center w-8 h-8 rounded-lg border transition-all ${
           isLooping
-            ? "bg-purple-950/80 border-purple-500/60 text-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.2)]"
-            : "bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300"
+            ? TACTICAL_VIEW_STYLES.PlayerActionControls_button_className_2
+            : TACTICAL_VIEW_STYLES.PlayerActionControls_button_className_3
         }`}
         title={isLooping ? "Loop Enabled" : "Loop Disabled"}
       >
@@ -40,7 +42,7 @@ export const PlayerActionControls: React.FC<PlayerActionControlsProps> = ({
       {/* Audio Mute */}
       <button
         onClick={onToggleMute}
-        className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-400 hover:text-slate-200 transition-all"
+        className={TACTICAL_VIEW_STYLES.PlayerActionControls_button_className_4}
         title={isMuted ? "Unmute" : "Mute"}
       >
         {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -49,7 +51,7 @@ export const PlayerActionControls: React.FC<PlayerActionControlsProps> = ({
       {/* Fullscreen */}
       <button
         onClick={onToggleFullscreen}
-        className="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-400 hover:text-cyan-300 transition-all"
+        className={TACTICAL_VIEW_STYLES.PlayerActionControls_button_className_5}
         title="Fullscreen"
       >
         <Maximize2 className="w-3.5 h-3.5" />

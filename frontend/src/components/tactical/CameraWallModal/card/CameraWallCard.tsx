@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { CameraWallCardProps } from "@/types";
@@ -19,10 +21,10 @@ export const CameraWallCard: React.FC<CameraWallCardProps> = ({
       onClick={onToggleConnect}
       className={`group relative rounded-xl border overflow-hidden cursor-pointer transition-all duration-300 flex flex-col justify-between ${
         isActive
-          ? "border-blue-500 bg-blue-950/20 shadow-[0_0_20px_rgba(59,130,246,0.25)]"
+          ? TACTICAL_VIEW_STYLES.CameraWallCard_div_className
           : isConnected
-          ? "border-emerald-500/80 bg-emerald-950/15 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-          : "border-slate-700/60 bg-[#06080E]/70 hover:border-blue-500/60 hover:bg-slate-900/50"
+          ? TACTICAL_VIEW_STYLES.CameraWallCard_div_className_2
+          : TACTICAL_VIEW_STYLES.CameraWallCard_div_className_3
       }`}
     >
       {/* 1. Channel Header & Identity Strip */}

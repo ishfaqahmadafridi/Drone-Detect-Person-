@@ -1,3 +1,5 @@
+
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import { useState, useEffect, useCallback } from "react";
 import { DEFAULT_RESTRICTED_ZONE } from "@/constants/tactical";
 import { UseZoneCanvasProps } from "@/types";
@@ -42,10 +44,10 @@ export const useZoneCanvas = ({
         ctx.lineTo(pt[0] * w, pt[1] * h);
       }
       ctx.closePath();
-      ctx.fillStyle = "rgba(0, 242, 254, 0.2)";
+      ctx.fillStyle = TACTICAL_VIEW_STYLES.useZoneCanvas_fillStyle;
       ctx.fill();
       ctx.lineWidth = 2.5;
-      ctx.strokeStyle = "#00f2fe";
+      ctx.strokeStyle = TACTICAL_VIEW_STYLES.useZoneCanvas_strokeStyle;
       ctx.stroke();
     }
 
@@ -56,13 +58,13 @@ export const useZoneCanvas = ({
 
       ctx.beginPath();
       ctx.arc(px, py, 8, 0, 2 * Math.PI);
-      ctx.fillStyle = idx === draggingIdx ? "#ef4444" : "#00f2fe";
+      ctx.fillStyle = idx === draggingIdx ? TACTICAL_VIEW_STYLES.useZoneCanvas_fillStyle_2 : TACTICAL_VIEW_STYLES.useZoneCanvas_strokeStyle;
       ctx.fill();
       ctx.lineWidth = 2;
-      ctx.strokeStyle = "#ffffff";
+      ctx.strokeStyle = TACTICAL_VIEW_STYLES.useZoneCanvas_strokeStyle_2;
       ctx.stroke();
 
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = TACTICAL_VIEW_STYLES.useZoneCanvas_strokeStyle_2;
       ctx.font = "bold 10px JetBrains Mono";
       ctx.fillText(`P${idx + 1}`, px + 10, py - 6);
     });

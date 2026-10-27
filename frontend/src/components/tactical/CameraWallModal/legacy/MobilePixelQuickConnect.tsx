@@ -1,4 +1,8 @@
 "use client";
+import { CAMERA_UI_TEXT } from "@/constants/tactical";
+
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { MobilePixelQuickConnectProps } from "@/types";
@@ -12,12 +16,12 @@ export const MobilePixelQuickConnect: React.FC<MobilePixelQuickConnectProps> = (
       onClick={(e) => {
         e.stopPropagation();
         if (onConnectRtsp) {
-          onConnectRtsp("http://10.10.20.117:8080");
+          onConnectRtsp(CAMERA_UI_TEXT.MobileCustomStreamForm_1);
         }
       }}
-      className="w-full py-2.5 px-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white border border-emerald-400/80 font-display text-xs font-bold uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] flex items-center justify-center gap-2 cursor-pointer"
+      className={TACTICAL_VIEW_STYLES.MobilePixelQuickConnect_button_className}
     >
-      <span>📱 CONNECT GOOGLE PIXEL 6A (10.10.20.117)</span>
+      <span>{CAMERA_UI_TEXT.cameraLabel_2}</span>
     </button>
   );
 };

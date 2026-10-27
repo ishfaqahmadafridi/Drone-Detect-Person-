@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { ViewportHeaderActionsProps } from "@/types";
@@ -12,16 +14,16 @@ export const ViewportHeaderActions: React.FC<ViewportHeaderActionsProps> = ({
     <div className="flex items-center gap-2">
       <button
         onClick={onSnapshotTrigger}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-display bg-slate-800 text-slate-300 border border-slate-700 hover:border-slate-500 transition-colors"
+        className={TACTICAL_VIEW_STYLES.ViewportHeaderActions_button_className}
         title="Trigger Instant Evidence Snapshot"
       >
-        <Camera className="w-3.5 h-3.5 text-cyan-400" />
+        <Camera className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_Network_className} />
         <span>Snap</span>
       </button>
 
       <button
         onClick={onToggleFullscreen}
-        className="p-1.5 rounded bg-slate-800 text-slate-300 border border-slate-700 hover:border-slate-500 transition-colors"
+        className={TACTICAL_VIEW_STYLES.ViewportHeaderActions_button_className_2}
         title="Toggle Fullscreen"
         aria-label="Toggle Fullscreen View"
       >

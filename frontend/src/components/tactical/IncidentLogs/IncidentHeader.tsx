@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { AlertCircle, Download, RefreshCw } from "lucide-react";
@@ -11,28 +13,28 @@ export const IncidentHeader: React.FC<IncidentHeaderProps> = ({
   onExport,
 }) => {
   return (
-    <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+    <div className={TACTICAL_VIEW_STYLES.IncidentHeader_div_className}>
       <div className="flex items-center gap-2">
-        <AlertCircle className="w-4 h-4 text-cyan-400" />
-        <h3 className="font-display font-bold text-xs uppercase tracking-wider text-white">
+        <AlertCircle className={TACTICAL_VIEW_STYLES.FlightDeckHeader_Navigation_className} />
+        <h3 className={TACTICAL_VIEW_STYLES.GroundStep1Device_span_className}>
           INCIDENT AUDIT LOG
         </h3>
-        <span className="font-mono-code text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">
+        <span className={TACTICAL_VIEW_STYLES.IncidentHeader_span_className}>
           {count} Events
         </span>
       </div>
       <div className="flex items-center gap-2">
         <button
           onClick={onRefresh}
-          className="text-slate-400 hover:text-cyan-400 p-1 rounded transition-colors"
+          className={TACTICAL_VIEW_STYLES.IncidentHeader_button_className}
           title="Refresh incident logs"
           aria-label="Refresh incident logs"
         >
-          <RefreshCw className={`w-3 h-3 ${isLoading ? "animate-spin text-cyan-400" : ""}`} />
+          <RefreshCw className={`w-3 h-3 ${isLoading ? TACTICAL_VIEW_STYLES.IncidentHeader_RefreshCw_className : ""}`} />
         </button>
         <button
           onClick={onExport}
-          className="flex items-center gap-1 text-[11px] font-mono-code text-cyan-400 hover:underline"
+          className={TACTICAL_VIEW_STYLES.IncidentHeader_button_className_2}
           title="Export incident report as CSV"
         >
           <Download className="w-3 h-3" /> Export CSV

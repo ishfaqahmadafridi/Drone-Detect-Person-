@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { DroneBatteryPillProps } from "@/types";
@@ -14,15 +16,15 @@ export const DroneBatteryPill: React.FC<DroneBatteryPillProps> = ({
     <div
       className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono-code font-medium border ${
         isBatteryLow
-          ? "bg-amber-500/10 text-amber-300 border-amber-500/30"
-          : "bg-slate-800/70 text-slate-300 border-slate-700/60"
+          ? TACTICAL_VIEW_STYLES.DroneBatteryPill_div_className
+          : TACTICAL_VIEW_STYLES.DroneBatteryPill_div_className_2
       }`}
       title={`Battery Health: ${health}% • Operating Voltage: ${voltage.toFixed(1)}V`}
     >
       {isBatteryLow ? (
-        <BatteryWarning className="w-3.5 h-3.5 text-amber-400" />
+        <BatteryWarning className={TACTICAL_VIEW_STYLES.HeaderActions_VolumeX_className} />
       ) : (
-        <Battery className="w-3.5 h-3.5 text-emerald-400" />
+        <Battery className={TACTICAL_VIEW_STYLES.DroneBatteryPill_Battery_className} />
       )}
       <span>{batteryPct}%</span>
     </div>

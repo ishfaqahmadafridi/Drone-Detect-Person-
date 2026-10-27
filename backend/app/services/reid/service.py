@@ -4,6 +4,8 @@ The video pipeline only supplies clean crops. A background thread snapshots shor
 tracklets and calls one inference process. Reference sequences stop changing once full,
 so a later tracking error cannot silently rewrite the selected person's identity.
 """
+from app.core.config import WORKER_SHUTDOWN_SECONDS
+
 import logging
 import threading
 import time
@@ -266,7 +268,7 @@ class ReIDService:
         if self._worker:
             self._worker.close()
         if self._thread:
-            self._thread.join(timeout=3)
+            self._thread.join(timeout=WORKER_SHUTDOWN_SECONDS)
         with self._lock:
             for tracks in self._tracks.values():
                 tracks.clear()

@@ -3,6 +3,8 @@
 Detection retains the selection lock, so frozen snapshots and ReID crops stay
 consistent. Capture never waits for that lock during ordinary playback.
 """
+from app.core.config import WORKER_SHUTDOWN_SECONDS
+
 import logging
 import threading
 import time
@@ -86,7 +88,7 @@ class PreviewStreamer(FrameStreamer):
                 time.sleep(max(0.001, 1 / STREAM_PREVIEW_FPS - (time.monotonic() - started)))
         finally:
             self._work.set()
-            self._inference.join(timeout=3)
+            self._inference.join(timeout=WORKER_SHUTDOWN_SECONDS)
 
     def _publish_preview(self, jpeg):
         with self._condition:

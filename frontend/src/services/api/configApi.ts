@@ -1,10 +1,9 @@
+import type { UpdateConfigPayload } from "@/types";
+export type { UpdateConfigPayload } from "@/types";
 import { apiClient } from "./client";
 import { SurveillanceConfig } from "@/types";
 
-export interface UpdateConfigPayload {
-  confidence_threshold?: number;
-  zone_polygon?: [number, number][];
-}
+
 
 export const configApi = {
   getConfig: async (): Promise<SurveillanceConfig> => {

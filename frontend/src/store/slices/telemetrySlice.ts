@@ -1,17 +1,9 @@
+import type { TelemetryState } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TelemetryData, ThreatLevel, ViewportLayoutMode } from "@/types";
-import { DEFAULT_AERIAL_MODEL_NAME, DEFAULT_AERIAL_ENGINE } from "@/constants/tactical";
+import { DEFAULT_AERIAL_MODEL_NAME, DEFAULT_AERIAL_ENGINE, DEFAULT_DETECTION_CONFIDENCE } from "@/constants/tactical";
 
-interface TelemetryState extends TelemetryData {
-  isConnected: boolean;
-  lastUpdated: number;
-  active_camera_id: string;
-  camera_name: string;
-  camera_location: string;
-  connected_camera_ids: string[];
-  viewport_layout: ViewportLayoutMode;
-  primary_camera_ids: Record<"ground" | "aerial", string>;
-}
+
 
 const initialState: TelemetryState = {
   threat_level: "CLEAR",
@@ -26,7 +18,7 @@ const initialState: TelemetryState = {
   view_mode: "aerial",
   model_name: DEFAULT_AERIAL_MODEL_NAME,
   engine: DEFAULT_AERIAL_ENGINE,
-  confidence_threshold: 0.35,
+  confidence_threshold: DEFAULT_DETECTION_CONFIDENCE,
   zone_polygon: [],
   isConnected: false,
   lastUpdated: 0,

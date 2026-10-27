@@ -1,3 +1,5 @@
+
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import type { SuspectSnapshotsProps } from "@/types";
 import { VIDEO_TESTING } from "@/constants/tactical";
 
@@ -15,7 +17,7 @@ export function SuspectSnapshots({ portraits, reference = false }: SuspectSnapsh
                 href={person.image}
                 download={`suspect-${person.id}-${person.capturedAt.replaceAll(":", "-")}.jpg`}
                 title={`Download suspect #${person.id} snapshot`}
-                className="block overflow-hidden rounded border border-slate-700 bg-slate-900"
+                className={TACTICAL_VIEW_STYLES.SuspectSnapshots_a_className}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -24,7 +26,7 @@ export function SuspectSnapshots({ portraits, reference = false }: SuspectSnapsh
                   className="w-full h-36 object-contain"
                 />
               </a>
-              <figcaption className="text-xs font-semibold text-slate-300">Suspect #{person.id}</figcaption>
+              <figcaption className={TACTICAL_VIEW_STYLES.SuspectSnapshots_figcaption_className}>Suspect #{person.id}</figcaption>
               <a
                 className={`${VIDEO_TESTING.buttonClass} w-full text-center`}
                 href={person.image}

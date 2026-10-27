@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { MobileGroundFeedCardProps } from "@/types";
@@ -25,15 +27,15 @@ export const MobileGroundFeedCard: React.FC<MobileGroundFeedCardProps> = ({
       <div
         className={`group relative rounded-xl border overflow-hidden transition-all duration-300 flex flex-col justify-between ${
           isActive
-            ? "border-emerald-400 bg-emerald-950/20 shadow-[0_0_20px_rgba(16,185,129,0.25)]"
-            : "border-slate-700/60 bg-slate-950/40 hover:border-emerald-500/50"
+            ? TACTICAL_VIEW_STYLES.MobileGroundFeedCard_div_className
+            : TACTICAL_VIEW_STYLES.MobileGroundFeedCard_div_className_2
         }`}
       >
         {/* 1. Tactical Channel Header */}
         <MobileGroundCardHeader isActive={isActive} />
 
         {/* 2. Card Body: Active Stream Status vs Clean Standby with '+' Connect Action */}
-        <div className="relative p-6 flex flex-col items-center bg-[#040814]/95 gap-3.5 flex-1 justify-center min-h-[260px]">
+        <div className={TACTICAL_VIEW_STYLES.MobileGroundFeedCard_div_className_3}>
           {isActive ? (
             <GroundActiveStreamState
               onPromote={handlePromote}
@@ -44,17 +46,17 @@ export const MobileGroundFeedCard: React.FC<MobileGroundFeedCardProps> = ({
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="group/add relative flex flex-col items-center justify-center p-6 w-full max-w-xs rounded-2xl bg-[#06080E]/70 hover:bg-emerald-950/30 border border-dashed border-slate-700/80 hover:border-emerald-400 transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(0,0,0,0.4)] hover:shadow-[0_0_25px_rgba(16,185,129,0.25)]"
+              className={TACTICAL_VIEW_STYLES.MobileGroundFeedCard_button_className}
             >
-              <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 group-hover/add:border-emerald-400 group-hover/add:bg-emerald-500/20 text-emerald-400 transition-all mb-3">
+              <div className={TACTICAL_VIEW_STYLES.MobileGroundFeedCard_div_className_4}>
                 <Plus className="w-7 h-7 group-hover/add:scale-125 transition-transform" />
-                <span className="absolute inset-0 rounded-full border border-emerald-400/40 animate-ping group-hover/add:animate-none opacity-40" />
+                <span className={TACTICAL_VIEW_STYLES.MobileGroundFeedCard_span_className} />
               </div>
 
-              <span className="font-display font-black text-xs uppercase tracking-wider text-white group-hover/add:text-emerald-300 transition-colors">
+              <span className={TACTICAL_VIEW_STYLES.MobileGroundFeedCard_span_className_2}>
                 CONNECT NEW SENSOR
               </span>
-              <span className="font-mono-code text-[10px] text-slate-400 mt-1 text-center">
+              <span className={TACTICAL_VIEW_STYLES.AddSensorCard_span_className_2}>
                 Click to configure Wall CCTV or Smartphone
               </span>
             </button>

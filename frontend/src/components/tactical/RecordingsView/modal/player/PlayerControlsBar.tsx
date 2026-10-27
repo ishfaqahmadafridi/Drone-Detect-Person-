@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { PlayerControlsBarProps } from "@/types";
@@ -14,7 +16,7 @@ export const PlayerControlsBar: React.FC<PlayerControlsBarProps> = ({
 }) => {
   return (
     <div
-      className={`w-full bg-slate-950/95 border-t border-slate-800/90 px-4 py-3 flex flex-col gap-2 z-20 backdrop-blur-md transition-opacity ${
+      className={`${TACTICAL_VIEW_STYLES.PlayerControlsBar_div_className}${
         isDisabled ? "opacity-40 pointer-events-none" : ""
       }`}
     >

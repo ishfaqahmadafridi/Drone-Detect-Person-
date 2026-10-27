@@ -1,15 +1,12 @@
 "use client";
+import type { ActiveCameraInfo } from "@/types";
+export type { ActiveCameraInfo } from "@/types";
+
 
 import { useAppSelector } from "@/store";
+import { DEFAULT_TACTICAL_CAMERAS } from "@/constants/tactical";
 
-export interface ActiveCameraInfo {
-  camId: string;
-  camName: string;
-  camLoc: string;
-  isGround: boolean;
-  isSimulation: boolean;
-  sensorTag: string;
-}
+
 
 /**
  * Custom hook providing centralized active camera metadata and dynamic sector tags.
@@ -21,10 +18,10 @@ export function useActiveCamera(): ActiveCameraInfo {
 
   const isGround = view_mode === "ground";
   const isSimulation = source_type === "synthetic";
-  const camId = active_camera_id || (isGround ? "CAM-02" : "CAM-01");
-  const camName = camera_name || (isGround ? "Gate 01 Perimeter CCTV" : "UAV-01 Aerial Gimbal");
-  const camLoc =
-    camera_location || (isGround ? "North Perimeter - Gate 01" : "North Airspace - Sector 04");
+  const fallback = DEFAULT_TACTICAL_CAMERAS.find(camera => camera.viewMode === view_mode);
+  const camId = active_camera_id || fallback?.id || "";
+  const camName = camera_name || fallback?.name || "";
+  const camLoc = camera_location || fallback?.location || "";
   const sensorTag = `${camId} / ${camName.toUpperCase()} / ${camLoc.toUpperCase()}`;
 
   return {

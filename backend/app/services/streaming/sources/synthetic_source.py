@@ -3,6 +3,7 @@ Synthetic Simulation Frame Source: Procedural in-memory drone patrol stream.
 Zero external hardware, disk, or codec requirements.
 """
 
+from app.core.config import SIMULATION_WIDTH, SIMULATION_HEIGHT, SIMULATION_PERSON_COUNT, SIMULATION_INTERVAL_SECONDS
 import time
 from typing import Tuple, Optional
 import numpy as np
@@ -17,10 +18,10 @@ class SyntheticFrameSource(BaseFrameSource):
     """
     def __init__(
         self,
-        width: int = 1280,
-        height: int = 720,
-        num_people: int = 4,
-        frame_interval_seconds: float = 0.035
+        width: int = SIMULATION_WIDTH,
+        height: int = SIMULATION_HEIGHT,
+        num_people: int = SIMULATION_PERSON_COUNT,
+        frame_interval_seconds: float = SIMULATION_INTERVAL_SECONDS
     ):
         self.stream = LiveSimulationStream(width=width, height=height, num_people=num_people)
         self.frame_interval_seconds = frame_interval_seconds

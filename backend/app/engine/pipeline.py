@@ -1,87 +1,21 @@
-"""
-Detection Pipeline Engine: Coordinated single-frame and continuous stream processor.
-"""
-
-from typing import Dict, Tuple, Optional, List
+"""CLI adapter over the same frame pipeline used by streaming."""
+from typing import Dict, Tuple, Optional
 import numpy as np
 from app.core.config import DetectionConfig
-from app.services.detector_service import DronePersonDetectorService
-from app.services.zone_service import ZoneMonitorService
-from app.services.alert_service import AlertManagerService
-from app.engine.annotator import TacticalFrameAnnotator
+from app.services.streaming.pipeline_processor import VisionPipelineProcessor
+
 
 class DetectionPipeline:
-    """
-    High-performance pipeline coordinating detection, zone tracking, and annotation.
-    """
     def __init__(self, config: Optional[DetectionConfig] = None):
-        self.config = config or DetectionConfig()
-        self.detector = DronePersonDetectorService(self.config)
-        self.zone_monitor = ZoneMonitorService(1280, 720, self.config.default_zone_normalized)
-        self.alert_manager = AlertManagerService(
-            output_dir=self.config.output_dir,
-            snapshots_dir=self.config.snapshots_dir,
-            logs_dir=self.config.logs_dir,
-            snapshot_cooldown=self.config.snapshot_cooldown_seconds,
-            enable_audio=self.config.enable_audio_alert
-        )
-        self.annotator = TacticalFrameAnnotator(self.config)
+        # CLI recorder dimensions follow the input; streaming previews remain capped.
+        self.processor = VisionPipelineProcessor(config, normalize_max_edge=None)
+        self.config = self.processor.config
+        self.detector = self.processor.detector
+        self.zone_monitor = self.processor.zone_monitor
+        self.alert_manager = self.processor.alert_manager
+        self.annotator = self.detector.annotator
 
-    def process_frame(
-        self,
-        frame: np.ndarray,
-        frame_idx: int = 0
-    ) -> Tuple[np.ndarray, Dict, Optional[str]]:
-        """
-        Processes a single video frame through the full detection pipeline.
-        
-        Returns:
-            Tuple of (annotated_frame, telemetry_dict, snapshot_filepath_or_none)
-        """
-        h, w = frame.shape[:2]
-        self.zone_monitor.update_resolution(w, h)
-
-        # 1. Infer & track persons
-        detected_persons = self.detector.process_frame(frame, use_tracking=True)
-
-        # 2. Check intrusion in polygon
-        intruders = self.zone_monitor.check_intrusions(detected_persons)
-
-        # 4. Evaluate threat level & alerts
-        threat_level, alert_msg, details = self.alert_manager.evaluate_state(
-            detected_persons=detected_persons,
-            intruders=intruders,
-            frame_idx=frame_idx
-        )
-
-        # 5. Draw tactical HUD & overlays
-        annotated_frame = self.annotator.draw_annotations(
-            frame=frame,
-            detected_persons=detected_persons,
-            intruders=intruders,
-            zone_polygon=self.zone_monitor.pixel_polygon,
-            threat_level=threat_level,
-            alert_msg=alert_msg,
-            fps=self.detector.fps,
-            track_history=self.detector.track_history
-        )
-
-        # 6. Capture Evidence Snapshot if in alert state
-        saved_snapshot = self.alert_manager.process_and_save_evidence(
-            annotated_frame,
-            threat_level,
-            details
-        )
-
-        telemetry = {
-            "threat_level": threat_level,
-            "alert_msg": alert_msg,
-            "total_persons": len(detected_persons),
-            "intruders_count": len(intruders),
-            "fps": self.detector.fps,
-            "frame_idx": frame_idx,
-            "detections": detected_persons,
-            "details": details
-        }
-
-        return annotated_frame, telemetry, saved_snapshot
+    def process_frame(self, frame: np.ndarray, frame_idx: int = 0) -> Tuple[np.ndarray, Dict, Optional[str]]:
+        result = self.processor.process_frame(frame, frame_idx=frame_idx, source_type="cli")
+        telemetry = {**result.telemetry_payload, "detections": result.detected_persons, "details": result.details}
+        return result.annotated_frame, telemetry, result.snapshot_filepath

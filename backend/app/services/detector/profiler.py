@@ -2,6 +2,8 @@
 FPS Profiler for real-time video stream throughput measurement.
 """
 
+from app.core.config import FPS_WINDOW_SECONDS
+
 import time
 
 
@@ -9,7 +11,7 @@ class FPSProfiler:
     """
     Sliding-window framerate profiler.
     """
-    def __init__(self, window_seconds: float = 0.5):
+    def __init__(self, window_seconds: float = FPS_WINDOW_SECONDS):
         self.window_seconds = window_seconds
         self.last_time = time.time()
         self.frame_count = 0

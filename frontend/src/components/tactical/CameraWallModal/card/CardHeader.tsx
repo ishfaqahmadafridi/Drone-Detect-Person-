@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { CameraCardHeaderProps } from "@/types";
@@ -12,32 +14,32 @@ export const CardHeader: React.FC<CameraCardHeaderProps> = ({
   const isOnline = channel.status === "ONLINE";
 
   return (
-    <div className="p-3 bg-[#06080E]/90 border-b border-slate-700/60 flex items-center justify-between">
+    <div className={TACTICAL_VIEW_STYLES.CardHeader_div_className}>
       <div className="flex items-center gap-2">
         <span
           className={`w-2 h-2 rounded-full ${
             isConnected
-              ? "bg-emerald-400 animate-ping"
+              ? TACTICAL_VIEW_STYLES.CardHeader_span_className
               : isOnline
-              ? "bg-emerald-400"
-              : "bg-amber-400"
+              ? TACTICAL_VIEW_STYLES.CardHeader_span_className_2
+              : TACTICAL_VIEW_STYLES.CardHeader_span_className_3
           }`}
         />
-        <span className="font-display font-bold text-xs text-white uppercase tracking-wider">
+        <span className={TACTICAL_VIEW_STYLES.CardHeader_span_className_4}>
           {channel.channelNum}: {channel.name}
         </span>
       </div>
 
       {isActive ? (
-        <span className="font-mono-code text-[10px] text-blue-400 font-bold flex items-center gap-1">
+        <span className={TACTICAL_VIEW_STYLES.CardHeader_span_className_5}>
           <CheckCircle2 className="w-3.5 h-3.5" /> PRIMARY VIEWPORT
         </span>
       ) : isConnected ? (
-        <span className="font-mono-code text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+        <span className={TACTICAL_VIEW_STYLES.CardHeader_span_className_6}>
           <Radio className="w-3.5 h-3.5 animate-pulse" /> CONNECTED & LIVE
         </span>
       ) : (
-        <span className="font-mono-code text-[10px] text-slate-400 font-medium uppercase">
+        <span className={TACTICAL_VIEW_STYLES.CardHeader_span_className_7}>
           {channel.status}
         </span>
       )}

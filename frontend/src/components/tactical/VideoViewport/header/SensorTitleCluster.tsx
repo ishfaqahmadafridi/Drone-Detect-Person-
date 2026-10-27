@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { SensorTitleClusterProps } from "@/types";
@@ -10,13 +12,13 @@ export const SensorTitleCluster: React.FC<SensorTitleClusterProps> = ({ classNam
 
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
-      <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+      <span className={TACTICAL_VIEW_STYLES.SensorTitleCluster_span_className} />
       <div className="flex items-center gap-2">
-        <h2 className="font-display font-bold text-xs tracking-wider text-white uppercase">
+        <h2 className={TACTICAL_VIEW_STYLES.SensorTitleCluster_h2_className}>
           {camId}: {camName}
         </h2>
-        <span className="hidden sm:flex items-center gap-1 text-[10px] font-mono-code text-slate-300 px-2 py-0.5 rounded bg-[#06080E] border border-slate-700/80">
-          <MapPin className="w-3 h-3 text-blue-400" />
+        <span className={TACTICAL_VIEW_STYLES.SensorTitleCluster_span_className_2}>
+          <MapPin className={TACTICAL_VIEW_STYLES.GroundStep1Device_ShieldCheck_className} />
           <span>{camLoc}</span>
         </span>
       </div>

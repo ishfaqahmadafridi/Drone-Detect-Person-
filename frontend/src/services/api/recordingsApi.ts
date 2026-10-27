@@ -1,27 +1,14 @@
+import type { RecordingStatusResponse, StartRecordingResponse, StopRecordingResponse, EvidenceListResponse } from "@/types";
+export type { RecordingStatusResponse, StartRecordingResponse, StopRecordingResponse, EvidenceListResponse } from "@/types";
 import { apiClient } from "./client";
-import { SnapshotItem } from "@/types";
 
-export interface RecordingStatusResponse {
-  is_recording: boolean;
-}
 
-export interface StartRecordingResponse {
-  message: string;
-  filename: string;
-  view_mode: string;
-  is_recording: boolean;
-}
 
-export interface StopRecordingResponse {
-  message: string;
-  record: SnapshotItem;
-}
 
-export interface EvidenceListResponse {
-  total: number;
-  count: number;
-  records: SnapshotItem[];
-}
+
+
+
+
 
 export const recordingsApi = {
   getEvidence: async (params?: {

@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { SidebarHeaderProps } from "@/types";
@@ -13,21 +15,21 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
 }) => {
   const isGround = viewMode === "ground";
   return (
-    <div className="flex flex-col border-b border-slate-800/80 p-3.5">
+    <div className={TACTICAL_VIEW_STYLES.SidebarHeader_div_className}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5 overflow-hidden">
-          <div className="relative p-2 rounded-lg bg-cyan-950/60 border border-cyan-400/40 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.3)] shrink-0">
-            <Shield className="w-5 h-5 text-cyan-300" />
-            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+          <div className={TACTICAL_VIEW_STYLES.SidebarHeader_div_className_2}>
+            <Shield className={TACTICAL_VIEW_STYLES.SidebarHeader_Shield_className} />
+            <div className={TACTICAL_VIEW_STYLES.SidebarHeader_div_className_3} />
           </div>
 
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="font-display font-black text-sm tracking-widest text-white uppercase truncate">
+              <span className={TACTICAL_VIEW_STYLES.SidebarHeader_span_className}>
                 AERO-GUARD
               </span>
-              <span className="font-mono-code text-[10px] text-cyan-400/80 tracking-wider truncate flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className={TACTICAL_VIEW_STYLES.SidebarHeader_span_className_2}>
+                <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_2} />
                 DEFENSE HUD v2.5
               </span>
             </div>
@@ -37,7 +39,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
         {/* Collapse Toggle Button */}
         <button
           onClick={onToggleCollapse}
-          className="p-1.5 rounded-md text-slate-400 hover:text-cyan-300 hover:bg-slate-800/80 transition-colors shrink-0"
+          className={TACTICAL_VIEW_STYLES.SidebarHeader_button_className}
           title={isCollapsed ? "Expand Tactical Sidebar" : "Collapse Sidebar"}
           aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
@@ -47,16 +49,16 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
 
       {/* Tactical Airspace / Perimeter Status Banner */}
       {!isCollapsed && (
-        <div className="mt-3 px-2.5 py-1.5 rounded-md bg-slate-900/80 border border-slate-800 flex items-center justify-between text-[11px] font-mono-code">
-          <span className="text-slate-400 flex items-center gap-1.5">
+        <div className={TACTICAL_VIEW_STYLES.SidebarHeader_div_className_4}>
+          <span className={TACTICAL_VIEW_STYLES.SidebarHeader_span_className_3}>
             {isGround ? (
               <>
-                <Camera className="w-3 h-3 text-emerald-400 animate-pulse" />
+                <Camera className={TACTICAL_VIEW_STYLES.SidebarHeader_Camera_className} />
                 CAM LINK:
               </>
             ) : (
               <>
-                <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
+                <Radio className={TACTICAL_VIEW_STYLES.SidebarHeader_Radio_className} />
                 UAV LINK:
               </>
             )}
@@ -64,10 +66,10 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
           <span
             className={`font-bold px-1.5 py-0.5 rounded text-[10px] uppercase ${
               isGround
-                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                ? TACTICAL_VIEW_STYLES.SidebarHeader_span_className_4
                 : isAirborne
-                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                : "bg-slate-800 text-slate-400 border border-slate-700"
+                ? TACTICAL_VIEW_STYLES.SidebarHeader_span_className_4
+                : TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_div_className_5
             }`}
           >
             {isGround ? "ONLINE" : flightState}

@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { AERIAL_STREAM_SOURCES, GROUND_STREAM_SOURCES } from "@/constants/tactical";
@@ -14,17 +16,17 @@ export const StreamSourceSelector: React.FC<StreamSourceSelectorProps> = ({
 
   return (
     <div className="relative flex items-center select-none">
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-700/80 hover:border-slate-600 transition-colors bg-slate-900/90 text-xs text-slate-200 cursor-pointer">
-        <Hexagon className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-        <span className="text-slate-400 font-medium">Select source</span>
+      <div className={TACTICAL_VIEW_STYLES.StreamSourceSelector_div_className}>
+        <Hexagon className={TACTICAL_VIEW_STYLES.StreamSourceSelector_Hexagon_className} />
+        <span className={TACTICAL_VIEW_STYLES.GroundStep4Review_span_className}>Select source</span>
         <select
           value={sourceType}
           onChange={(e) => onSourceSelect(e.target.value as StreamSourceType)}
-          className="bg-transparent text-slate-100 font-mono-code font-semibold outline-none cursor-pointer pr-1"
+          className={TACTICAL_VIEW_STYLES.StreamSourceSelector_select_className}
           aria-label="Select camera feed source"
         >
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-slate-900 text-slate-200">
+            <option key={opt.value} value={opt.value} className={TACTICAL_VIEW_STYLES.StreamSourceSelector_option_className}>
               {opt.label}
             </option>
           ))}

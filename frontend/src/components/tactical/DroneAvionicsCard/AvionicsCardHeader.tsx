@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { AvionicsCardHeaderProps } from "@/types";
@@ -8,10 +10,10 @@ export const AvionicsCardHeader: React.FC<AvionicsCardHeaderProps> = ({ flightSt
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <div className="relative w-3 h-3 rounded-full bg-emerald-400 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" />
+        <div className={TACTICAL_VIEW_STYLES.AvionicsCardHeader_div_className}>
+          <div className={TACTICAL_VIEW_STYLES.AvionicsCardHeader_div_className_2} />
         </div>
-        <span className="font-display font-bold text-sm tracking-wide text-white uppercase">
+        <span className={TACTICAL_VIEW_STYLES.AvionicsCardHeader_span_className}>
           DRONE AVIONICS & BATTERY
         </span>
       </div>

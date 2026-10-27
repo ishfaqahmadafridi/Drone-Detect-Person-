@@ -1,5 +1,13 @@
 import { StreamSourceType } from "../index";
 
+export interface GroundWizardStepOption { number: GroundWizardStep; title: string; }
+export interface GroundSensorPreset {
+  group: "wired" | "wireless" | "phone";
+  label: string;
+  config: Partial<GroundSensorConfigState> & { host: string; port: number; streamPath: string };
+}
+export type GroundPresetPickerProps = Pick<GroundStep3FormProps, "config" | "onApplyPreset">;
+
 // ==========================================
 // 9. Camera Wall & Ground Uplink Wizard Props
 // ==========================================

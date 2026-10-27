@@ -15,9 +15,13 @@ class VideoEndTests(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.path = Path(self.directory.name) / "short.mp4"
         writer = None
-        for fourcc_str, ext in [("avc1", "mp4"), ("mp4v", "mp4"), ("MJPG", "avi")]:
+        for fourcc_str, ext, backend in [("MJPG", "avi", cv2.CAP_OPENCV_MJPEG),
+                                         ("mp4v", "mp4", cv2.CAP_FFMPEG)]:
             test_path = Path(self.directory.name) / f"short.{ext}"
-            w = cv2.VideoWriter(str(test_path), cv2.VideoWriter_fourcc(*fourcc_str), 25, (40, 40))
+            # Use software encoding: native macOS writers can open successfully
+            # but fail to append frames when hardware encoding is unavailable.
+            w = cv2.VideoWriter(str(test_path), backend,
+                                cv2.VideoWriter_fourcc(*fourcc_str), 25, (40, 40))
             if w.isOpened():
                 self.path = test_path
                 writer = w

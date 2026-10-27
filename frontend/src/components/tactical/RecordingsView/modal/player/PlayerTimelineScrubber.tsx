@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { PlayerTimelineScrubberProps } from "@/types";
@@ -13,14 +15,14 @@ export const PlayerTimelineScrubber: React.FC<PlayerTimelineScrubberProps> = ({
 }) => {
   return (
     <div className="flex items-center gap-3 w-full">
-      <span className="font-mono-code text-[11px] text-cyan-400 font-bold w-12 text-right shrink-0">
+      <span className={TACTICAL_VIEW_STYLES.PlayerTimelineScrubber_span_className}>
         {formattedCurrent}
       </span>
 
       <div className="relative flex-1 flex items-center h-4 group/scrub cursor-pointer">
-        <div className="absolute inset-0 top-1.5 h-1.5 rounded-full bg-slate-800">
+        <div className={TACTICAL_VIEW_STYLES.PlayerTimelineScrubber_div_className}>
           <div
-            className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-75"
+            className={TACTICAL_VIEW_STYLES.PlayerTimelineScrubber_div_className_2}
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -36,7 +38,7 @@ export const PlayerTimelineScrubber: React.FC<PlayerTimelineScrubberProps> = ({
         />
       </div>
 
-      <span className="font-mono-code text-[11px] text-slate-500 font-bold w-12 shrink-0">
+      <span className={TACTICAL_VIEW_STYLES.PlayerTimelineScrubber_span_className_2}>
         {formattedDuration}
       </span>
     </div>

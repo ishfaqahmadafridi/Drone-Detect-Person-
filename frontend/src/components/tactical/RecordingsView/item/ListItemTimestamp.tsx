@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { Clock } from "lucide-react";
@@ -9,12 +11,12 @@ export const ListItemTimestamp: React.FC<ListItemTimestampProps> = ({ createdAt 
   const { datePart, timePart } = parseEvidenceTimestamp(createdAt);
 
   return (
-    <div className="flex items-center gap-1.5 text-slate-100 mb-0.5">
-      <Clock className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-      <span className="font-mono-code text-xs font-bold tracking-wider text-cyan-300">
+    <div className={TACTICAL_VIEW_STYLES.ListItemTimestamp_div_className}>
+      <Clock className={TACTICAL_VIEW_STYLES.ListItemTimestamp_Clock_className} />
+      <span className={TACTICAL_VIEW_STYLES.ListItemTimestamp_span_className}>
         {timePart}
       </span>
-      <span className="text-[10px] font-mono-code text-slate-400">
+      <span className={TACTICAL_VIEW_STYLES.PerimeterDeckHeader_p_className}>
         {datePart}
       </span>
     </div>

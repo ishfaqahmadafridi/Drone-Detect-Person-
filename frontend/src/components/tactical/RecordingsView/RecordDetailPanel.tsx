@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { Clock, Camera, HardDrive } from "lucide-react";
@@ -10,10 +12,10 @@ export const RecordDetailPanel: React.FC<RecordDetailPanelProps> = ({ snap }) =>
     useEvidenceMetadata(snap);
 
   return (
-    <div className="px-3 py-3 bg-slate-950/60 border-t border-slate-800/60 space-y-3">
+    <div className={TACTICAL_VIEW_STYLES.RecordDetailPanel_div_className}>
       {/* Full-size preview */}
       {snap.url && (
-        <div className="rounded-lg overflow-hidden border border-slate-700/60 bg-slate-900">
+        <div className={TACTICAL_VIEW_STYLES.RecordDetailPanel_div_className_2}>
           <img
             src={snap.url}
             alt={snap.filename}
@@ -24,27 +26,27 @@ export const RecordDetailPanel: React.FC<RecordDetailPanelProps> = ({ snap }) =>
 
       {/* Metadata grid */}
       <div className="grid grid-cols-2 gap-2 text-[10px] font-mono-code">
-        <div className="flex items-center gap-1.5 text-slate-400">
-          <Clock className="w-3 h-3 text-cyan-400" />
-          <span className="text-slate-500">DATE</span>
-          <span className="text-slate-200 ml-auto">{datePart}</span>
+        <div className={TACTICAL_VIEW_STYLES.RecordDetailPanel_div_className_3}>
+          <Clock className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Gauge_className} />
+          <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_3}>DATE</span>
+          <span className={TACTICAL_VIEW_STYLES.RecordDetailPanel_span_className}>{datePart}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-slate-400">
-          <Clock className="w-3 h-3 text-cyan-400" />
-          <span className="text-slate-500">TIME</span>
-          <span className="text-slate-200 ml-auto">{timePart}</span>
+        <div className={TACTICAL_VIEW_STYLES.RecordDetailPanel_div_className_3}>
+          <Clock className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Gauge_className} />
+          <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_3}>TIME</span>
+          <span className={TACTICAL_VIEW_STYLES.RecordDetailPanel_span_className}>{timePart}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-slate-400">
-          <Camera className="w-3 h-3 text-emerald-400" />
-          <span className="text-slate-500">SENSOR</span>
-          <span className={`ml-auto font-bold ${perspectiveColor.split(" ")[1] ?? "text-cyan-300"}`}>
+        <div className={TACTICAL_VIEW_STYLES.RecordDetailPanel_div_className_3}>
+          <Camera className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Compass_className} />
+          <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_3}>SENSOR</span>
+          <span className={`ml-auto font-bold ${perspectiveColor.split(" ")[1] ?? TACTICAL_VIEW_STYLES.PerimeterPowerStatus_span_className_5}`}>
             {perspectiveLabel}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 text-slate-400">
-          <HardDrive className="w-3 h-3 text-slate-400" />
-          <span className="text-slate-500">SIZE</span>
-          <span className="text-slate-200 ml-auto">{snap.size_kb} KB</span>
+        <div className={TACTICAL_VIEW_STYLES.RecordDetailPanel_div_className_3}>
+          <HardDrive className={TACTICAL_VIEW_STYLES.FlightStatePill_Navigation_className} />
+          <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_3}>SIZE</span>
+          <span className={TACTICAL_VIEW_STYLES.RecordDetailPanel_span_className}>{snap.size_kb} KB</span>
         </div>
       </div>
 
@@ -54,7 +56,7 @@ export const RecordDetailPanel: React.FC<RecordDetailPanelProps> = ({ snap }) =>
           href={snap.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full text-center py-1.5 rounded bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-[10px] font-mono-code font-bold tracking-wider transition-colors"
+          className={TACTICAL_VIEW_STYLES.RecordDetailPanel_a_className}
         >
           OPEN FULL FRAME ↗
         </a>

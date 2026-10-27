@@ -46,7 +46,9 @@ export const streamApi = {
     return data;
   },
   switchView: async (view: "aerial" | "ground"): Promise<{ message: string; active_view: string }> => {
-    const { data } = await apiClient.post<{ message: string; active_view: string }>(`/stream/view?view=${view}`);
+    const { data } = await apiClient.post<{ message: string; active_view: string }>(
+      "/stream/view", {}, { params: { view, channel: view } }
+    );
     return data;
   },
 

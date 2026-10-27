@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { PerimeterZoomControlProps } from "@/types";
@@ -10,8 +12,8 @@ export const PerimeterZoomControl: React.FC<PerimeterZoomControlProps> = ({
   onZoomChange,
 }) => {
   return (
-    <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-900/60 border border-slate-800">
-      <div className="px-1 text-slate-500">
+    <div className={TACTICAL_VIEW_STYLES.PerimeterZoomControl_div_className}>
+      <div className={TACTICAL_VIEW_STYLES.PerimeterZoomControl_div_className_2}>
         <ZoomIn className="w-3.5 h-3.5" />
       </div>
       <div className="flex-1 grid grid-cols-3 gap-1">
@@ -23,8 +25,8 @@ export const PerimeterZoomControl: React.FC<PerimeterZoomControlProps> = ({
             aria-pressed={activeZoom === preset.value}
             className={`py-1 px-1.5 text-[10px] font-mono-code font-bold rounded transition-all cursor-pointer ${
               activeZoom === preset.value
-                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]"
-                : "bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/60"
+                ? TACTICAL_VIEW_STYLES.PerimeterZoomControl_button_className
+                : TACTICAL_VIEW_STYLES.PerimeterZoomControl_button_className_2
             }`}
             title={`Switch to ${preset.label}`}
           >

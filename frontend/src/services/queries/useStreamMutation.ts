@@ -1,24 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { streamApi } from "../api/streamApi";
-import { StreamSourceType } from "@/types";
-import { useAppDispatch } from "@/store";
+import type { SourceSelectionInput } from "@/types";
+import { useAppDispatch, useAppSelector } from "@/store";
 import { setTelemetryData } from "@/store/slices/telemetrySlice";
 
 export const useStreamMutation = () => {
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
+  const activeChannel = useAppSelector(state => state.telemetry.view_mode);
 
   const switchSource = useMutation({
     mutationFn: async ({
       sourceType,
       sourcePath,
-    }: {
-      sourceType: StreamSourceType;
-      sourcePath?: string;
-    }) => {
+      channel,
+    }: SourceSelectionInput) => {
       const safeType = typeof sourceType === "string" ? sourceType : "synthetic";
       const safePath = typeof sourcePath === "string" && sourcePath.trim().length > 0 ? sourcePath.trim() : undefined;
-      return await streamApi.switchSource(safeType, safePath);
+      return await streamApi.switchSource(safeType, safePath, channel ?? activeChannel);
     },
     onSuccess: (_, variables) => {
       dispatch(setTelemetryData({ source_type: variables.sourceType }));

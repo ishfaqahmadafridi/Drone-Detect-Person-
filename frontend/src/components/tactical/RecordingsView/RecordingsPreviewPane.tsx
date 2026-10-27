@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { RecordingsPreviewPaneProps } from "@/types";
@@ -19,7 +21,7 @@ export const RecordingsPreviewPane: React.FC<RecordingsPreviewPaneProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full rounded-2xl border border-slate-800/80 bg-slate-950/60 overflow-hidden shadow-2xl backdrop-blur-md">
+    <div className={TACTICAL_VIEW_STYLES.RecordingsPreviewPane_div_className}>
       {/* ── 1. Top Tactical Toolbar ── */}
       <PreviewTopToolbar
         selectedSnapshot={selectedSnapshot}

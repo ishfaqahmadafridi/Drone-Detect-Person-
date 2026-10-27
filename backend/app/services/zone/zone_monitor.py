@@ -3,6 +3,8 @@ Zone Monitor Service: Coordinates restricted zone intrusion detection .
 """
 
 from typing import List, Tuple, Dict, Optional
+from app.core.constants import DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT
+
 import numpy as np
 
 from app.services.zone.geometry import normalized_to_pixel_polygon, is_point_in_polygon
@@ -14,8 +16,8 @@ class ZoneMonitorService:
     """
     def __init__(
         self,
-        frame_width: int = 1280,
-        frame_height: int = 720,
+        frame_width: int = DEFAULT_FRAME_WIDTH,
+        frame_height: int = DEFAULT_FRAME_HEIGHT,
         zone_polygon_normalized: Optional[List[Tuple[float, float]]] = None
     ):
         self.width = frame_width

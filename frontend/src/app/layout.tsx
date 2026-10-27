@@ -1,4 +1,7 @@
+
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import type { Metadata, Viewport } from "next";
+import type { ChildrenProps } from "@/types";
 import { inter, jetbrainsMono } from "./fonts";
 import { siteMetadata, siteViewport } from "@/constants/site";
 import { AppProviders } from "@/providers/AppProviders";
@@ -9,15 +12,13 @@ export const viewport: Viewport = siteViewport;
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: ChildrenProps) {
   return (
     <html
       lang="en"
       className={`dark h-full antialiased ${inter.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-full bg-[#0B0E14] text-slate-100 flex flex-col font-sans selection:bg-blue-600/30 selection:text-blue-100">
+      <body className={TACTICAL_VIEW_STYLES.layout_body_className}>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

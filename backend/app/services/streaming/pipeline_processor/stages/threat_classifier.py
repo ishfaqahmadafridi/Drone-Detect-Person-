@@ -2,7 +2,7 @@
 Threat Classifier Stage: Threat state classification and forensic snapshot persistence.
 """
 
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Tuple, Any, Optional
 import numpy as np
 
 
@@ -38,7 +38,7 @@ class PipelineThreatClassifier:
         threat_level: str,
         details: Dict[str, Any],
         active_view: str
-    ) -> None:
+    ) -> Optional[str]:
         """
         Saves annotated forensic evidence snapshot if threat condition is triggered.
         Guarded with try-except to ensure storage faults never crash the live video pipeline.
@@ -46,6 +46,6 @@ class PipelineThreatClassifier:
         try:
             evidence_details = dict(details) if isinstance(details, dict) else {}
             evidence_details["view_mode"] = active_view
-            alert_manager.process_and_save_evidence(annotated_frame, threat_level, evidence_details)
+            return alert_manager.process_and_save_evidence(annotated_frame, threat_level, evidence_details)
         except Exception as exc:
             print(f"[WARN] Failed to persist forensic evidence snapshot: {exc}")

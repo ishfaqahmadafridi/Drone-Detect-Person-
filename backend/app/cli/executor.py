@@ -4,6 +4,8 @@ CLI Detection Executor: Runs detection pipeline, video display, recording, and i
 
 import time
 import cv2
+from app.core.constants import DEFAULT_CONFIDENCE_THRESHOLD
+
 from typing import Optional
 
 from app.core.config import DetectionConfig, SYNTHETIC_VIDEO_PATH, AERIAL_MODEL_NAME
@@ -23,7 +25,7 @@ class CLIDetectionExecutor:
         self,
         source: str = "synthetic",
         model_name: Optional[str] = None,
-        confidence: float = 0.35,
+        confidence: float = DEFAULT_CONFIDENCE_THRESHOLD,
         save_video: bool = False,
         output_video_path: str = "runs/output/annotated_output.mp4",
         headless: bool = False,

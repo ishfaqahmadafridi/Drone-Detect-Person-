@@ -1,4 +1,6 @@
 """A single spawned CPU/CUDA process with timeout and no frame backlog."""
+from app.core.config import REID_PROCESS_SHUTDOWN_SECONDS
+
 import multiprocessing
 import threading
 
@@ -59,7 +61,7 @@ class ModelWorker:
             if self.process is not None:
                 if self.process.is_alive():
                     self.process.terminate()
-                self.process.join(timeout=2)
+                self.process.join(timeout=REID_PROCESS_SHUTDOWN_SECONDS)
             if self.connection is not None:
                 self.connection.close()
             self.process = self.connection = None

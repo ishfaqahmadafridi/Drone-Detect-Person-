@@ -50,8 +50,6 @@ class SelectionSession:
         with self.lock:
             if config.view_mode != "ground":
                 raise HTTPException(409, "Suspect selection is available only in Ground CCTV mode.")
-            if self.paused:
-                raise HTTPException(409, "Another selection session is already open.")
             if self.frame_is_current is not None and not self.frame_is_current():
                 raise HTTPException(409, "Wait for detection on the current camera source before selecting suspects.")
             if not self.latest or self.latest["view_mode"] != "ground":
@@ -75,8 +73,8 @@ class SelectionSession:
     def commit(self, token, selected_ids, config, telemetry):
         with self.lock:
             self.validate(token)
-            available = {d["id"] for d in self.latest["detections"]}
-            if not set(selected_ids) <= available:
+            available = {d["id"] for d in self.latest.get("detections", [])}
+            if selected_ids and not set(selected_ids) <= available:
                 raise HTTPException(422, "Select only people detected in the frozen frame.")
             config.selected_target_ids = sorted(set(selected_ids))
             config.tracking_mode = "manual" if selected_ids else "auto"

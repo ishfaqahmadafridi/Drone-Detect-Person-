@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { AerialFeedCardProps } from "@/types";
@@ -13,32 +15,32 @@ export const AerialFeedCard: React.FC<AerialFeedCardProps> = ({ isActive, onSele
       onClick={onSelect}
       className={`group relative rounded-xl border overflow-hidden cursor-pointer transition-all duration-300 ${
         isActive
-          ? "border-blue-500 bg-blue-950/20 shadow-[0_0_20px_rgba(59,130,246,0.25)]"
-          : "border-slate-700/60 bg-slate-950/40 hover:border-blue-500/50"
+          ? TACTICAL_VIEW_STYLES.CameraWallCard_div_className
+          : TACTICAL_VIEW_STYLES.AerialFeedCard_div_className
       }`}
     >
-      <div className="p-3 bg-[#06080E]/80 border-b border-slate-700/60 flex items-center justify-between">
+      <div className={TACTICAL_VIEW_STYLES.AerialFeedCard_div_className_2}>
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-display font-bold text-xs text-white uppercase">
+          <span className={TACTICAL_VIEW_STYLES.HeaderConnectionBadge_span_className} />
+          <span className={TACTICAL_VIEW_STYLES.AerialFeedCard_span_className}>
             CH-01: AERIAL DRONE GIMBAL
           </span>
         </div>
         {isActive && (
-          <span className="font-mono-code text-[10px] text-blue-400 flex items-center gap-1">
+          <span className={TACTICAL_VIEW_STYLES.AerialFeedCard_span_className_2}>
             <CheckCircle2 className="w-3 h-3" /> ACTIVE VIEWPORT
           </span>
         )}
       </div>
 
-      <div className="relative aspect-video bg-black/90 flex items-center justify-center overflow-hidden">
+      <div className={TACTICAL_VIEW_STYLES.AerialFeedCard_div_className_3}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={streamUrl}
           alt="Aerial Drone Feed"
           className="w-full h-full object-contain pointer-events-none"
         />
-        <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/70 border border-slate-700 font-mono-code text-[10px] text-slate-300">
+        <div className={TACTICAL_VIEW_STYLES.AerialFeedCard_div_className_4}>
           AI DETECT: ACTIVE • 1080p @ 25FPS
         </div>
       </div>

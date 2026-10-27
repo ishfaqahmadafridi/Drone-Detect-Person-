@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+export interface ChildrenProps { children: ReactNode; }
+
 // ==========================================
 // 7. Context & Provider Interfaces
 // ==========================================

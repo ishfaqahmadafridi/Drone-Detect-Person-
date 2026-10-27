@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { GroundSensorPillProps } from "@/types";
@@ -12,10 +14,10 @@ export const GroundSensorPill: React.FC<GroundSensorPillProps> = ({
 }) => {
   return (
     <div
-      className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono-code font-medium border bg-slate-800/70 text-slate-300 border-slate-700/60"
+      className={TACTICAL_VIEW_STYLES.GroundPowerPill_div_className}
       title={`Sensor: ${name} • Mount: ${mountHeight}`}
     >
-      <Camera className="w-3 h-3 text-emerald-400" />
+      <Camera className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Compass_className} />
       <span>{sensorId} • Fixed</span>
     </div>
   );

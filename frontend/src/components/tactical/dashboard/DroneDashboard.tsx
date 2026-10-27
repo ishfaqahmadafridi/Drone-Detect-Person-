@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { Header, TacticalWorkspace, TacticalOverlays } from "@/components/tactical";
@@ -23,7 +25,7 @@ export const DroneDashboard: React.FC<DroneDashboardProps> = ({ initialTab }) =>
   } = useDashboardOrchestrator(initialTab);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0B0E14] text-slate-100">
+    <div className={TACTICAL_VIEW_STYLES.DroneDashboard_div_className}>
       {/* 1. Global Tactical Command Bar */}
       <Header
         onRefresh={handleManualRefresh}

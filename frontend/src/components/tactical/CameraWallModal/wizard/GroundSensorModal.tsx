@@ -1,6 +1,9 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
-import React, { useEffect } from "react";
+
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import React from "react";
 import { GroundSensorModalProps } from "@/types";
 import { Camera, X, ShieldCheck } from "lucide-react";
 import { GroundSensorWizard } from "./GroundSensorWizard";
@@ -15,40 +18,32 @@ export const GroundSensorModal: React.FC<GroundSensorModalProps> = ({
   onConnect,
 }) => {
   // Close on Escape key press
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className={TACTICAL_VIEW_STYLES.CameraWallModalDialog_div_className}>
       <div
-        className="relative max-w-xl w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col bg-[#0F141F] animate-in zoom-in-95 duration-200"
+        className={TACTICAL_VIEW_STYLES.GroundSensorModal_div_className}
         role="dialog"
         aria-modal="true"
         aria-labelledby="ground-sensor-dialog-title"
       >
         {/* Tactical Modal Header */}
-        <div className="p-4 bg-slate-900/60 border-b border-slate-700/60 flex items-center justify-between">
+        <div className={TACTICAL_VIEW_STYLES.GroundSensorModal_div_className_2}>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400">
+            <div className={TACTICAL_VIEW_STYLES.GroundSensorModal_div_className_3}>
               <Camera className="w-4 h-4" />
             </div>
             <div className="flex flex-col text-left">
               <span
                 id="ground-sensor-dialog-title"
-                className="font-display font-black text-sm text-white uppercase tracking-wider flex items-center gap-1.5"
+                className={TACTICAL_VIEW_STYLES.GroundSensorModal_span_className}
               >
                 CONNECT GROUND SENSOR UPLINK
               </span>
-              <span className="font-mono-code text-[10px] text-slate-400">
+              <span className={TACTICAL_VIEW_STYLES.GroundSensorModal_span_className_2}>
                 Wall CCTV (Wired PoE / Wireless Wi-Fi) • Mobile Patrol Smartphone
               </span>
             </div>
@@ -58,7 +53,7 @@ export const GroundSensorModal: React.FC<GroundSensorModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-slate-400 hover:text-white transition-colors"
+            className={TACTICAL_VIEW_STYLES.GroundSensorModal_button_className}
           >
             <X className="w-4 h-4" />
           </button>
@@ -76,8 +71,8 @@ export const GroundSensorModal: React.FC<GroundSensorModalProps> = ({
         </div>
 
         {/* Modal Footer Security Ribbon */}
-        <div className="px-4 py-2 bg-slate-950/60 border-t border-slate-900 flex items-center justify-between text-[10px] font-mono-code text-slate-400">
-          <span className="flex items-center gap-1 text-emerald-400">
+        <div className={TACTICAL_VIEW_STYLES.GroundSensorModal_div_className_4}>
+          <span className={TACTICAL_VIEW_STYLES.GroundSensorModal_span_className_3}>
             <ShieldCheck className="w-3.5 h-3.5" /> SECURE RTSP / HTTP PROBE ENGINE
           </span>
           <span>ESC TO DISMISS</span>
