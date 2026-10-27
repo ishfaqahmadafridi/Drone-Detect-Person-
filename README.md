@@ -1,6 +1,6 @@
 <div align="center">
 
-# AERO-GUARD
+# AERO-GUARD: Person Detection and Tracking
 
 **Person Detection · Multi-Camera Tracking · Aerial Monitoring**
 
@@ -125,6 +125,18 @@ SDK acknowledgment confirms the control connection. The manual panel supports he
 > **Development status:** real-flight smoothness remains unverified. Control state is command-derived; Tello video, measured telemetry, and autonomous following are separate integrations. Automated tests use a local UDP emulator.
 
 See the [Tello control guide](docs/tello-manual-control.md) for connection settings and operating limitations.
+
+## Person Re-identification
+
+The optional X-TFCLIP module compares selected ground-camera portraits with people detected in aerial footage. Detection finds people, tracking maintains IDs within a feed, and ReID compares appearance across camera views.
+
+With the backend virtual environment active, install the optional assets from `backend`:
+
+```sh
+python scripts/setup_reid.py --install-source --download-weights
+```
+
+Follow the [ReID guide](docs/person-reidentification.md) for dependencies, CPU setup, GPU configuration, and evaluation. Enable `REID_ENABLED=true` after setup and restart the backend. Appearance matches require evaluation on representative footage; they do not establish a person's identity.
 
 ## Configuration
 
