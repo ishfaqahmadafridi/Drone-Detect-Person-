@@ -11,7 +11,8 @@ try:
 except ImportError:
     cv2 = None
 
-from app.core.config import DetectionConfig
+from app.core.config import DetectionConfig, FPS_WINDOW_SECONDS
+from app.core.constants import DEFAULT_CONFIDENCE_THRESHOLD, DEFAULT_IOU_THRESHOLD, DEFAULT_TRACKER_NAME
 from app.services.inference_service import inference_service, MultiViewInferenceService
 from app.services.tracking_service import tracking_service, TargetTrackerService
 from app.services.annotation_service import TacticalFrameAnnotator
@@ -39,7 +40,7 @@ class DronePersonDetectorService:
         self._apply_profile(preserve_overrides=True)
         
         # FPS Profiler
-        self._profiler = FPSProfiler(window_seconds=0.5)
+        self._profiler = FPSProfiler(window_seconds=FPS_WINDOW_SECONDS)
         
         # Track trajectory history
         max_trail = getattr(self.config, "track_trail_length", 30)
@@ -104,15 +105,15 @@ class DronePersonDetectorService:
         conf_thresh = (
             self.config.confidence_threshold
             if self.config.confidence_threshold > 0
-            else profile.get("confidence", 0.3)
+            else profile.get("confidence", DEFAULT_CONFIDENCE_THRESHOLD)
         )
         iou_thresh = (
             self.config.iou_threshold
             if self.config.iou_threshold > 0
-            else profile.get("iou", 0.45)
+            else profile.get("iou", DEFAULT_IOU_THRESHOLD)
         )
         target_classes = profile.get("person_classes", [0])
-        tracker_file = profile.get("tracker", "bytetrack.yaml")
+        tracker_file = profile.get("tracker", DEFAULT_TRACKER_NAME)
 
         if use_tracking:
             results = model.track(

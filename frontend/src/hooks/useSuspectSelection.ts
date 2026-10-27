@@ -7,8 +7,11 @@ import { useEscapeKey } from "./useEscapeKey";
 import { apiErrorMessage } from "@/utils/apiError";
 import type { FrozenSelection, SuspectSelectionProps } from "@/types";
 import { cropSuspectSnapshots } from "@/utils/suspectSnapshots";
+import { captureSuspect } from "@/utils/suspectCapture";
+import { VIDEO_TESTING } from "@/constants/tactical";
 
-export function useSuspectSelection({ channel, sourceType, selectedTargetIds }: SuspectSelectionProps = {}) {
+export function useSuspectSelection(props: SuspectSelectionProps = {}) {
+  const { channel, sourceType, selectedTargetIds, onOpenAerialView } = props;
   const dispatch = useAppDispatch();
   const legacy = useAppSelector(state => state.telemetry);
   const view_mode = channel ?? legacy.view_mode;
@@ -62,8 +65,12 @@ export function useSuspectSelection({ channel, sourceType, selectedTargetIds }: 
       if (apply) {
         const crops = await cropSuspectSnapshots(snapshot, selectedIds);
         const result = await trackingApi.commit(snapshot.token, selectedIds, channel);
-        dispatch(setSuspectPortraits(crops.filter(person => result.selected_ids.includes(person.id))));
+        const validPortraits = crops.filter(person => result.selected_ids.includes(person.id));
+        dispatch(setSuspectPortraits(validPortraits.length > 0 ? validPortraits : crops));
         if (!channel) dispatch(setTelemetryData({ tracking_mode: result.mode, selected_target_ids: result.selected_ids }));
+        if (props.onOpenAerialView && selectedIds.length > 0) {
+          props.onOpenAerialView();
+        }
       } else {
         await trackingApi.resume(snapshot.token, channel);
       }
@@ -88,6 +95,42 @@ export function useSuspectSelection({ channel, sourceType, selectedTargetIds }: 
     finally { setPending(false); busy.current = false; }
   };
 
+  const autoSelectSuspect = async (targetId?: number, autoSwitch: boolean = true) => {
+    if (busy.current) return;
+    busy.current = true;
+    setPending(true);
+    setError("");
+    try {
+      const { result, portraits } = await captureSuspect(channel, targetId);
+      dispatch(setSuspectPortraits(portraits));
+      if (!channel) dispatch(setTelemetryData({ tracking_mode: result.mode, selected_target_ids: result.selected_ids }));
+      if (autoSwitch && onOpenAerialView) {
+        setTimeout(onOpenAerialView, VIDEO_TESTING.aerialNavigationDelayMs);
+      }
+      activeToken.current = null;
+      setSnapshot(null);
+    } catch (err) {
+      setError(apiErrorMessage(err));
+    } finally {
+      setPending(false);
+      busy.current = false;
+    }
+  };
+
   const toggle = (id: number) => setSelectedIds(ids => ids.includes(id) ? ids.filter(item => item !== id) : [...ids, id]);
-  return { isGround: view_mode === "ground", snapshot, portraits, selectedIds, selectedCount: Math.max(selected_target_ids?.length ?? 0, portraits.length), pending, error, freeze, finish, clear, toggle };
+  return {
+    isGround: view_mode === "ground",
+    snapshot,
+    portraits,
+    selectedIds,
+    selectedCount: Math.max(selected_target_ids?.length ?? 0, portraits.length),
+    liveDetections: legacy.detections ?? [],
+    pending,
+    error,
+    freeze,
+    autoSelectSuspect,
+    finish,
+    clear,
+    toggle,
+  };
 }

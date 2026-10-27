@@ -1,5 +1,6 @@
-﻿"""Independent camera sessions: sources, models, trackers, and selection locks."""
+"""Independent camera sessions: sources, models, trackers, and selection locks."""
 from threading import RLock
+from app.core.constants import PRIMARY_CAMERA_VIEWS
 from typing import Literal, Optional
 from fastapi import HTTPException
 from app.core.config import DetectionConfig
@@ -9,7 +10,7 @@ Channel = Literal["ground", "aerial"]
 _channels = {}
 _camera_sessions = {}
 _lock = RLock()
-_PRIMARY_CAMERAS = {"CAM-01": "aerial", "CAM-02": "ground"}
+_PRIMARY_CAMERAS = PRIMARY_CAMERA_VIEWS
 
 
 def _new_session(channel):
@@ -17,25 +18,8 @@ def _new_session(channel):
     session.set_view_mode(channel)
     session.fixed_view = channel
     session.frame_streamer.record_frames = False
-    from app.services.reid.service import reid_service
-
-    def observe(frame, detections, frame_idx, source_type, selected_ids):
-        # Only the primary camera in each view contributes identity tracklets.
-        # Other connected cameras retain their own detection and streaming state.
-        if _channels.get(channel) is session:
-            reid_service.observe(channel, frame, detections, frame_idx, source_type, selected_ids)
-
-    def invalidate():
-        if _channels.get(channel) is session:
-            reid_service.reset_channel(channel)
-
-    session.pipeline_processor.set_frame_observer(observe)
-    session.frame_streamer.on_invalidate = invalidate
-    if channel == "ground":
-        selection = session.frame_streamer.selection
-        selection.on_commit = lambda ids: reid_service.select(ids) if _channels.get(channel) is session else None
-        selection.on_freeze = lambda: reid_service.freeze_ground() if _channels.get(channel) is session else None
-        selection.on_resume = lambda: reid_service.resume_ground() if _channels.get(channel) is session else None
+    from app.services.streaming.coordinator.reid_binding import bind_reid
+    bind_reid(session, is_active=lambda: _channels.get(channel) is session)
     return session
 
 
@@ -57,8 +41,11 @@ def get_stream_session(channel: Optional[Channel] = None, camera_id: Optional[st
             session.set_source(camera.source_type, camera.stream_url)
             _camera_sessions[camera_id] = session
             return session
+
         if channel is None:
             return stream_service
+        if channel in _channels:
+            return _channels[channel]
         if channel not in _channels:
             _channels[channel] = _new_session(channel)
             primary_id = next(camera_id for camera_id, view in _PRIMARY_CAMERAS.items() if view == channel)
@@ -76,9 +63,10 @@ def select_camera_session(camera_id):
         previous = get_stream_session(camera.view_mode)
         session = get_stream_session(camera_id=camera_id)
         if previous is not session:
-            previous.frame_streamer.selection.invalidate()
-            _channels[camera.view_mode] = session
-            session.config.selected_target_ids = []
-            session.config.tracking_mode = "auto"
-            reid_service.reset_channel(camera.view_mode)
+            with previous.frame_streamer.selection.lock:
+                previous.frame_streamer.selection.invalidate()
+            with session.frame_streamer.selection.lock:
+                _channels[camera.view_mode] = session
+                session.tracking_manager.set_tracking_mode("auto")
+                reid_service.reset_channel(camera.view_mode)
         return session

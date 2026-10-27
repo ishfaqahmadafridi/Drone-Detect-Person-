@@ -3,7 +3,10 @@ Inference Profiles & Registry Loader for Multi-View Computer Vision.
 """
 
 from typing import Dict, Any
-from app.core.config import GROUND_MODEL_NAME, AERIAL_MODEL_NAME, AERIAL_DETECTION_PROFILE
+from app.core.config import (
+    INFERENCE_DEFAULT_PROFILES, AERIAL_DETECTION_PROFILE,
+    GROUND_MODEL_NAME, AERIAL_MODEL_NAME,  # Backward-compatible configuration exports.
+)
 from app.services.inference.registry_loader import (
     MODELS_DIR,
     REGISTRY_FILE,
@@ -13,36 +16,7 @@ from app.services.inference.registry_loader import (
     apply_profile_overrides,
 )
 
-DEFAULT_PROFILES: Dict[str, Any] = {
-    "ground": {
-        "name": "Ground View (YOLO26n Person)",
-        "architecture": "YOLO26n",
-        "dataset": "COCO",
-        "filename": GROUND_MODEL_NAME,
-        "recommended_imgsz": 640,
-        "confidence": 0.35,
-        "iou": 0.50,
-        "person_classes": [0],
-        "person_labels": ["person"],
-        "tracker": "bytetrack.yaml",
-        "engine": "YOLO26n + ByteTrack",
-        "description": "General-purpose person detection for ground cameras and uploaded videos."
-    },
-    "aerial": {
-        "name": "Aerial Drone View (YOLO11n VisDrone Person)",
-        "architecture": "YOLO11n",
-        "dataset": "VisDrone",
-        "filename": AERIAL_MODEL_NAME,
-        "recommended_imgsz": 640,
-        "confidence": 0.25,
-        "iou": 0.45,
-        "person_classes": [0],
-        "person_labels": ["person"],
-        "tracker": "bytetrack.yaml",
-        "engine": "YOLO11n + ByteTrack",
-        "description": "pratap424's YOLO11n checkpoint fine-tuned on VisDrone, merging pedestrian and people into a single person class."
-    }
-}
+DEFAULT_PROFILES = INFERENCE_DEFAULT_PROFILES
 
 
 def load_inference_profiles() -> Dict[str, Any]:

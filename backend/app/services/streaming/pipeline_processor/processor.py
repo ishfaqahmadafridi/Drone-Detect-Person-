@@ -6,7 +6,7 @@ Composes dedicated subservice container, config manager, and frame orchestrator.
 from typing import List, Dict, Tuple, Optional
 import numpy as np
 
-from app.core.config import DetectionConfig
+from app.core.config import DetectionConfig, PREVIEW_MAX_EDGE
 from app.services.streaming.pipeline_models import PipelineResult
 from app.services.streaming.pipeline_processor.services_container import PipelineServicesContainer
 from app.services.streaming.pipeline_processor.config_manager import PipelineConfigManager
@@ -19,8 +19,10 @@ class VisionPipelineProcessor:
     Delegates configuration lifecycle to PipelineConfigManager and frame execution to PipelineFrameOrchestrator.
     """
 
-    def __init__(self, config: Optional[DetectionConfig] = None, isolated: bool = False):
+    def __init__(self, config: Optional[DetectionConfig] = None, isolated: bool = False,
+                 normalize_max_edge: Optional[int] = PREVIEW_MAX_EDGE):
         self._services = PipelineServicesContainer(config, isolated=isolated)
+        self._services.normalize_max_edge = normalize_max_edge
         self._config_mgr = PipelineConfigManager(
             config=self._services.config,
             detector=self._services.detector,

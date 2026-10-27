@@ -1,6 +1,9 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
-import React, { useEffect } from "react";
+
+import { useEscapeKey } from "@/hooks/useEscapeKey";
+import React from "react";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setSelectedTargetIds } from "@/store/slices/telemetrySlice";
 import { DetectedPersonsModalProps, Detection } from "@/types";
@@ -31,15 +34,7 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
   const selectedTargetIds = rawSelectedIds || [];
 
   // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -57,30 +52,30 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200"
+      className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className}
       onClick={onClose}
     >
       <div
-        className="glass-panel w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl border border-cyan-500/30 bg-slate-900/95 shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden"
+        className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_2}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 1. Modal Tactical Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/60">
+        <div className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_3}>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+            <div className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_4}>
               <Users className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-display font-bold text-sm tracking-wider uppercase text-white">
+                <h3 className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_h3_className}>
                   LIVE DETECTED PERSONS & TARGETS
                 </h3>
-                <span className="flex items-center gap-1 text-[10px] font-mono-code px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-semibold">
-                  <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
+                <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className}>
+                  <Radio className={TACTICAL_VIEW_STYLES.SidebarHeader_Radio_className} />
                   {isGround ? "PERIMETER CCTV" : "AERIAL UAV"}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-mono-code mt-0.5">
+              <p className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_p_className}>
                 Real-time computer vision tracker telemetry & target identification
               </p>
             </div>
@@ -89,7 +84,7 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_button_className}
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
@@ -97,26 +92,26 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
         </div>
 
         {/* 2. Tactical Metrics Ribbon */}
-        <div className="grid grid-cols-3 gap-2 px-6 py-3 bg-slate-950/60 border-b border-slate-800/80 text-xs font-mono-code">
+        <div className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_5}>
           <div className="flex flex-col">
-            <span className="text-slate-400 text-[10px]">TOTAL DETECTIONS</span>
-            <span className="text-cyan-400 font-bold text-base">
+            <span className={TACTICAL_VIEW_STYLES.PreviewTelemetryAudit_span_className_4}>TOTAL DETECTIONS</span>
+            <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_2}>
               {detections.length} Persons
             </span>
           </div>
           <div className="flex flex-col">
-            <span className="text-slate-400 text-[10px]">PERIMETER INTRUDERS</span>
+            <span className={TACTICAL_VIEW_STYLES.PreviewTelemetryAudit_span_className_4}>PERIMETER INTRUDERS</span>
             <span
               className={`font-bold text-base ${
-                intrudersCount > 0 ? "text-red-400 animate-pulse" : "text-emerald-400"
+                intrudersCount > 0 ? TACTICAL_VIEW_STYLES.SidebarTelemetryWidget_Battery_className : TACTICAL_VIEW_STYLES.BatteryHealthGauge_strong_className
               }`}
             >
               {intrudersCount} Breaches
             </span>
           </div>
           <div className="flex flex-col">
-            <span className="text-slate-400 text-[10px]">TRACKING PROTOCOL</span>
-            <span className="text-white font-bold text-base uppercase">
+            <span className={TACTICAL_VIEW_STYLES.PreviewTelemetryAudit_span_className_4}>TRACKING PROTOCOL</span>
+            <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_3}>
               {tracking_mode === "manual" ? "MANUAL LOCK" : "AUTONOMOUS"}
             </span>
           </div>
@@ -126,15 +121,15 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3 min-h-[220px]">
           {detections.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center gap-3 my-auto">
-              <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-cyan-950/40 border border-cyan-500/20 text-cyan-400">
-                <Radar className="w-8 h-8 animate-spin text-cyan-400/80 [animation-duration:6s]" />
-                <span className="absolute inset-0 rounded-full border border-cyan-400/30 animate-ping [animation-duration:3s]" />
+              <div className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_6}>
+                <Radar className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_Radar_className} />
+                <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_4} />
               </div>
               <div className="flex flex-col gap-1 max-w-sm">
-                <span className="font-display text-sm font-semibold tracking-wide text-white uppercase">
+                <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_5}>
                   SECTOR SECURE — NO ACTIVE PERSONS
                 </span>
-                <span className="text-xs font-mono-code text-slate-400">
+                <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_6}>
                   Computer vision detector is actively polling video feed. New persons will
                   appear with track IDs & coordinates automatically.
                 </span>
@@ -154,45 +149,45 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
                     key={target.id || index}
                     className={`p-3.5 rounded-xl border flex flex-col justify-between gap-2.5 transition-all ${
                       target.is_intruder
-                        ? "border-red-500/50 bg-red-950/20 shadow-[0_0_12px_rgba(239,68,68,0.15)]"
+                        ? TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_7
                         : isSelected
-                        ? "border-cyan-400 bg-cyan-950/30 shadow-[0_0_15px_rgba(0,242,254,0.2)]"
-                        : "border-slate-800 bg-slate-900/50 hover:border-slate-700"
+                        ? TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_8
+                        : TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_9
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono-code text-xs font-bold text-white bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                        <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_7}>
                           ID #{target.id ?? index + 1}
                         </span>
                         {target.is_intruder ? (
-                          <span className="flex items-center gap-1 text-[10px] font-mono-code font-bold text-red-400 bg-red-950/60 px-2 py-0.5 rounded border border-red-500/40">
-                            <ShieldAlert className="w-3 h-3 text-red-400" /> INTRUDER
+                          <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_8}>
+                            <ShieldAlert className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_ShieldAlert_className} /> INTRUDER
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1 text-[10px] font-mono-code text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/30">
-                            <ShieldCheck className="w-3 h-3 text-emerald-400" /> SECURE
+                          <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_9}>
+                            <ShieldCheck className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Compass_className} /> SECURE
                           </span>
                         )}
                       </div>
 
-                      <span className="text-[11px] font-mono-code font-bold text-cyan-300">
+                      <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_10}>
                         {confPercent}% CONF
                       </span>
                     </div>
 
                     {/* Coordinates & Bounding Box Info */}
-                    <div className="grid grid-cols-2 gap-1 text-[10px] font-mono-code text-slate-400 bg-slate-950/50 p-2 rounded-lg border border-slate-800/80">
+                    <div className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_10}>
                       <div>
-                        POS: <span className="text-white font-bold">{Math.round(x1)}, {Math.round(y1)}</span>
+                        POS: <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_11}>{Math.round(x1)}, {Math.round(y1)}</span>
                       </div>
                       <div className="text-right">
-                        SIZE: <span className="text-white font-bold">{width}×{height}px</span>
+                        SIZE: <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_11}>{width}×{height}px</span>
                       </div>
                       {target.speed_px_s !== undefined && (
-                        <div className="col-span-2 pt-1 border-t border-slate-800 text-[10px]">
+                        <div className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_11}>
                           VELOCITY:{" "}
-                          <span className="text-cyan-400 font-bold">
+                          <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_12}>
                             {target.speed_px_s.toFixed(1)} px/s
                           </span>
                         </div>
@@ -206,8 +201,8 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
                         onClick={() => handleToggleTarget(target.id)}
                         className={`w-full py-1 px-2 rounded-lg font-mono-code text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
                           isSelected
-                            ? "bg-cyan-500 text-slate-950 shadow-[0_0_12px_rgba(0,242,254,0.4)]"
-                            : "bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30"
+                            ? TACTICAL_VIEW_STYLES.DetectedPersonsModal_button_className_2
+                            : TACTICAL_VIEW_STYLES.DetectedPersonsModal_button_className_3
                         }`}
                       >
                         <Crosshair className="w-3.5 h-3.5" />
@@ -222,15 +217,15 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
         </div>
 
         {/* 4. Modal Tactical Footer */}
-        <div className="flex items-center justify-between px-6 py-3 border-t border-slate-800 bg-slate-900/60 text-xs font-mono-code text-slate-400">
+        <div className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_12}>
           <div className="flex items-center gap-2">
-            <Eye className="w-3.5 h-3.5 text-cyan-400" />
+            <Eye className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_Network_className} />
             <span>PRESS [ESC] OR CLICK OUTSIDE TO RETURN</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold transition-colors border border-slate-700"
+            className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_button_className_4}
           >
             DISMISS
           </button>

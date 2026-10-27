@@ -5,7 +5,11 @@ import { streamApi } from "@/services/api/streamApi";
 import { VIDEO_TESTING } from "@/constants/tactical";
 import { apiErrorMessage } from "@/utils/apiError";
 
-export function useVideoUpload(onUploaded: () => void, channel?: "ground" | "aerial") {
+export function useVideoUpload(
+  onUploaded: () => void,
+  channel?: "ground" | "aerial",
+  onPostUpload?: () => Promise<void> | void
+) {
   const inputRef = useRef<HTMLInputElement>(null);
   const busyRef = useRef(false);
   const dispatch = useAppDispatch();
@@ -33,6 +37,9 @@ export function useVideoUpload(onUploaded: () => void, channel?: "ground" | "aer
       if (!channel) dispatch(setTelemetryData({ source_type: "file", selected_target_ids: [], tracking_mode: "auto" }));
       setMessage(`Testing: ${file.name}`);
       onUploaded();
+      if (onPostUpload) {
+        await onPostUpload();
+      }
     } catch (error) {
       setError(apiErrorMessage(error));
     } finally {

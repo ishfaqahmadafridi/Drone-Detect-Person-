@@ -5,6 +5,8 @@ Decoupled service layer for probing wired/wireless CCTV and mobile phone RTSP/HT
 without interfering with the primary computer vision processing loop.
 """
 
+from app.core.config import CAMERA_PROBE_TIMEOUT_SECONDS
+
 import time
 import socket
 import urllib.parse
@@ -17,7 +19,7 @@ class StreamConnectionProberService:
     Handles URI synthesis and non-blocking TCP socket diagnostics for external stream sources.
     """
 
-    def __init__(self, default_timeout_s: float = 2.0) -> None:
+    def __init__(self, default_timeout_s: float = CAMERA_PROBE_TIMEOUT_SECONDS) -> None:
         self.default_timeout_s = default_timeout_s
 
     def build_effective_stream_path(self, req: StreamSourceRequest) -> str:

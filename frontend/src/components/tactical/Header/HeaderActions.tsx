@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { HeaderActionsProps } from "@/types";
@@ -15,18 +17,18 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({
       <button
         onClick={onRefresh}
         title="Refresh Telemetry Feed"
-        className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-300 hover:text-white text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98]"
+        className={TACTICAL_VIEW_STYLES.HeaderActions_button_className}
       >
-        <Activity className="w-3.5 h-3.5 text-blue-400" />
+        <Activity className={TACTICAL_VIEW_STYLES.GroundStep3Form_Network_className} />
         <span>Telemetry</span>
       </button>
 
       <button
         onClick={toggleMute}
         title={isMuted ? "Audio siren muted - click to enable" : "Audio siren active - click to mute"}
-        className="p-1.5 rounded-md border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-slate-400 hover:text-slate-100 cursor-pointer transition-all duration-150 active:scale-95"
+        className={TACTICAL_VIEW_STYLES.HeaderActions_button_className_2}
       >
-        {isMuted ? <VolumeX className="w-3.5 h-3.5 text-amber-400" /> : <Volume2 className="w-3.5 h-3.5 text-slate-300" />}
+        {isMuted ? <VolumeX className={TACTICAL_VIEW_STYLES.HeaderActions_VolumeX_className} /> : <Volume2 className={TACTICAL_VIEW_STYLES.HeaderActions_Volume2_className} />}
       </button>
     </div>
   );

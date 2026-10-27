@@ -6,6 +6,7 @@ and operational tracking modes (AUTO continuous detection vs MANUAL operator loc
 from typing import List, Dict, Optional
 from app.core.config import DetectionConfig
 from app.services.streaming.telemetry_state import TelemetryStateStore
+from app.services.tracking.target_matching import match_normalized_target
 
 
 class TargetTrackingManager:
@@ -81,42 +82,18 @@ class TargetTrackingManager:
         }
 
     def _match_target_by_coordinate(self, x: float, y: float) -> Optional[int]:
-        """
-        Maps normalized click coordinates [0.0 - 1.0] to default frame resolution [1280x720]
-        and identifies the matching or nearest detected person bounding box.
-        """
-        px = float(x) * 1280.0
-        py = float(y) * 720.0
-        latest_detections = self.telemetry_store.latest.get("detections", [])
-
-        best_match_id = None
-        min_dist = float("inf")
-
-        for det in latest_detections:
-            bbox = det.get("bbox", [0, 0, 0, 0])
-            x1, y1, x2, y2 = bbox
-
-            # Check if clicked inside bounding box with margin
-            if (x1 - 35) <= px <= (x2 + 35) and (y1 - 35) <= py <= (y2 + 35):
-                return det.get("id")
-
-            # Calculate distance to bounding box centroid for nearest-box matching
-            cx = (x1 + x2) / 2.0
-            cy = (y1 + y2) / 2.0
-            dist = ((px - cx) ** 2 + (py - cy) ** 2) ** 0.5
-            if dist < 80 and dist < min_dist:
-                min_dist = dist
-                best_match_id = det.get("id")
-
-        return best_match_id
+        """Resolve operator coordinates against the current processed frame."""
+        return match_normalized_target(x, y, self.telemetry_store.latest)
 
     def clear_manual_targets(self) -> Dict:
         """
-        Clears all selected targets in manual mode.
+        Clears all selected targets and reverts tracking mode to auto.
         """
+        self.config.tracking_mode = "auto"
         self.config.selected_target_ids = []
-        self.telemetry_store.update(selected_target_ids=[])
+        self.telemetry_store.update(tracking_mode="auto", selected_target_ids=[])
         return {
             "status": "ok",
+            "mode": "auto",
             "selected_ids": []
         }

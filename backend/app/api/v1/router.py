@@ -3,6 +3,7 @@ V1 API Router Aggregator.
 """
 
 from fastapi import APIRouter
+from app.api.v1.endpoints import drone_control
 from app.api.v1.endpoints import (
     stream,
     ws,
@@ -19,6 +20,7 @@ from app.api.v1.endpoints import (
 )
 
 api_router = APIRouter()
+api_router.include_router(drone_control.router)
 
 api_router.include_router(cameras.router)
 api_router.include_router(reid.router)

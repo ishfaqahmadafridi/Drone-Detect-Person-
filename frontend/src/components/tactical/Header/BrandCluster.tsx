@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { BrandClusterProps } from "@/types";
@@ -7,16 +9,16 @@ import { Shield } from "lucide-react";
 export const BrandCluster: React.FC<BrandClusterProps> = ({ isConnected }) => {
   return (
     <div className="flex items-center gap-2.5 select-none">
-      <div className="w-7 h-7 rounded-md bg-slate-800/80 border border-slate-700/80 flex items-center justify-center shrink-0">
-        <Shield className="w-4 h-4 text-slate-200" />
+      <div className={TACTICAL_VIEW_STYLES.BrandCluster_div_className}>
+        <Shield className={TACTICAL_VIEW_STYLES.BrandCluster_Shield_className} />
       </div>
       <div className="flex items-center gap-2">
-        <span className="font-semibold text-sm tracking-wider text-slate-100 uppercase">
+        <span className={TACTICAL_VIEW_STYLES.BrandCluster_span_className}>
           AERO-GUARD
         </span>
         <span
           className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-            isConnected ? "bg-emerald-500" : "bg-amber-500"
+            isConnected ? TACTICAL_VIEW_STYLES.BrandCluster_span_className_2 : TACTICAL_VIEW_STYLES.BrandCluster_span_className_3
           }`}
           title={isConnected ? "Telemetry Connected" : "Connecting..."}
         />

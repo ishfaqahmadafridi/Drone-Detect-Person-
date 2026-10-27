@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { FlightDeckHeaderProps } from "@/types";
@@ -8,12 +10,12 @@ export const FlightDeckHeader: React.FC<FlightDeckHeaderProps> = ({ className = 
   return (
     <div className={`flex items-center justify-between ${className}`}>
       <div className="flex items-center gap-2">
-        <Navigation className="w-4 h-4 text-cyan-400" />
-        <h3 className="font-display font-bold text-sm tracking-wide text-white uppercase">
+        <Navigation className={TACTICAL_VIEW_STYLES.FlightDeckHeader_Navigation_className} />
+        <h3 className={TACTICAL_VIEW_STYLES.AvionicsCardHeader_span_className}>
           MISSION FLIGHT CONTROL DECK
         </h3>
       </div>
-      <span className="font-mono-code text-[10px] text-cyan-400/80 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
+      <span className={TACTICAL_VIEW_STYLES.FlightDeckHeader_span_className}>
         UAV COMMAND LINK
       </span>
     </div>

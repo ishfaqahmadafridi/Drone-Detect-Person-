@@ -1,12 +1,23 @@
 /**
  * Tactical Network & WebSocket Configuration Constants
  */
+import deployment from "./deployment.json";
+
 export const NETWORK_CONFIG = {
+  API_BASE_PATH: `${process.env.NEXT_PUBLIC_API_ORIGIN?.replace(/\/$/, "") ?? ""}${deployment.apiBasePath}`,
   API_TIMEOUT_MS: 15000,
   WS_RECONNECT_INTERVAL_MS: 3000,
   WS_TELEMETRY_PATH: "/ws/telemetry",
-  DEV_FRONTEND_PORT: "3000",
-  DEV_API_PORT: "8000",
+  DEV_FRONTEND_PORT: deployment.frontendPort,
+  DEV_API_PORT: deployment.backendPort,
+} as const;
+
+export const DRONE_CONTROL_PATHS = {
+  status: "/drone/manual/status",
+  connect: "/drone/manual/connect",
+  input: "/drone/manual/input",
+  action: "/drone/manual/action",
+  disconnect: "/drone/manual/disconnect",
 } as const;
 
 export function resolveVideoStreamUrl(path: string): string {
@@ -25,13 +36,14 @@ export function resolveVideoStreamUrl(path: string): string {
 export function getWebSocketTelemetryUrl(channel?: "ground" | "aerial"): string {
   if (typeof window === "undefined") return "";
 
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const host =
-    window.location.port === "3000"
-      ? `${window.location.hostname}:8000`
-      : window.location.host;
-
-  return `${protocol}//${host}${NETWORK_CONFIG.WS_TELEMETRY_PATH}${channel ? `?channel=${channel}` : ""}`;
+  const origin = process.env.NEXT_PUBLIC_WS_ORIGIN || process.env.NEXT_PUBLIC_API_ORIGIN ||
+    (window.location.port === NETWORK_CONFIG.DEV_FRONTEND_PORT
+      ? `${window.location.protocol}//${window.location.hostname}:${NETWORK_CONFIG.DEV_API_PORT}`
+      : window.location.origin);
+  const url = new URL(NETWORK_CONFIG.WS_TELEMETRY_PATH, origin);
+  url.protocol = url.protocol === "https:" || url.protocol === "wss:" ? "wss:" : "ws:";
+  if (channel) url.searchParams.set("channel", channel);
+  return url.toString();
 }
 
 export function getCameraStreamUrl(cameraId: string): string {

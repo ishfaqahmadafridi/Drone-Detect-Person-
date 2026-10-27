@@ -1,30 +1,20 @@
 import type { NextConfig } from "next";
+import deployment from "./src/constants/deployment.json";
+
+const backendOrigin = (process.env.BACKEND_ORIGIN ||
+  `http://${deployment.backendHost}:${deployment.backendPort}`).replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   experimental: {
     // Include multipart overhead above the 500 MB application upload limit.
     proxyClientMaxBodySize: "501mb",
     proxyTimeout: 600_000,
   },
   async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "http://127.0.0.1:8000/api/:path*",
-      },
-      {
-        source: "/snapshots/:path*",
-        destination: "http://127.0.0.1:8000/snapshots/:path*",
-      },
-      {
-        source: "/recordings/:path*",
-        destination: "http://127.0.0.1:8000/recordings/:path*",
-      },
-      {
-        source: "/ws/:path*",
-        destination: "http://127.0.0.1:8000/ws/:path*",
-      },
-    ];
+    return deployment.proxyPrefixes.map(prefix => ({
+      source: `/${prefix}/:path*`, destination: `${backendOrigin}/${prefix}/:path*`,
+    }));
   },
 };
 

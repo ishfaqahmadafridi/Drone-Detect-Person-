@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { normalizeAvionicsMetrics } from "@/utils/avionicsUtils";
+import { DRONE_LINK } from "@/constants/tactical";
 import { useMutation } from "@tanstack/react-query";
 import { droneApi } from "@/services/api/droneApi";
 import { useAppDispatch, useAppSelector } from "@/store";
@@ -11,6 +13,7 @@ export function useDroneFlight() {
   const dispatch = useAppDispatch();
   const telemetry = useAppSelector((state) => state.telemetry);
   const avionics = telemetry.avionics;
+  const metrics = normalizeAvionicsMetrics(avionics);
 
   const [lastMessage, setLastMessage] = useState<string | null>(null);
   const { switchSource, switchView } = useStreamMutation();
@@ -35,11 +38,11 @@ export function useDroneFlight() {
           })
         );
       }
-      setTimeout(() => setLastMessage(null), 4000);
+      setTimeout(() => setLastMessage(null), DRONE_LINK.messageDurationMs);
     },
     onError: (err: Error) => {
       setLastMessage(`Command error: ${err.message}`);
-      setTimeout(() => setLastMessage(null), 4000);
+      setTimeout(() => setLastMessage(null), DRONE_LINK.messageDurationMs);
     },
   });
 
@@ -51,32 +54,33 @@ export function useDroneFlight() {
     const validUrl =
       typeof droneRtspUrl === "string" && droneRtspUrl.trim().length > 0
         ? droneRtspUrl.trim()
-        : "rtsp://192.168.1.1:8554/live";
+        : DRONE_LINK.defaultRtspUrl;
+    await switchView.mutateAsync("aerial");
     await switchSource.mutateAsync({
       sourceType: "rtsp",
       sourcePath: validUrl,
+      channel: "aerial",
     });
-    await switchView.mutateAsync("aerial");
-    commandMutation.mutate("connect_drone_link");
+    commandMutation.mutate(DRONE_LINK.connectAction);
   };
 
   const handleLaunchDroneFlight = async () => {
-    await switchSource.mutateAsync({ sourceType: "synthetic" });
     await switchView.mutateAsync("aerial");
+    await switchSource.mutateAsync({ sourceType: "synthetic", channel: "aerial" });
     commandMutation.mutate("takeoff");
   };
 
   return {
     avionics,
-    flightState: avionics?.flight_state || "AIRBORNE",
-    altitude: avionics?.altitude_m ?? 42.5,
-    batteryPercent: avionics?.battery_percent ?? 88,
-    batteryVoltage: avionics?.battery_voltage ?? 24.8,
-    batteryHealth: avionics?.battery_health_percent ?? 98,
-    flightTimeRemaining: avionics?.flight_time_remaining_min ?? 24,
-    cameraOnline: avionics?.camera_online ?? true,
-    cameraResolution: avionics?.camera_resolution ?? "1280x720 (HD)",
-    cameraDetecting: avionics?.camera_detecting ?? true,
+    flightState: metrics.flightState,
+    altitude: metrics.altitude,
+    batteryPercent: metrics.battery,
+    batteryVoltage: metrics.voltage,
+    batteryHealth: metrics.health,
+    flightTimeRemaining: metrics.flightTime,
+    cameraOnline: metrics.camOnline,
+    cameraResolution: metrics.resolution,
+    cameraDetecting: metrics.camDetecting,
     isCommandPending: commandMutation.isPending,
     lastMessage,
     handleCommand,

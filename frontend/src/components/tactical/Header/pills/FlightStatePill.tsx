@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { FlightStatePillProps } from "@/types";
@@ -14,12 +16,12 @@ export const FlightStatePill: React.FC<FlightStatePillProps> = ({
     <div
       className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono-code font-medium border ${
         isAirborne
-          ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/25"
-          : "bg-slate-800/70 text-slate-300 border-slate-700/60"
+          ? TACTICAL_VIEW_STYLES.FlightStatePill_div_className
+          : TACTICAL_VIEW_STYLES.DroneBatteryPill_div_className_2
       }`}
       title={`Altitude: ${altitude.toFixed(1)}m • Heading: ${heading}°`}
     >
-      <Navigation className="w-3 h-3 text-slate-400" />
+      <Navigation className={TACTICAL_VIEW_STYLES.FlightStatePill_Navigation_className} />
       <span className="capitalize">{flightState.toLowerCase()}</span>
     </div>
   );

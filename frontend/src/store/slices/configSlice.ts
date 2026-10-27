@@ -1,19 +1,12 @@
+import { DEFAULT_RESTRICTED_ZONE, DEFAULT_DETECTION_CONFIDENCE } from "@/constants/tactical";
+import type { ConfigState } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface ConfigState {
-  confidence_threshold: number;
-  zone_polygon: [number, number][];
-  isSaving: boolean;
-}
+
 
 const initialState: ConfigState = {
-  confidence_threshold: 0.35,
-  zone_polygon: [
-    [0.25, 0.25],
-    [0.75, 0.25],
-    [0.75, 0.75],
-    [0.25, 0.75],
-  ],
+  confidence_threshold: DEFAULT_DETECTION_CONFIDENCE,
+  zone_polygon: [...DEFAULT_RESTRICTED_ZONE],
   isSaving: false,
 };
 

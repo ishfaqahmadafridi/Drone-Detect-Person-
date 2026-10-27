@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import type { ChannelPanelProps } from "@/types";
 import { useChannelPanel } from "@/hooks/useChannelPanel";
@@ -13,12 +15,12 @@ export function ChannelVideoPanel({ channel }: ChannelPanelProps) {
   const { containerRef, telemetry, revision, sourceType, networkUrl, setNetworkUrl, showNetwork, pending, error, streamError, setStreamError, toggleFullscreen, upload, selectSource, submitNetwork, reconnect, replay } = useChannelPanel(channel);
   const streamUrl = useVideoStreamUrl(getChannelStreamUrl(channel, revision));
   return (
-    <section aria-label={`${channel} video panel`} className="min-w-0 rounded-xl overflow-hidden border border-slate-700 bg-slate-950 text-slate-200">
+    <section aria-label={`${channel} video panel`} className={TACTICAL_VIEW_STYLES.ChannelVideoPanel_section_className}>
       <header className="flex flex-wrap items-center justify-between gap-2 p-3">
         <h2 className="font-semibold">{channel === "ground" ? "Ground CCTV" : "Aerial drone"}</h2>
         <span className="text-xs">{sourceType === "synthetic" ? "Simulation" : sourceType === "file" ? "Uploaded video" : "Camera stream"}</span>
       </header>
-      <div ref={containerRef} className="relative aspect-video bg-black flex items-center justify-center">
+      <div ref={containerRef} className={TACTICAL_VIEW_STYLES.ChannelVideoPanel_div_className}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={streamUrl} alt={`${channel} person detection stream`} className="w-full h-full object-contain" onLoad={() => setStreamError(false)} onError={() => setStreamError(true)} />
         {streamError && <div role="alert" className={VIDEO_TESTING.panelClass}>Stream unavailable. <button className={VIDEO_TESTING.buttonClass} onClick={reconnect}>Reconnect</button></div>}

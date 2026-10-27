@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { CameraCardLocationSpecsProps } from "@/types";
@@ -10,13 +12,13 @@ export const CardLocationSpecs: React.FC<CameraCardLocationSpecsProps> = ({
   return (
     <>
       {/* Prominent Location Field */}
-      <div className="flex items-start gap-2 p-2 rounded-lg bg-slate-900/70 border border-slate-800">
-        <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+      <div className={TACTICAL_VIEW_STYLES.CardLocationSpecs_div_className}>
+        <MapPin className={TACTICAL_VIEW_STYLES.CardLocationSpecs_MapPin_className} />
         <div className="flex flex-col min-w-0">
-          <span className="text-[9px] text-slate-400 font-semibold tracking-wider uppercase">
+          <span className={TACTICAL_VIEW_STYLES.CardLocationSpecs_span_className}>
             DEPLOYMENT LOCATION:
           </span>
-          <span className="text-white font-bold text-xs truncate">
+          <span className={TACTICAL_VIEW_STYLES.CardLocationSpecs_span_className_2}>
             {channel.location}
           </span>
         </div>
@@ -24,13 +26,13 @@ export const CardLocationSpecs: React.FC<CameraCardLocationSpecsProps> = ({
 
       {/* Network & Optical Spec Grid */}
       <div className="grid grid-cols-2 gap-2 text-[10px]">
-        <div className="flex items-center gap-1.5 text-slate-300">
-          <Network className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <div className={TACTICAL_VIEW_STYLES.CardLocationSpecs_div_className_2}>
+          <Network className={TACTICAL_VIEW_STYLES.CardLocationSpecs_Network_className} />
           <span className="truncate">{channel.ipAddress || "LAN IP"}</span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-slate-300">
-          <Video className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <div className={TACTICAL_VIEW_STYLES.CardLocationSpecs_div_className_2}>
+          <Video className={TACTICAL_VIEW_STYLES.CardLocationSpecs_Network_className} />
           <span className="truncate">{channel.resolution || "1080p FHD"}</span>
         </div>
       </div>

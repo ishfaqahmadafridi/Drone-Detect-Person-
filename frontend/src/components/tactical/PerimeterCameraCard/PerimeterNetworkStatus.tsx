@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { PerimeterNetworkStatusProps } from "@/types";
@@ -11,25 +13,25 @@ export const PerimeterNetworkStatus: React.FC<PerimeterNetworkStatusProps> = ({
   isDetecting = true,
 }) => {
   return (
-    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-[11px] font-mono-code">
+    <div className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_div_className}>
       <div
         className="flex items-center gap-2"
         title={`Protocol: ${networkProtocol}`}
       >
-        <Network className="w-3.5 h-3.5 text-cyan-400" />
-        <span className="text-slate-400">STREAM LINK:</span>
-        <span className="font-bold text-emerald-400 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        <Network className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_Network_className} />
+        <span className={TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_span_className_3}>STREAM LINK:</span>
+        <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className}>
+          <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_2} />
           ONLINE ({resolution.split(" ")[0]})
         </span>
       </div>
 
       <div className="flex items-center gap-1.5">
-        <Activity className="w-3.5 h-3.5 text-cyan-400" />
-        <span className="text-slate-400">CV AI:</span>
+        <Activity className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_Network_className} />
+        <span className={TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_span_className_3}>CV AI:</span>
         <span
           className={`font-bold ${
-            isDetecting ? "text-emerald-400" : "text-slate-500"
+            isDetecting ? TACTICAL_VIEW_STYLES.BatteryHealthGauge_strong_className : TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_3
           }`}
         >
           {isDetecting ? "ACTIVE" : "STANDBY"}

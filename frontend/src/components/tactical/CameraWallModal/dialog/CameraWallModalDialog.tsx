@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { CameraWallModalDialogProps } from "@/types";
@@ -19,8 +21,8 @@ export const CameraWallModalDialog: React.FC<CameraWallModalDialogProps> = ({
   onOpenWizard,
 }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative bg-[#0F141F] max-w-5xl w-full rounded-2xl overflow-hidden border border-slate-700/80 flex flex-col max-h-[90vh] shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+    <div className={TACTICAL_VIEW_STYLES.CameraWallModalDialog_div_className}>
+      <div className={TACTICAL_VIEW_STYLES.CameraWallModalDialog_div_className_2}>
         {/* 1. Modal Tactical Header */}
         <CameraWallHeader
           onClose={onClose}

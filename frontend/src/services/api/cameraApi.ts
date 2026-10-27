@@ -1,28 +1,14 @@
+import type { CameraListResponse, CameraSwitchResponse, CameraCreatePayload } from "@/types";
+export type { CameraListResponse, CameraSwitchResponse, CameraCreatePayload } from "@/types";
 import { apiClient } from "./client";
 import { TacticalCameraChannel, CameraWireModel } from "@/types";
 import { normalizeCamera } from "@/utils/cameraUtils";
 
-export interface CameraListResponse {
-  cameras: TacticalCameraChannel[];
-  active_camera_id: string;
-}
 
-export interface CameraSwitchResponse {
-  success: boolean;
-  message: string;
-  active_camera: TacticalCameraChannel;
-}
 
-export interface CameraCreatePayload {
-  name: string;
-  location: string;
-  device_type?: string;
-  view_mode?: string;
-  source_type?: string;
-  stream_url?: string;
-  ip_address?: string;
-  resolution?: string;
-}
+
+
+
 
 export const cameraApi = {
   listCameras: async (): Promise<CameraListResponse> => {

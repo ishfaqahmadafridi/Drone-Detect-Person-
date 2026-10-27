@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import { SidebarNavListProps } from "@/types";
 
@@ -14,7 +16,7 @@ export const SidebarNavList: React.FC<SidebarNavListProps> = ({
   return (
     <div className="flex-1 flex flex-col gap-1.5 p-2.5 overflow-y-auto">
       <div
-        className={`px-2 py-1 text-[10px] font-mono-code tracking-wider text-slate-400 font-semibold uppercase ${
+        className={`${TACTICAL_VIEW_STYLES.SidebarNavList_div_className}${
           isCollapsed ? "text-center" : ""
         }`}
       >

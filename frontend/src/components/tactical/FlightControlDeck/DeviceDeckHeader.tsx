@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { DeviceDeckHeaderProps } from "@/types";
@@ -10,10 +12,10 @@ export const DeviceDeckHeader: React.FC<DeviceDeckHeaderProps> = ({
 
   return (
     <div className="select-none">
-      <div className="text-[10px] font-mono-code uppercase tracking-wider text-slate-400 font-semibold">
+      <div className={TACTICAL_VIEW_STYLES.DeviceDeckHeader_div_className}>
         DEVICE DECK
       </div>
-      <h3 className="text-sm font-semibold text-slate-200 mt-0.5">
+      <h3 className={TACTICAL_VIEW_STYLES.DeviceDeckHeader_h3_className}>
         {isGround ? "Perimeter sensor telemetry" : "Flight telemetry"}
       </h3>
     </div>

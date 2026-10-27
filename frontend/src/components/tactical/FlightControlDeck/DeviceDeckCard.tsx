@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { DeviceDeckCardProps } from "@/types";
@@ -6,6 +8,7 @@ import { DeviceDeckHeader } from "./DeviceDeckHeader";
 import { DeviceDeckGrid } from "./DeviceDeckGrid";
 import { DeviceDeckActions } from "./DeviceDeckActions";
 import { SlidersHorizontal } from "lucide-react";
+import { DroneMovementPanel } from "./manual/DroneMovementPanel";
 
 export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
   avionics,
@@ -19,7 +22,7 @@ export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
   isTuningOpen = false,
 }) => {
   return (
-    <div className="p-5 rounded-xl border border-slate-700/60 bg-[#0F141F] flex flex-col gap-5 select-none shadow-lg">
+    <div className={TACTICAL_VIEW_STYLES.DeviceDeckCard_div_className}>
       {/* 1. Header Cluster */}
       <DeviceDeckHeader viewMode={viewMode} />
 
@@ -44,17 +47,18 @@ export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
       />
 
       {/* 4. Detection Tuning Trigger */}
+      {viewMode === "aerial" && <DroneMovementPanel />}
       {onToggleTuning && (
         <button
           onClick={onToggleTuning}
           className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg border text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] ${
             isTuningOpen
-              ? "border-blue-500/50 bg-blue-600/20 text-white shadow-sm font-semibold"
-              : "border-slate-700/80 bg-slate-900/80 hover:bg-slate-800 hover:border-slate-600 text-slate-200 hover:text-white"
+              ? TACTICAL_VIEW_STYLES.DeviceDeckCard_button_className
+              : TACTICAL_VIEW_STYLES.DeviceDeckCard_button_className_2
           }`}
         >
           <span>Detection tuning</span>
-          <SlidersHorizontal className={`w-3.5 h-3.5 ${isTuningOpen ? "text-blue-400" : "text-slate-400"}`} />
+          <SlidersHorizontal className={`w-3.5 h-3.5 ${isTuningOpen ? TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_span_className : TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_span_className_3}`} />
         </button>
       )}
     </div>

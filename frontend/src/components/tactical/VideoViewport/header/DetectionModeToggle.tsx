@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { DetectionModeToggleProps } from "@/types";
@@ -16,14 +18,14 @@ export const DetectionModeToggle: React.FC<DetectionModeToggleProps> = ({
   return (
     <div className="flex items-center gap-1.5 ml-1">
       {/* Segmented Auto/Manual Button Group */}
-      <div className="flex items-center bg-slate-900 border border-slate-700/80 rounded-md p-0.5 shadow-inner">
+      <div className={TACTICAL_VIEW_STYLES.DetectionModeToggle_div_className}>
         <button
           type="button"
           onClick={() => onTrackingModeChange?.("auto")}
           className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-mono-code font-bold uppercase transition-colors ${
             isAuto
-              ? "bg-cyan-500 text-slate-950 shadow-sm"
-              : "text-slate-400 hover:text-slate-200"
+              ? TACTICAL_VIEW_STYLES.DetectionModeToggle_button_className
+              : TACTICAL_VIEW_STYLES.RecordingsFilterTabs_button_className_2
           }`}
           title="Auto Detection: Continuously detects and boxes all visible persons"
         >
@@ -36,8 +38,8 @@ export const DetectionModeToggle: React.FC<DetectionModeToggleProps> = ({
           onClick={() => onTrackingModeChange?.("manual")}
           className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-mono-code font-bold uppercase transition-colors ${
             isManual
-              ? "bg-amber-400 text-slate-950 shadow-sm font-extrabold"
-              : "text-slate-400 hover:text-slate-200"
+              ? TACTICAL_VIEW_STYLES.DetectionModeToggle_button_className_2
+              : TACTICAL_VIEW_STYLES.RecordingsFilterTabs_button_className_2
           }`}
           title="Manual Detection: Click on each person on screen to lock on and draw bounding box"
         >
@@ -51,7 +53,7 @@ export const DetectionModeToggle: React.FC<DetectionModeToggleProps> = ({
         <button
           type="button"
           onClick={onClearSelectedTargets}
-          className="flex items-center gap-1 text-[10px] text-amber-400/90 hover:text-amber-300 font-mono-code border border-amber-500/30 px-1.5 py-0.5 rounded hover:bg-amber-500/15 transition-colors"
+          className={TACTICAL_VIEW_STYLES.DetectionModeToggle_button_className_3}
           title="Clear all locked targets"
         >
           <X className="w-3 h-3" />

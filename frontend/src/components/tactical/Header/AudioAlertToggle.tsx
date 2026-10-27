@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { AudioAlertToggleProps } from "@/types";
@@ -10,8 +12,8 @@ export const AudioAlertToggle: React.FC<AudioAlertToggleProps> = ({ isMuted, onT
       onClick={onToggleMute}
       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-display text-xs font-semibold uppercase tracking-wider transition-all border ${
         !isMuted
-          ? "bg-red-500/20 text-red-300 border-red-500/50 hover:bg-red-500/30"
-          : "bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700"
+          ? TACTICAL_VIEW_STYLES.AudioAlertToggle_button_className
+          : TACTICAL_VIEW_STYLES.AudioAlertToggle_button_className_2
       }`}
       title="Toggle Audio Siren Alert"
       aria-label={!isMuted ? "Mute audio siren" : "Unmute audio siren"}

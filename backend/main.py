@@ -11,13 +11,15 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.router import api_router
 from app.api.v1.endpoints import ws
-from app.core.config import SNAPSHOTS_DIR, RECORDINGS_DIR
+from app.core.config import SNAPSHOTS_DIR, RECORDINGS_DIR, API_HOST, API_PORT, API_RELOAD
 from app.services.reid.service import reid_service
+from app.services.drone_control.controller import drone_movement_controller
 
 
 @asynccontextmanager
 async def lifespan(application):
     yield
+    drone_movement_controller.close()
     reid_service.close()
 
 app = FastAPI(
@@ -69,4 +71,4 @@ if os.path.exists(RECORDINGS_DIR):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host=API_HOST, port=API_PORT, reload=API_RELOAD)

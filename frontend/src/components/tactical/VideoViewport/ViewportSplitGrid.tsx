@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { ViewportSplitGridProps } from "@/types";
@@ -20,7 +22,7 @@ export const ViewportSplitGrid: React.FC<ViewportSplitGridProps> = ({
   } = useViewportSplitGrid({ layoutMode, onSelectCamera });
 
   return (
-    <div className={`w-full p-2 gap-2 bg-[#02050e] ${gridClass}`}>
+    <div className={`${TACTICAL_VIEW_STYLES.ViewportSplitGrid_div_className}${gridClass}`}>
       {channelsToDisplay.map((cam) => {
         const isCamActive = activeCameraId === cam.id;
 
@@ -29,35 +31,35 @@ export const ViewportSplitGrid: React.FC<ViewportSplitGridProps> = ({
             key={cam.id}
             className={`relative rounded-xl overflow-hidden border flex flex-col justify-between transition-all duration-200 ${
               isCamActive
-                ? "border-blue-500/80 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
-                : "border-slate-800 bg-[#06080E]/80 hover:border-slate-700"
+                ? TACTICAL_VIEW_STYLES.ViewportSplitGrid_div_className_2
+                : TACTICAL_VIEW_STYLES.ViewportSplitGrid_div_className_3
             }`}
           >
             {/* 1. Pane Header */}
-            <div className="p-2 px-3 bg-[#06080E]/95 border-b border-slate-800 flex items-center justify-between z-10">
+            <div className={TACTICAL_VIEW_STYLES.ViewportSplitGrid_div_className_4}>
               <div className="flex items-center gap-2 min-w-0">
                 <span
                   className={`w-2 h-2 rounded-full shrink-0 ${
                     isCamActive
-                      ? "bg-blue-400 animate-ping"
-                      : "bg-emerald-400 animate-pulse"
+                      ? TACTICAL_VIEW_STYLES.ViewportSplitGrid_span_className
+                      : TACTICAL_VIEW_STYLES.OpticalSensorStatus_span_className_2
                   }`}
                 />
-                <span className="font-display font-bold text-xs text-white uppercase tracking-wider truncate">
+                <span className={TACTICAL_VIEW_STYLES.ViewportSplitGrid_span_className_2}>
                   {cam.channelNum}: {cam.name}
                 </span>
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
                 {isCamActive ? (
-                  <span className="font-mono-code text-[10px] text-blue-400 font-bold flex items-center gap-1">
+                  <span className={TACTICAL_VIEW_STYLES.CardHeader_span_className_5}>
                     <CheckCircle2 className="w-3.5 h-3.5" /> PRIMARY ({fps} FPS)
                   </span>
                 ) : (
                   <button
                     type="button"
                     onClick={() => handlePromoteCamera(cam)}
-                    className="font-mono-code text-[10px] text-slate-300 hover:text-white bg-slate-800 hover:bg-blue-600/80 px-2 py-0.5 rounded flex items-center gap-1 transition-colors cursor-pointer"
+                    className={TACTICAL_VIEW_STYLES.ViewportSplitGrid_button_className}
                   >
                     <span>PROMOTE</span>
                     <ArrowUpRight className="w-3 h-3" />
@@ -69,7 +71,7 @@ export const ViewportSplitGrid: React.FC<ViewportSplitGridProps> = ({
                     type="button"
                     onClick={() => handleDisconnectCamera(cam.id)}
                     title="Disconnect camera from simultaneous multi-view"
-                    className="text-slate-400 hover:text-rose-400 p-0.5 rounded hover:bg-rose-950/40 transition-colors cursor-pointer ml-1"
+                    className={TACTICAL_VIEW_STYLES.ViewportSplitGrid_button_className_2}
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -78,7 +80,7 @@ export const ViewportSplitGrid: React.FC<ViewportSplitGridProps> = ({
             </div>
 
             {/* 2. Visual Surveillance Feed Preview Window */}
-            <div className="relative flex-1 min-h-[140px] overflow-hidden flex items-center justify-center p-1 bg-black">
+            <div className={TACTICAL_VIEW_STYLES.ViewportSplitGrid_div_className_5}>
               <TacticalCameraFeedPreview
                 channel={cam}
                 isActive={isCamActive}

@@ -1,6 +1,9 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
-import React, { useState } from "react";
+
+import { useToggle } from "@/hooks/useToggle";
+import React from "react";
 import { AirspaceCommandViewProps } from "@/types";
 import { useAppSelector } from "@/store";
 import { VideoViewport } from "../VideoViewport";
@@ -19,7 +22,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   onOpenWall,
   viewMode: propViewMode,
 }) => {
-  const [isTuningOpen, setIsTuningOpen] = useState(false);
+  const [isTuningOpen, setIsTuningOpen] = useToggle(false);
   const storeViewMode = useAppSelector((state) => state.telemetry.view_mode);
   const activeViewMode = propViewMode || storeViewMode || "aerial";
   const activeSourceType = useAppSelector((state) => state.telemetry.source_type) || "synthetic";
@@ -28,15 +31,15 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   return (
     <div className="flex flex-col gap-4 min-w-0">
       {/* 1. Operations Header & Status Pill */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-700/60 select-none">
+      <div className={TACTICAL_VIEW_STYLES.AirspaceCommandView_div_className}>
         <div>
-          <div className="text-[10px] font-mono-code uppercase tracking-wider text-slate-400 font-semibold">
+          <div className={TACTICAL_VIEW_STYLES.DeviceDeckHeader_div_className}>
             OPERATIONS / SECTOR 04
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight mt-0.5">
+          <h1 className={TACTICAL_VIEW_STYLES.AirspaceCommandView_h1_className}>
             Airspace Command
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className={TACTICAL_VIEW_STYLES.AirspaceCommandView_p_className}>
             North perimeter • Sector 04 • Operational overview
           </p>
         </div>
@@ -45,8 +48,8 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
           <span
             className={`px-3 py-1.5 rounded-md text-xs font-mono-code font-bold tracking-wider uppercase border shadow-sm ${
               isSimulation
-                ? "border-emerald-500/50 bg-emerald-950/30 text-emerald-400"
-                : "border-blue-500/50 bg-blue-950/30 text-blue-400"
+                ? TACTICAL_VIEW_STYLES.AirspaceCommandView_span_className
+                : TACTICAL_VIEW_STYLES.AirspaceCommandView_span_className_2
             }`}
           >
             {isSimulation ? "SIMULATION" : "LIVE LINK"}

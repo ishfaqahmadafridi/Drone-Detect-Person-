@@ -5,7 +5,7 @@ Inference Registry Loader: Resolves and parses YOLO model profiles and metadata.
 import json
 from pathlib import Path
 from typing import Dict, Any, Optional
-from app.core.config import BASE_DIR, ROOT_DIR, GROUND_MODEL_NAME, AERIAL_MODEL_NAME
+from app.core.config import BASE_DIR, ROOT_DIR, GROUND_MODEL_NAME, AERIAL_MODEL_NAME, INFERENCE_PROFILE_OVERRIDES
 
 
 def resolve_models_dir() -> Path:
@@ -56,4 +56,7 @@ def apply_profile_overrides(profiles: Dict[str, Any]) -> Dict[str, Any]:
             profiles["aerial"].pop("sha256", None)
             profiles["aerial"].pop("size_bytes", None)
 
+    for view, overrides in INFERENCE_PROFILE_OVERRIDES.items():
+        if view in profiles:
+            profiles[view].update(overrides)
     return profiles

@@ -1,3 +1,5 @@
+
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
 import { cn } from "@/lib/utils";
 import { MetricTileProps } from "@/types";
@@ -9,9 +11,9 @@ export const MetricTile: React.FC<MetricTileProps> = ({
   value,
   subValue,
   progressPercent,
-  progressBarColor = "bg-blue-500",
+  progressBarColor = TACTICAL_VIEW_STYLES.MetricTile_color,
   isAlertActive = false,
-  alertBorderColor = "border-red-500/40 bg-red-950/15",
+  alertBorderColor = TACTICAL_VIEW_STYLES.MetricTile_color_2,
   className,
   onClick,
   actionHint,
@@ -33,25 +35,25 @@ export const MetricTile: React.FC<MetricTileProps> = ({
       }}
       className={cn(
         "glass-panel p-3.5 rounded-lg flex flex-col justify-between gap-2 transition-all duration-150 select-none",
-        isAlertActive ? alertBorderColor : "border-slate-800 hover:border-slate-700",
-        clickable && "group cursor-pointer hover:border-slate-600/80 active:scale-[0.995]",
+        isAlertActive ? alertBorderColor : TACTICAL_VIEW_STYLES.MetricTile_div_className,
+        clickable && TACTICAL_VIEW_STYLES.MetricTile_div_className_2,
         className
       )}
     >
       <div>
-        <div className="flex items-center justify-between text-slate-400 mb-1.5">
-          <span className="text-xs font-medium text-slate-400">{title}</span>
-          <span className="text-slate-400 group-hover:text-slate-300 transition-colors">{icon}</span>
+        <div className={TACTICAL_VIEW_STYLES.MetricTile_div_className_3}>
+          <span className={TACTICAL_VIEW_STYLES.MetricTile_span_className}>{title}</span>
+          <span className={TACTICAL_VIEW_STYLES.MetricTile_span_className_2}>{icon}</span>
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-semibold text-slate-100 font-mono-code tracking-tight">{value}</span>
-          <span className="text-xs text-slate-400">{subValue}</span>
+          <span className={TACTICAL_VIEW_STYLES.MetricTile_span_className_3}>{value}</span>
+          <span className={TACTICAL_VIEW_STYLES.MetricTile_span_className_4}>{subValue}</span>
         </div>
       </div>
 
       {/* Clean Enterprise Progress Indicator */}
       {showProgressLine && progressPercent !== undefined && (
-        <div className="w-full bg-slate-800/80 rounded-full h-1 overflow-hidden mt-1">
+        <div className={TACTICAL_VIEW_STYLES.MetricTile_div_className_4}>
           <div
             className={cn("h-full transition-all duration-200", progressBarColor)}
             style={{ width: `${Math.min(Math.max(progressPercent, 0), 100)}%` }}
@@ -61,9 +63,9 @@ export const MetricTile: React.FC<MetricTileProps> = ({
 
       {/* Sub-action hint */}
       {actionHint && (
-        <div className="flex items-center justify-between text-[11px] text-slate-400 group-hover:text-blue-400 pt-1.5 border-t border-slate-800/70 transition-colors">
+        <div className={TACTICAL_VIEW_STYLES.MetricTile_div_className_5}>
           <span className="font-normal">{actionHint}</span>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-transform group-hover:translate-x-0.5" />
+          <ChevronRight className={TACTICAL_VIEW_STYLES.MetricTile_ChevronRight_className} />
         </div>
       )}
     </div>

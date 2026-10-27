@@ -1,6 +1,9 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
-import React, { useState } from "react";
+
+import { useToggle } from "@/hooks/useToggle";
+import React from "react";
 import { AlertTriangle } from "lucide-react";
 import { PlayerViewportProps } from "@/types";
 
@@ -16,19 +19,19 @@ export const PlayerViewport: React.FC<PlayerViewportProps> = ({
   onError,
   onTogglePlay,
 }) => {
-  const [localError, setLocalError] = useState<boolean>(false);
+  const [localError, setLocalError] = useToggle(false);
   const isErr = hasError || localError;
 
   if (isErr) {
     return (
       <div className="flex flex-col items-center justify-center p-8 gap-3 text-center my-auto min-h-[300px]">
-        <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+        <div className={TACTICAL_VIEW_STYLES.PlayerViewport_div_className}>
           <AlertTriangle className="w-6 h-6" />
         </div>
-        <p className="text-sm font-mono-code font-bold text-slate-200">
+        <p className={TACTICAL_VIEW_STYLES.PlayerViewport_p_className}>
           Evidentiary Clip Empty or Corrupted
         </p>
-        <p className="text-xs text-slate-400 max-w-md font-mono-code">
+        <p className={TACTICAL_VIEW_STYLES.PlayerViewport_p_className_2}>
           This recording file was interrupted before data could be written (0 KB). Select a valid recording to play video footage.
         </p>
       </div>

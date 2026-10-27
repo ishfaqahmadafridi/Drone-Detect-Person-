@@ -1,23 +1,26 @@
+
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
+import { useToggle } from "@/hooks/useToggle";
 import { Clock } from "lucide-react";
 import { SnapshotCardProps } from "@/types";
 import { useEvidenceMetadata } from "@/hooks";
 
 export const SnapshotCard: React.FC<SnapshotCardProps> = ({ snapshot, onClick }) => {
-  const [imgError, setImgError] = React.useState(false);
+  const [imgError, setImgError] = useToggle(false);
   const { datePart, timePart, perspectiveLabel, perspectiveBadgeClass } =
     useEvidenceMetadata(snapshot);
 
   return (
     <div
       onClick={onClick}
-      className="relative shrink-0 w-52 h-32 rounded-xl overflow-hidden border border-slate-800 hover:border-cyan-400/80 transition-all cursor-pointer group shadow-xl bg-slate-950"
+      className={TACTICAL_VIEW_STYLES.SnapshotCard_div_className}
     >
       {/* Thumbnail / Fallback */}
       {imgError ? (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900/80 text-slate-500 gap-1 select-none">
-          <Clock className="w-5 h-5 text-slate-600" />
-          <span className="text-[10px] font-mono-code text-slate-400">Preview Unavailable</span>
+        <div className={TACTICAL_VIEW_STYLES.SnapshotCard_div_className_2}>
+          <Clock className={TACTICAL_VIEW_STYLES.SnapshotCard_Clock_className} />
+          <span className={TACTICAL_VIEW_STYLES.PerimeterDeckHeader_p_className}>Preview Unavailable</span>
         </div>
       ) : (
         /* eslint-disable-next-line @next/next/no-img-element */
@@ -37,13 +40,13 @@ export const SnapshotCard: React.FC<SnapshotCardProps> = ({ snapshot, onClick })
       </span>
 
       {/* Clear Time & Info Bottom Bar */}
-      <div className="absolute inset-x-0 bottom-0 bg-slate-950/90 backdrop-blur-md px-2.5 py-1.5 flex flex-col border-t border-slate-800/60">
-        <div className="flex items-center gap-1.5 text-cyan-300 font-mono-code text-[11px] font-bold">
-          <Clock className="w-3 h-3 text-cyan-400 shrink-0" />
+      <div className={TACTICAL_VIEW_STYLES.SnapshotCard_div_className_3}>
+        <div className={TACTICAL_VIEW_STYLES.SnapshotCard_div_className_4}>
+          <Clock className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_Clock_className} />
           <span>{timePart}</span>
-          <span className="text-slate-400 text-[9px] font-normal">{datePart}</span>
+          <span className={TACTICAL_VIEW_STYLES.SnapshotCard_span_className}>{datePart}</span>
         </div>
-        <span className="font-mono-code text-[9px] text-slate-400 truncate mt-0.5">
+        <span className={TACTICAL_VIEW_STYLES.SnapshotCard_span_className_2}>
           {snapshot.filename}
         </span>
       </div>

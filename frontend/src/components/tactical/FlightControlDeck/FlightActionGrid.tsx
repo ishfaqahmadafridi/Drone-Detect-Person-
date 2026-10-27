@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { FlightActionGridProps } from "@/types";
@@ -16,8 +18,8 @@ export const FlightActionGrid: React.FC<FlightActionGridProps> = ({
         disabled={isCommandPending}
         className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg border font-display text-xs font-semibold uppercase tracking-wider transition-all ${
           flightState === "AIRBORNE"
-            ? "bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)]"
-            : "bg-slate-900 border-slate-700/80 text-slate-300 hover:border-emerald-400/60 hover:text-emerald-300"
+            ? TACTICAL_VIEW_STYLES.FlightActionGrid_button_className
+            : TACTICAL_VIEW_STYLES.FlightActionGrid_button_className_2
         }`}
       >
         <Rocket className="w-3.5 h-3.5" />
@@ -29,8 +31,8 @@ export const FlightActionGrid: React.FC<FlightActionGridProps> = ({
         disabled={isCommandPending}
         className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg border font-display text-xs font-semibold uppercase tracking-wider transition-all ${
           flightState === "PATROL"
-            ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.3)]"
-            : "bg-slate-900 border-slate-700/80 text-slate-300 hover:border-cyan-400/60 hover:text-cyan-300"
+            ? TACTICAL_VIEW_STYLES.FlightActionGrid_button_className_3
+            : TACTICAL_VIEW_STYLES.FlightActionGrid_button_className_4
         }`}
       >
         <Radio className="w-3.5 h-3.5" />
@@ -42,8 +44,8 @@ export const FlightActionGrid: React.FC<FlightActionGridProps> = ({
         disabled={isCommandPending}
         className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg border font-display text-xs font-semibold uppercase tracking-wider transition-all ${
           flightState === "HOVER"
-            ? "bg-amber-500/20 border-amber-400 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.3)]"
-            : "bg-slate-900 border-slate-700/80 text-slate-300 hover:border-amber-400/60 hover:text-amber-300"
+            ? TACTICAL_VIEW_STYLES.FlightActionGrid_button_className_5
+            : TACTICAL_VIEW_STYLES.FlightActionGrid_button_className_6
         }`}
       >
         <ShieldAlert className="w-3.5 h-3.5" />
@@ -55,8 +57,8 @@ export const FlightActionGrid: React.FC<FlightActionGridProps> = ({
         disabled={isCommandPending}
         className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg border font-display text-xs font-semibold uppercase tracking-wider transition-all ${
           flightState === "RTL"
-            ? "bg-red-500/20 border-red-400 text-red-300 shadow-[0_0_12px_rgba(239,68,68,0.3)]"
-            : "bg-slate-900 border-slate-700/80 text-slate-300 hover:border-red-400/60 hover:text-red-300"
+            ? TACTICAL_VIEW_STYLES.FlightActionGrid_button_className_7
+            : TACTICAL_VIEW_STYLES.FlightActionGrid_button_className_8
         }`}
       >
         <Home className="w-3.5 h-3.5" />

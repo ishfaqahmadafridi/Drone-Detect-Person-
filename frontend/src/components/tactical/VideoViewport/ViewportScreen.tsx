@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { ViewportScreenProps } from "@/types";
@@ -29,7 +31,7 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full bg-[#02050e] flex items-center justify-center border-y border-slate-700/60 select-none ${layoutMode === "single" ? "aspect-video overflow-hidden" : "min-h-0"}`}
+      className={`${TACTICAL_VIEW_STYLES.ViewportScreen_div_className}${layoutMode === "single" ? "aspect-video overflow-hidden" : "min-h-0"}`}
     >
       {layoutMode && layoutMode !== "single" ? (
         <ViewportSplitGrid
@@ -69,13 +71,13 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
           {(zoomLevel > 1.0 || isNightVision) && (
             <div className="absolute bottom-4 left-10 z-20 pointer-events-none flex items-center gap-2">
               {zoomLevel > 1.0 && (
-                <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/50 text-[10px] font-mono-code font-bold text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)] animate-pulse">
+                <span className={TACTICAL_VIEW_STYLES.ViewportScreen_span_className}>
                   OPTICAL ZOOM: {zoomLevel.toFixed(1)}x
                 </span>
               )}
               {isNightVision && (
-                <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/50 text-[10px] font-mono-code font-bold text-emerald-300 shadow-[0_0_8px_rgba(16,185,129,0.3)] flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <span className={TACTICAL_VIEW_STYLES.ViewportScreen_span_className_2}>
+                  <span className={TACTICAL_VIEW_STYLES.MobileGroundCardHeader_span_className_2} />
                   IR NIGHT VISION (850nm)
                 </span>
               )}

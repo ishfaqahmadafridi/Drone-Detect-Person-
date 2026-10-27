@@ -3,6 +3,8 @@ CLI Runner: Command-line orchestration entrypoint for aerial detection processin
 Coordinates argument parsing, source acquisition, and execution via modular subcomponents.
 """
 
+from app.core.constants import DEFAULT_CONFIDENCE_THRESHOLD
+
 from typing import Optional
 from app.cli.parser import build_cli_parser
 from app.cli.executor import CLIDetectionExecutor
@@ -12,7 +14,7 @@ from app.cli.source_resolver import resolve_video_source, VideoSourceMetadata
 def run_cli_detection(
     source: str = "synthetic",
     model_name: Optional[str] = None,
-    confidence: float = 0.35,
+    confidence: float = DEFAULT_CONFIDENCE_THRESHOLD,
     save_video: bool = False,
     output_video_path: str = "runs/output/annotated_output.mp4",
     headless: bool = False,

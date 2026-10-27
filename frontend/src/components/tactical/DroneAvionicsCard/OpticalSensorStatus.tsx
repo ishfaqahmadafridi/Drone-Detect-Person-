@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { OpticalSensorStatusProps } from "@/types";
@@ -9,20 +11,20 @@ export const OpticalSensorStatus: React.FC<OpticalSensorStatusProps> = ({
   camDetecting,
 }) => {
   return (
-    <div className="p-2.5 rounded-lg bg-slate-950/40 border border-slate-800 flex items-center justify-between text-xs">
+    <div className={TACTICAL_VIEW_STYLES.OpticalSensorStatus_div_className}>
       <div className="flex items-center gap-2">
-        <Video className={`w-4 h-4 ${camOnline ? "text-cyan-400" : "text-red-400"}`} />
-        <span className="font-mono-code text-[11px] text-slate-300">
-          OPTICAL SENSOR: <strong className="text-white">{camOnline ? "ONLINE (1080p)" : "DISCONNECTED"}</strong>
+        <Video className={`w-4 h-4 ${camOnline ? TACTICAL_VIEW_STYLES.BatteryHealthGauge_strong_className_2 : TACTICAL_VIEW_STYLES.OpticalSensorStatus_Video_className}`} />
+        <span className={TACTICAL_VIEW_STYLES.OpticalSensorStatus_span_className}>
+          OPTICAL SENSOR: <strong className={TACTICAL_VIEW_STYLES.OpticalSensorStatus_strong_className}>{camOnline ? "ONLINE (1080p)" : "DISCONNECTED"}</strong>
         </span>
       </div>
       <div className="flex items-center gap-1.5">
         <span
           className={`w-2 h-2 rounded-full ${
-            camDetecting ? "bg-emerald-400 animate-pulse" : "bg-slate-600"
+            camDetecting ? TACTICAL_VIEW_STYLES.OpticalSensorStatus_span_className_2 : TACTICAL_VIEW_STYLES.OpticalSensorStatus_span_className_3
           }`}
         />
-        <span className="font-mono-code text-[10px] text-emerald-400">
+        <span className={TACTICAL_VIEW_STYLES.OpticalSensorStatus_span_className_4}>
           {camDetecting ? "PERSON DETECT: ACTIVE" : "STANDBY"}
         </span>
       </div>

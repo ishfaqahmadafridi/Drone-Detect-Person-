@@ -1,3 +1,5 @@
+
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
 import { AlertOctagon } from "lucide-react";
 import { MetricTile } from "./MetricTile";
@@ -9,15 +11,15 @@ export const IntrudersMetricCard: React.FC<IntrudersMetricCardProps> = ({ count 
       title="ZONE INTRUDERS"
       icon={
         <AlertOctagon
-          className={`w-4 h-4 ${count > 0 ? "text-red-400 animate-pulse" : "text-slate-500"}`}
+          className={`w-4 h-4 ${count > 0 ? TACTICAL_VIEW_STYLES.SidebarTelemetryWidget_Battery_className : TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_3}`}
         />
       }
       value={count}
       subValue="Breaches"
       progressPercent={count * 33.3}
-      progressBarColor="bg-red-500"
+      progressBarColor={TACTICAL_VIEW_STYLES.SidebarTelemetryWidget_div_className_5}
       isAlertActive={count > 0}
-      alertBorderColor="border-red-500/60 bg-red-950/20 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+      alertBorderColor={TACTICAL_VIEW_STYLES.IntrudersMetricCard_MetricTile_alertBorderColor}
     />
   );
 };

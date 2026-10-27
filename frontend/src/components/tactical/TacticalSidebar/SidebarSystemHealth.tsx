@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { SidebarSystemHealthProps } from "@/types";
@@ -15,8 +17,8 @@ export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
 
   if (isCollapsed) {
     return (
-      <div className="p-2 border-t border-slate-800/80 flex flex-col items-center gap-1 text-[9px] font-mono-code text-slate-400">
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+      <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className}>
+        <span className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_span_className} />
         <span>10Hz</span>
       </div>
     );
@@ -26,25 +28,25 @@ export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
   const displaySync = lastSync || utcTime;
 
   return (
-    <div className="p-4 border-t border-slate-700/60 bg-slate-900/30 select-none">
-      <div className="text-[10px] font-mono-code uppercase tracking-wider text-slate-400 font-semibold mb-2.5">
+    <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_2}>
+      <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_3}>
         SYSTEM HEALTH
       </div>
 
       <div className="flex flex-col gap-2 font-mono-code text-xs">
-        <div className="flex items-center justify-between text-slate-400">
+        <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_4}>
           <span>Telemetry</span>
-          <span className="text-slate-200">{telemetryHz} Hz</span>
+          <span className={TACTICAL_VIEW_STYLES.ModalFooter_strong_className}>{telemetryHz} Hz</span>
         </div>
 
-        <div className="flex items-center justify-between text-slate-400">
+        <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_4}>
           <span>Inference</span>
-          <span className="text-slate-200">{displayFps} FPS</span>
+          <span className={TACTICAL_VIEW_STYLES.ModalFooter_strong_className}>{displayFps} FPS</span>
         </div>
 
-        <div className="flex items-center justify-between text-slate-400">
+        <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_4}>
           <span>Last sync</span>
-          <span className="text-slate-200" suppressHydrationWarning>
+          <span className={TACTICAL_VIEW_STYLES.ModalFooter_strong_className} suppressHydrationWarning>
             {displaySync}
           </span>
         </div>

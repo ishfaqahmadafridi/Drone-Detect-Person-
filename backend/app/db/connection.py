@@ -6,7 +6,7 @@ import sqlite3
 import threading
 from contextlib import contextmanager
 from typing import Generator
-from app.core.config import DATABASE_PATH
+from app.core.config import DATABASE_PATH, DB_CONNECTION_TIMEOUT_SECONDS, DB_BUSY_TIMEOUT_MS
 
 
 class DatabaseManager:
@@ -21,14 +21,14 @@ class DatabaseManager:
         if not hasattr(self._local, "conn") or self._local.conn is None:
             conn = sqlite3.connect(
                 self.db_path,
-                timeout=20.0,
+                timeout=DB_CONNECTION_TIMEOUT_SECONDS,
                 check_same_thread=False,
             )
             conn.row_factory = sqlite3.Row
             # Enable WAL mode for high concurrency non-blocking reads
             conn.execute("PRAGMA journal_mode = WAL;")
             conn.execute("PRAGMA synchronous = NORMAL;")
-            conn.execute("PRAGMA busy_timeout = 10000;")
+            conn.execute(f"PRAGMA busy_timeout = {DB_BUSY_TIMEOUT_MS};")
             self._local.conn = conn
         return self._local.conn
 

@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { SidebarTopSectionProps } from "@/types";
@@ -20,10 +22,10 @@ export const SidebarTopSection: React.FC<SidebarTopSectionProps> = ({
     <div className="flex flex-col min-w-0">
       {/* 1. Collapse toggle button when collapsed */}
       {isCollapsed && (
-        <div className="p-2 border-b border-slate-700/60 flex justify-center">
+        <div className={TACTICAL_VIEW_STYLES.SidebarTopSection_div_className}>
           <button
             onClick={onToggleCollapse}
-            className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer active:scale-95 transition-all"
+            className={TACTICAL_VIEW_STYLES.SidebarTopSection_button_className}
             title="Expand Sidebar"
             aria-label="Expand Sidebar"
           >
@@ -34,7 +36,7 @@ export const SidebarTopSection: React.FC<SidebarTopSectionProps> = ({
 
       {/* 2. Surveillance Vision Perspective Switcher */}
       {onViewSelect && (
-        <div className="border-b border-slate-700/60">
+        <div className={TACTICAL_VIEW_STYLES.SidebarTopSection_div_className_2}>
           <SidebarPerspectiveToggle
             viewMode={viewMode}
             onViewSelect={onViewSelect}

@@ -3,6 +3,8 @@ Video Clip Recorder Service: High-level orchestrator coordinating pre-roll buffe
 container writer, and SQLite persistence.
 """
 
+from app.core.constants import DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT
+
 import threading
 from typing import Optional
 
@@ -64,8 +66,8 @@ class VideoClipRecorder:
         self,
         view_mode: str = "aerial",
         threat_level: str = "MANUAL",
-        width: int = 1280,
-        height: int = 720,
+        width: int = DEFAULT_FRAME_WIDTH,
+        height: int = DEFAULT_FRAME_HEIGHT,
     ) -> str:
         """Start recording frames into a new MP4 container with pre-roll lead-up."""
         with self._lock:
@@ -116,8 +118,8 @@ class VideoClipRecorder:
         view_mode: str = "aerial",
         threat_level: str = "INTRUSION",
         duration_seconds: float = 4.0,
-        width: int = 1280,
-        height: int = 720,
+        width: int = DEFAULT_FRAME_WIDTH,
+        height: int = DEFAULT_FRAME_HEIGHT,
     ) -> Optional[EvidenceRecord]:
         """Record fixed-duration evidence clip asynchronously in a background thread."""
         ClipCaptureWorker.spawn_clip_task(

@@ -1,10 +1,8 @@
-import { RECORDINGS_PERSPECTIVE_LABELS, RECORDINGS_PERSPECTIVE_COLORS } from "@/constants/tactical";
+import type { ParsedTimestamp } from "@/types";
+import { RECORDINGS_PERSPECTIVE_LABELS, RECORDINGS_PERSPECTIVE_COLORS, DOMAIN_BADGE_STYLES } from "@/constants/tactical";
 import { EvidenceMetadata, SnapshotItem } from "@/types";
 
-export interface ParsedTimestamp {
-  datePart: string;
-  timePart: string;
-}
+
 
 export function parseEvidenceTimestamp(rawTimestamp?: string): ParsedTimestamp {
   if (!rawTimestamp) {
@@ -37,9 +35,9 @@ export function parseThreatType(filename: string = ""): string {
 export function getThreatBadgeClass(threatType: string = ""): string {
   const upper = threatType.toUpperCase();
   if (upper.includes("INTRUSION")) {
-    return "bg-rose-500/20 text-rose-300 border-rose-500/40";
+    return DOMAIN_BADGE_STYLES.evidenceDanger;
   }
-  return "bg-cyan-500/20 text-cyan-300 border-cyan-500/40";
+  return DOMAIN_BADGE_STYLES.evidenceNormal;
 }
 
 export function getEvidenceMetadata(
@@ -60,3 +58,5 @@ export function getEvidenceMetadata(
     threatBadgeClass,
   };
 }
+
+export type { ParsedTimestamp } from "@/types";

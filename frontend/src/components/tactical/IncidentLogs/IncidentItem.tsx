@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { IncidentItemProps } from "@/types";
@@ -12,8 +14,8 @@ export const IncidentItem: React.FC<IncidentItemProps> = ({ alert }) => {
     <div
       className={`p-2.5 rounded-lg border text-xs flex items-center justify-between transition-colors ${
         isDanger
-          ? "bg-red-950/20 border-red-500/40 hover:bg-red-950/40"
-          : "bg-slate-900/50 border-slate-800 hover:bg-slate-800/50"
+          ? TACTICAL_VIEW_STYLES.IncidentItem_div_className
+          : TACTICAL_VIEW_STYLES.IncidentItem_div_className_2
       }`}
     >
       <div className="flex flex-col gap-0.5">
@@ -21,17 +23,17 @@ export const IncidentItem: React.FC<IncidentItemProps> = ({ alert }) => {
           <span className={`font-mono-code font-bold text-[10px] px-1.5 py-0.2 rounded ${badgeStyle}`}>
             {alert.threat_level}
           </span>
-          <span className="text-slate-300 font-medium">
+          <span className={TACTICAL_VIEW_STYLES.IncidentItem_span_className}>
             {isDanger
               ? `${alert.intruders_count || 1} Intruder(s) in Restricted Zone`
               : `${alert.total_persons} Persons Detected`}
           </span>
         </div>
-        <span className="font-mono-code text-[10px] text-slate-500">{alert.timestamp}</span>
+        <span className={TACTICAL_VIEW_STYLES.IncidentItem_span_className_2}>{alert.timestamp}</span>
       </div>
 
       {alert.snapshot_path && (
-        <span className="font-mono-code text-[10px] text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded">
+        <span className={TACTICAL_VIEW_STYLES.IncidentItem_span_className_3}>
           Evidence Frame
         </span>
       )}

@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { SidebarPerspectiveToggleProps } from "@/types";
@@ -18,8 +20,8 @@ export const SidebarPerspectiveToggle: React.FC<SidebarPerspectiveToggleProps> =
           aria-label="Perspective: Aerial Drone Model"
           className={`p-2 rounded-lg cursor-pointer transition-all duration-150 active:scale-95 ${
             viewMode === "aerial"
-              ? "bg-blue-600/20 text-white border border-blue-500/60 shadow-[0_0_12px_rgba(59,130,246,0.25)]"
-              : "bg-slate-900/60 text-slate-500 hover:text-slate-200 hover:bg-slate-800 border border-slate-800 hover:border-slate-700"
+              ? TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className
+              : TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className_2
           }`}
         >
           <Crosshair className="w-4 h-4" />
@@ -30,8 +32,8 @@ export const SidebarPerspectiveToggle: React.FC<SidebarPerspectiveToggleProps> =
           aria-label="Perspective: Ground CCTV Model"
           className={`p-2 rounded-lg cursor-pointer transition-all duration-150 active:scale-95 ${
             viewMode === "ground"
-              ? "bg-blue-600/20 text-white border border-blue-500/60 shadow-[0_0_12px_rgba(59,130,246,0.25)]"
-              : "bg-slate-900/60 text-slate-500 hover:text-slate-200 hover:bg-slate-800 border border-slate-800 hover:border-slate-700"
+              ? TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className
+              : TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className_2
           }`}
         >
           <Video className="w-4 h-4" />
@@ -42,7 +44,7 @@ export const SidebarPerspectiveToggle: React.FC<SidebarPerspectiveToggleProps> =
 
   return (
     <div className="px-3 pt-3 pb-2 select-none">
-      <div className="text-[10px] font-mono-code uppercase tracking-wider text-slate-400 font-semibold mb-2">
+      <div className={TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_div_className}>
         PERSPECTIVE
       </div>
 
@@ -52,8 +54,8 @@ export const SidebarPerspectiveToggle: React.FC<SidebarPerspectiveToggleProps> =
           title="Switch to Aerial Drone Perspective (UAV Flight Model)"
           className={`flex items-center justify-center py-2 px-2 rounded-lg border text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] ${
             viewMode === "aerial"
-              ? "bg-blue-600/20 text-white border-blue-500/60 shadow-[0_0_12px_rgba(59,130,246,0.2)] font-semibold"
-              : "bg-slate-900/60 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 border-slate-800 hover:border-slate-700"
+              ? TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className_3
+              : TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className_4
           }`}
         >
           <span>Aerial Drone</span>
@@ -64,8 +66,8 @@ export const SidebarPerspectiveToggle: React.FC<SidebarPerspectiveToggleProps> =
           title="Switch to Ground CCTV Perspective (Perimeter Camera Model)"
           className={`flex items-center justify-center py-2 px-2 rounded-lg border text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] ${
             viewMode === "ground"
-              ? "bg-blue-600/20 text-white border-blue-500/60 shadow-[0_0_12px_rgba(59,130,246,0.2)] font-semibold"
-              : "bg-slate-900/60 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 border-slate-800 hover:border-slate-700"
+              ? TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className_3
+              : TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className_4
           }`}
         >
           <span>Ground CCTV</span>

@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { Film, RefreshCw } from "lucide-react";
@@ -7,19 +9,19 @@ import { RecordingsEmptyStateProps } from "@/types";
 export const RecordingsEmptyState: React.FC<RecordingsEmptyStateProps> = ({ isLoading }) => {
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-40 gap-3 text-slate-500">
-        <RefreshCw className="w-6 h-6 animate-spin text-purple-400" />
+      <div className={TACTICAL_VIEW_STYLES.RecordingsEmptyState_div_className}>
+        <RefreshCw className={TACTICAL_VIEW_STYLES.RecordingsEmptyState_RefreshCw_className} />
         <span className="text-xs font-mono-code">LOADING RECORDS…</span>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-40 gap-3 text-slate-600 border border-dashed border-slate-800 rounded-xl">
-      <Film className="w-8 h-8 text-slate-700" />
+    <div className={TACTICAL_VIEW_STYLES.RecordingsEmptyState_div_className_2}>
+      <Film className={TACTICAL_VIEW_STYLES.RecordingsEmptyState_Film_className} />
       <div className="text-center">
-        <p className="text-xs font-mono-code text-slate-500">NO EVIDENCE RECORDS</p>
-        <p className="text-[10px] text-slate-600 mt-1">
+        <p className={TACTICAL_VIEW_STYLES.RecordingsEmptyState_p_className}>NO EVIDENCE RECORDS</p>
+        <p className={TACTICAL_VIEW_STYLES.RecordingsEmptyState_p_className_2}>
           Frames are captured automatically when a threat is detected
         </p>
       </div>

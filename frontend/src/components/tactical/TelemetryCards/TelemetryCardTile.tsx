@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { TelemetryCardTileProps } from "@/types";
@@ -14,24 +16,24 @@ export const TelemetryCardTile: React.FC<TelemetryCardTileProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`p-4 rounded-xl border flex flex-col justify-between gap-3 select-none transition-all duration-200 group cursor-pointer active:scale-[0.98] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)] ${
+      className={`${TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className}${
         isAlert
-          ? "border-red-500/50 bg-red-950/20 hover:border-red-400 hover:bg-red-950/40 shadow-sm"
-          : "border-slate-700/60 hover:border-slate-500 bg-[#0F141F] hover:bg-slate-800/80"
+          ? TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_2
+          : TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_3
       }`}
     >
       <div>
-        <div className="text-xs font-medium text-slate-400 group-hover:text-slate-200 transition-colors">
+        <div className={TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_4}>
           {title}
         </div>
-        <div className="text-2xl font-mono-code font-bold text-slate-100 group-hover:text-white mt-1 transition-colors">
+        <div className={TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_5}>
           {value}
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-[11px] text-slate-400 group-hover:text-slate-300">
+      <div className={TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_6}>
         <span>{subText}</span>
-        <ArrowUpRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+        <ArrowUpRight className={TACTICAL_VIEW_STYLES.TelemetryCardTile_ArrowUpRight_className} />
       </div>
     </div>
   );

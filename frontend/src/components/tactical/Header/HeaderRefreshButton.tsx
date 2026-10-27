@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { HeaderRefreshButtonProps } from "@/types";
@@ -8,7 +10,7 @@ export const HeaderRefreshButton: React.FC<HeaderRefreshButtonProps> = ({ onRefr
   return (
     <button
       onClick={onRefresh}
-      className="p-2 rounded-md bg-slate-800/80 text-slate-300 border border-slate-700/60 hover:border-blue-400/50 hover:text-blue-400 transition-colors cursor-pointer"
+      className={TACTICAL_VIEW_STYLES.HeaderRefreshButton_button_className}
       title="Refresh Telemetry & Alerts"
       aria-label="Refresh telemetry and alerts"
     >

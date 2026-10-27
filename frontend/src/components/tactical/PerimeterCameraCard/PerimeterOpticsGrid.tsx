@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { PerimeterOpticsGridProps } from "@/types";
@@ -13,34 +15,34 @@ export const PerimeterOpticsGrid: React.FC<PerimeterOpticsGridProps> = ({
   return (
     <div className="grid grid-cols-3 gap-2">
       {/* 1. Fixed Mount Height */}
-      <div className="flex flex-col p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-center">
-        <span className="text-[10px] font-mono-code text-slate-400 flex items-center justify-center gap-1 uppercase">
-          <Sliders className="w-3 h-3 text-cyan-400" />
+      <div className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_div_className}>
+        <span className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_span_className}>
+          <Sliders className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Gauge_className} />
           Mount Height
         </span>
-        <span className="text-sm font-mono-code font-bold text-cyan-300 mt-1 truncate">
+        <span className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_span_className_2}>
           {mountHeight}
         </span>
       </div>
 
       {/* 2. Optical Field of View */}
-      <div className="flex flex-col p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-center">
-        <span className="text-[10px] font-mono-code text-slate-400 flex items-center justify-center gap-1 uppercase">
-          <Eye className="w-3 h-3 text-emerald-400" />
+      <div className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_div_className}>
+        <span className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_span_className}>
+          <Eye className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Compass_className} />
           Optical Lens
         </span>
-        <span className="text-sm font-mono-code font-bold text-emerald-300 mt-1 truncate">
+        <span className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_span_className_3}>
           {lens}
         </span>
       </div>
 
       {/* 3. Anti-Tamper Sensor */}
-      <div className="flex flex-col p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-center">
-        <span className="text-[10px] font-mono-code text-slate-400 flex items-center justify-center gap-1 uppercase">
-          <ShieldAlert className="w-3 h-3 text-amber-400" />
+      <div className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_div_className}>
+        <span className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_span_className}>
+          <ShieldAlert className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Satellite_className} />
           Anti-Tamper
         </span>
-        <span className="text-sm font-mono-code font-bold text-emerald-400 mt-1 truncate">
+        <span className={TACTICAL_VIEW_STYLES.PerimeterOpticsGrid_span_className_4}>
           {tamperStatus.split(" ")[0]}
         </span>
       </div>

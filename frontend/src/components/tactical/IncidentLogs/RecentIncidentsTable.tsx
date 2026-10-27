@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { RecentIncidentsTableProps } from "@/types";
@@ -22,20 +24,20 @@ export const RecentIncidentsTable: React.FC<RecentIncidentsTableProps> = ({
         confidence: (0.88 + (idx * 0.04)).toFixed(2),
         status: a.threat_level === "CLEAR" ? "Resolved" : "Monitoring",
         statusColor: a.threat_level === "CLEAR"
-          ? "bg-emerald-950/40 text-emerald-400 border-emerald-500/30"
-          : "bg-amber-950/40 text-amber-400 border-amber-500/30",
+          ? TACTICAL_VIEW_STYLES.RecentIncidentsTable_color
+          : TACTICAL_VIEW_STYLES.RecentIncidentsTable_color_2,
       }))
     : [];
 
   return (
-    <div className="glass-panel p-5 rounded-xl border border-slate-800 flex flex-col gap-4">
+    <div className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_div_className}>
       {/* Header Cluster */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-[10px] font-mono-code uppercase tracking-wider text-slate-400 font-semibold">
+          <div className={TACTICAL_VIEW_STYLES.DeviceDeckHeader_div_className}>
             EVENT STREAM
           </div>
-          <h3 className="text-base font-semibold text-slate-100 tracking-tight mt-0.5">
+          <h3 className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_h3_className}>
             Recent incidents
           </h3>
         </div>
@@ -43,10 +45,10 @@ export const RecentIncidentsTable: React.FC<RecentIncidentsTableProps> = ({
         {onViewAll && (
           <button
             onClick={onViewAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-800/60 hover:bg-slate-800 hover:border-slate-600 text-xs font-medium text-slate-200 hover:text-white cursor-pointer transition-all duration-150 active:scale-[0.98]"
+            className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_button_className}
           >
             <span>View all incidents</span>
-            <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+            <ArrowRight className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_ArrowRight_className} />
           </button>
         )}
       </div>
@@ -55,7 +57,7 @@ export const RecentIncidentsTable: React.FC<RecentIncidentsTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-slate-800/80 text-[11px] font-mono-code text-slate-400 uppercase tracking-wider">
+            <tr className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_tr_className}>
               <th className="pb-3 font-semibold">TIME</th>
               <th className="pb-3 font-semibold">SOURCE</th>
               <th className="pb-3 font-semibold">EVENT TYPE</th>
@@ -67,20 +69,20 @@ export const RecentIncidentsTable: React.FC<RecentIncidentsTableProps> = ({
           </thead>
           <tbody className="divide-y divide-slate-800/40">
             {incidents.map((item) => (
-              <tr key={item.id} className="hover:bg-slate-800/20 transition-colors">
-                <td className="py-3 font-mono-code text-slate-200">{item.time}</td>
-                <td className="py-3 text-slate-300 font-medium">{item.source}</td>
-                <td className="py-3 text-slate-300">{item.eventType}</td>
-                <td className="py-3 font-mono-code text-slate-300">{item.track}</td>
-                <td className="py-3 font-mono-code text-slate-300">{item.confidence}</td>
+              <tr key={item.id} className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_tr_className_2}>
+                <td className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_td_className}>{item.time}</td>
+                <td className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_td_className_2}>{item.source}</td>
+                <td className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_td_className_3}>{item.eventType}</td>
+                <td className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_td_className_4}>{item.track}</td>
+                <td className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_td_className_4}>{item.confidence}</td>
                 <td className="py-3">
                   <span
                     className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono-code font-medium border ${item.statusColor}`}
                   >
                     {item.status === "Resolved" ? (
-                      <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                      <ShieldCheck className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Compass_className} />
                     ) : (
-                      <Eye className="w-3 h-3 text-amber-400" />
+                      <Eye className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Satellite_className} />
                     )}
                     {item.status}
                   </span>
@@ -88,7 +90,7 @@ export const RecentIncidentsTable: React.FC<RecentIncidentsTableProps> = ({
                 <td className="py-3 text-right pr-2">
                   <button
                     onClick={() => onOpenEvidence?.(item.id)}
-                    className="px-3 py-1 rounded-md bg-slate-800/80 hover:bg-blue-600/20 border border-slate-700 hover:border-blue-500/40 text-xs font-medium text-slate-200 hover:text-blue-300 cursor-pointer transition-all duration-150 active:scale-95"
+                    className={TACTICAL_VIEW_STYLES.RecentIncidentsTable_button_className_2}
                   >
                     Evidence
                   </button>

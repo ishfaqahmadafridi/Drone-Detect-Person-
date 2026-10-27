@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { RecordingsFilterTabsProps } from "@/types";
@@ -9,7 +11,7 @@ export const RecordingsFilterTabs: React.FC<RecordingsFilterTabsProps> = ({
   onFilterChange,
 }) => {
   return (
-    <div className="flex gap-1.5 bg-slate-900/50 rounded-lg p-1 border border-slate-800/60">
+    <div className={TACTICAL_VIEW_STYLES.RecordingsFilterTabs_div_className}>
       {RECORDINGS_FILTER_OPTIONS.map((opt) => {
         const isActive = activeFilter === opt.value;
         return (
@@ -18,8 +20,8 @@ export const RecordingsFilterTabs: React.FC<RecordingsFilterTabsProps> = ({
             onClick={() => onFilterChange(opt.value)}
             className={`flex-1 py-1.5 rounded-md text-[10px] font-mono-code font-bold tracking-wider transition-all ${
               isActive
-                ? "bg-purple-500/25 text-purple-200 border border-purple-500/40 shadow-[0_0_10px_rgba(168,85,247,0.15)]"
-                : "text-slate-400 hover:text-slate-200"
+                ? TACTICAL_VIEW_STYLES.RecordingsFilterTabs_button_className
+                : TACTICAL_VIEW_STYLES.RecordingsFilterTabs_button_className_2
             }`}
           >
             {opt.label}

@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { CameraWallHeaderProps } from "@/types";
@@ -14,7 +16,7 @@ export const CameraWallHeader: React.FC<CameraWallHeaderProps> = ({
   onLaunchSplit,
 }) => {
   return (
-    <div className="p-4 px-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+    <div className={TACTICAL_VIEW_STYLES.CameraWallHeader_div_className}>
       {/* 1. Tactical Modal Title & Sensor Subtitle */}
       <HeaderTitleCluster />
 

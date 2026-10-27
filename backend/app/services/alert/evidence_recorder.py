@@ -7,6 +7,9 @@ import time
 import json
 import csv
 from datetime import datetime
+from app.core.config import OUTPUT_DIR, SNAPSHOTS_DIR, LOGS_DIR
+from app.core.constants import DEFAULT_SNAPSHOT_COOLDOWN_SECONDS
+
 from typing import List, Dict, Optional, Any
 try:
     import cv2
@@ -20,10 +23,10 @@ from app.db import evidence_repository
 class EvidenceRecorder:
     def __init__(
         self,
-        output_dir: str = "runs/output",
-        snapshots_dir: str = "runs/output/snapshots",
-        logs_dir: str = "runs/output/logs",
-        snapshot_cooldown: float = 3.0,
+        output_dir: str = OUTPUT_DIR,
+        snapshots_dir: str = SNAPSHOTS_DIR,
+        logs_dir: str = LOGS_DIR,
+        snapshot_cooldown: float = DEFAULT_SNAPSHOT_COOLDOWN_SECONDS,
         auto_record_clips: bool = False,
     ):
         self.output_dir = output_dir

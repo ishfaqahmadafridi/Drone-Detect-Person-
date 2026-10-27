@@ -1,4 +1,13 @@
 import { DroneAvionics } from "../index";
+import type { DroneDirection, DroneDirectionOption } from "../droneControl";
+
+export interface DroneDirectionButtonProps {
+  option: DroneDirectionOption;
+  disabled: boolean;
+  active: boolean;
+  onPress: (direction: DroneDirection) => void;
+  onRelease: (direction: DroneDirection) => void;
+}
 
 // ==========================================
 // 8. Drone Flight & Avionics Component Props

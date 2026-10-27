@@ -43,4 +43,29 @@ export interface SuspectSelectionProps {
   channel?: StreamChannel;
   sourceType?: string;
   selectedTargetIds?: number[];
+  onOpenAerialView?: () => void;
+}
+
+export interface SuspectActionToolbarProps {
+  pending: boolean;
+  isFrozen: boolean;
+  selectedCount: number;
+  onAutoCapture: () => void;
+  onManualFreeze: () => void;
+  onClear: () => void;
+}
+
+export interface SuspectQuickSelectChipsProps {
+  detections: Detection[];
+  pending: boolean;
+  onSelectPerson: (id: number) => void;
+}
+
+export interface SuspectFreezeModalProps {
+  snapshot: FrozenSelection;
+  selectedIds: number[];
+  pending: boolean;
+  error?: string;
+  onToggle: (id: number) => void;
+  onFinish: (apply: boolean) => void;
 }

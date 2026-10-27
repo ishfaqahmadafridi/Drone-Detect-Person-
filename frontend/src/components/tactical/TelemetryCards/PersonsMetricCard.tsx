@@ -1,3 +1,5 @@
+
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
 import { Users } from "lucide-react";
 import { MetricTile } from "./MetricTile";
@@ -11,7 +13,7 @@ export const PersonsMetricCard: React.FC<PersonsMetricCardProps> = ({
   return (
     <MetricTile
       title="TOTAL PERSONS"
-      icon={<Users className="w-4 h-4 text-cyan-400" />}
+      icon={<Users className={TACTICAL_VIEW_STYLES.FlightDeckHeader_Navigation_className} />}
       value={count}
       subValue={viewMode === "ground" ? "Perimeter Tracks" : "Aerial Tracks"}
       onClick={onClick}
@@ -20,8 +22,8 @@ export const PersonsMetricCard: React.FC<PersonsMetricCardProps> = ({
       isAlertActive={count > 0}
       alertBorderColor={
         viewMode === "ground"
-          ? "border-emerald-500/50 bg-emerald-950/20 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
-          : "border-cyan-500/50 bg-cyan-950/20 shadow-[0_0_12px_rgba(0,242,254,0.15)]"
+          ? TACTICAL_VIEW_STYLES.PersonsMetricCard_MetricTile_alertBorderColor
+          : TACTICAL_VIEW_STYLES.PersonsMetricCard_MetricTile_alertBorderColor_2
       }
     />
   );

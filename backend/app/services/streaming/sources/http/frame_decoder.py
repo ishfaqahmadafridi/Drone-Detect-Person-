@@ -3,6 +3,8 @@ HTTP Frame Decoder: Decodes binary frame payloads and handles image scaling.
 """
 
 from typing import Optional
+from app.core.config import STREAM_MAX_FRAME_WIDTH
+
 import numpy as np
 
 try:
@@ -28,7 +30,7 @@ class HttpFrameDecoder:
             return None
 
     @staticmethod
-    def resize_max_width(frame: np.ndarray, max_width: int = 1280) -> np.ndarray:
+    def resize_max_width(frame: np.ndarray, max_width: int = STREAM_MAX_FRAME_WIDTH) -> np.ndarray:
         """Resizes the frame preserving aspect ratio if the width exceeds max_width."""
         if cv2 is None or frame is None:
             return frame

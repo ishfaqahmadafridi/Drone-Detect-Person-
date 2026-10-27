@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { SidebarFooterProps } from "@/types";
@@ -13,20 +15,20 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
   const activeEngine = useInferenceModel();
 
   return (
-    <div className="p-2.5 border-t border-slate-800/80 flex flex-col gap-2 bg-slate-950/80">
+    <div className={TACTICAL_VIEW_STYLES.SidebarFooter_div_className}>
       {/* Siren Alert Toggle */}
       <button
         onClick={onToggleMute}
         className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border font-display text-xs font-semibold uppercase tracking-wider transition-all ${
           !isMuted
-            ? "bg-red-500/20 text-red-300 border-red-500/50 hover:bg-red-500/30"
-            : "bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800"
+            ? TACTICAL_VIEW_STYLES.AudioAlertToggle_button_className
+            : TACTICAL_VIEW_STYLES.SidebarFooter_button_className
         } ${isCollapsed ? "justify-center px-0" : ""}`}
         title={!isMuted ? "Audio Siren Active (Click to Mute)" : "Audio Siren Muted (Click to Unmute)"}
         aria-label={!isMuted ? "Mute audio siren" : "Unmute audio siren"}
       >
         {!isMuted ? (
-          <Volume2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
+          <Volume2 className={TACTICAL_VIEW_STYLES.SidebarFooter_Volume2_className} />
         ) : (
           <VolumeX className="w-3.5 h-3.5 shrink-0" />
         )}
@@ -35,12 +37,12 @@ export const SidebarFooter: React.FC<SidebarFooterProps> = ({
 
       {/* AI Engine & System Pill */}
       {!isCollapsed && (
-        <div className="flex items-center justify-between text-[10px] font-mono-code text-slate-400 px-1 pt-1">
+        <div className={TACTICAL_VIEW_STYLES.SidebarFooter_div_className_2}>
           <span className="flex items-center gap-1 truncate" title={`Active Vision Model Engine: ${activeEngine}`}>
-            <Zap className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <Zap className={TACTICAL_VIEW_STYLES.ListItemTimestamp_Clock_className} />
             <span className="truncate">{activeEngine}</span>
           </span>
-          <span className="text-emerald-400 font-bold shrink-0 ml-1">ONLINE</span>
+          <span className={TACTICAL_VIEW_STYLES.SidebarFooter_span_className}>ONLINE</span>
         </div>
       )}
     </div>

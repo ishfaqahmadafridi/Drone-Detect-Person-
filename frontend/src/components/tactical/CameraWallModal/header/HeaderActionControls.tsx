@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { HeaderActionControlsProps } from "@/types";
@@ -15,7 +17,7 @@ export const HeaderActionControls: React.FC<HeaderActionControlsProps> = ({
         <button
           type="button"
           onClick={onConnectAll}
-          className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono-code text-xs font-bold tracking-wider flex items-center gap-1.5 transition-all shadow-md shadow-emerald-950/40 cursor-pointer"
+          className={TACTICAL_VIEW_STYLES.HeaderActionControls_button_className}
           title="Connect all 5 cameras simultaneously in live stream"
         >
           <span>+ CONNECT ALL (5-UP)</span>
@@ -27,7 +29,7 @@ export const HeaderActionControls: React.FC<HeaderActionControlsProps> = ({
           <button
             type="button"
             onClick={() => onLaunchSplit("dual")}
-            className="px-3 py-1.5 rounded-lg bg-blue-950/60 hover:bg-blue-900/80 border border-blue-500/40 text-blue-300 font-mono-code text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+            className={TACTICAL_VIEW_STYLES.HeaderActionControls_button_className_2}
             title="View Drone Aerial & Ground CCTV live at the same time"
           >
             <SplitSquareVertical className="w-3.5 h-3.5" />
@@ -37,7 +39,7 @@ export const HeaderActionControls: React.FC<HeaderActionControlsProps> = ({
           <button
             type="button"
             onClick={() => onLaunchSplit("quad")}
-            className="px-3 py-1.5 rounded-lg bg-blue-950/60 hover:bg-blue-900/80 border border-blue-500/40 text-blue-300 font-mono-code text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+            className={TACTICAL_VIEW_STYLES.HeaderActionControls_button_className_2}
             title="View 4 Cameras live at the same time in 2x2 matrix"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
@@ -48,7 +50,7 @@ export const HeaderActionControls: React.FC<HeaderActionControlsProps> = ({
 
       <button
         onClick={onClose}
-        className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 hover:text-white text-slate-300 cursor-pointer transition-all duration-150 active:scale-95"
+        className={TACTICAL_VIEW_STYLES.HeaderActionControls_button_className_3}
         title="Close Camera Wall"
         aria-label="Close Camera Wall Modal"
       >

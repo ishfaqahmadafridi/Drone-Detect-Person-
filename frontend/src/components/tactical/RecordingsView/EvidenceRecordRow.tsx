@@ -1,4 +1,6 @@
 "use client";
+import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+
 
 import React from "react";
 import { Film, Clock, ChevronDown, ChevronUp } from "lucide-react";
@@ -15,14 +17,14 @@ export const EvidenceRecordRow: React.FC<EvidenceRecordRowProps> = ({
     useEvidenceMetadata(snap);
 
   return (
-    <div className="border border-slate-800/60 rounded-lg overflow-hidden transition-all">
+    <div className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_div_className}>
       {/* Row Header — clickable summary */}
       <button
         onClick={onToggle}
-        className="w-full flex items-center gap-3 px-3 py-2.5 bg-slate-900/60 hover:bg-slate-800/60 transition-colors text-left"
+        className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_button_className}
       >
         {/* Thumbnail placeholder */}
-        <div className="w-10 h-10 shrink-0 rounded bg-slate-800 border border-slate-700 flex items-center justify-center overflow-hidden">
+        <div className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_div_className_2}>
           {snap.url ? (
             <img
               src={snap.url}
@@ -33,23 +35,23 @@ export const EvidenceRecordRow: React.FC<EvidenceRecordRowProps> = ({
               }}
             />
           ) : (
-            <Film className="w-4 h-4 text-slate-600" />
+            <Film className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_Film_className} />
           )}
         </div>
 
         {/* Timestamp & Metadata */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-0.5">
-            <Clock className="w-3 h-3 text-cyan-400 shrink-0" />
-            <span className="font-mono-code text-xs font-bold text-cyan-300 tracking-wider">
+            <Clock className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_Clock_className} />
+            <span className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_span_className}>
               {timePart}
             </span>
-            <span className="font-mono-code text-[10px] text-slate-500">
+            <span className={TACTICAL_VIEW_STYLES.IncidentItem_span_className_2}>
               {datePart}
             </span>
           </div>
 
-          <p className="text-[10px] text-slate-400 truncate font-mono-code leading-tight">
+          <p className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_p_className}>
             {snap.filename}
           </p>
         </div>
@@ -61,9 +63,9 @@ export const EvidenceRecordRow: React.FC<EvidenceRecordRowProps> = ({
 
         {/* Expand toggle */}
         {isExpanded ? (
-          <ChevronUp className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+          <ChevronUp className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_ChevronUp_className} />
         ) : (
-          <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+          <ChevronDown className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_ChevronUp_className} />
         )}
       </button>
 
