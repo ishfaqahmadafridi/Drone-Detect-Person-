@@ -16,6 +16,10 @@ A tactical dashboard connecting ground-camera intelligence with aerial video and
 
 AERO-GUARD brings video monitoring, person detection, suspect selection, and aerial workflows into one interface. A FastAPI vision engine processes camera feeds while a Next.js dashboard provides live views, tracking overlays, alerts, and operator controls.
 
+![AERO-GUARD architecture: video sources pass through the vision backend to the dashboard; manual controls follow a separate service path to simulation or Tello.](docs/images/system-overview.svg)
+
+*System overview diagram.* Camera footage passes through detection and tracking before reaching the dashboard. Manual flight commands follow a separate path through the control service to simulation or a Wi-Fi-connected Tello.
+
 Two dedicated perspectives keep the workflows clear:
 
 | Ground CCTV | Aerial Drone |
@@ -37,16 +41,7 @@ Two dedicated perspectives keep the workflows clear:
 
 ## System Design
 
-```mermaid
-flowchart LR
-    A[Camera feeds and uploaded video] --> B[FastAPI vision backend]
-    B --> C[Detection and tracking]
-    C --> D[Zones, alerts, and evidence]
-    C --> E[Optional re-identification]
-    B -->|MJPEG and WebSockets| F[Next.js dashboard]
-    F -->|Manual control API| G[Tello controller]
-    G --> H[Simulation or Tello SDK over Wi-Fi]
-```
+The backend handles video acquisition, inference, tracking, and evidence. The frontend displays previews and status, while dedicated API requests handle operator actions. Optional ReID compares appearance across camera views; it does not command the aircraft to follow a person.
 
 | Layer | Technologies |
 | --- | --- |
@@ -112,6 +107,10 @@ npm run dev
 ### 3. Open a feed
 
 Choose **Ground CCTV** or **Aerial Drone**, then select a source or upload a video. Use a synthetic feed to explore the interface. Ground feeds support frozen-frame suspect selection; cross-camera matching requires the optional ReID module.
+
+![Operator workflow: choose a perspective, open a source, review detections, then select ground suspects or use aerial manual controls.](docs/images/operator-workflow.svg)
+
+*Operator workflow diagram.* Start by choosing the camera perspective and source. Ground operators can freeze a detected frame and select suspects. Aerial operators use the separate manual control panel for movement and landing.
 
 ## Tello Manual Control
 
