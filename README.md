@@ -1,33 +1,68 @@
+<div align="center">
+
 # AERO-GUARD
 
-AERO-GUARD combines a FastAPI computer-vision backend with a Next.js tactical dashboard for person detection, tracking, ground-to-aerial suspect workflows, and manual Tello control.
+**Person Detection · Multi-Camera Tracking · Aerial Monitoring**
 
-## Features
+A tactical dashboard connecting ground-camera intelligence with aerial video and manual drone control.
 
-- **Ground CCTV:** webcam, IP camera, and uploaded-video workflows with person detection and tracking.
-- **Aerial Drone:** aerial detection profiles, synthetic feeds, and supported live video sources.
-- **Suspect selection:** freeze a ground frame, select tracked people, and capture portraits for the optional re-identification workflow.
-- **Streaming:** MJPEG previews and WebSocket telemetry, with isolated named camera channels and shared processing for viewers of the same channel.
-- **Monitoring:** restricted-zone editing, intrusion alerts, snapshots, and recordings.
-- **Tello manual control:** connect, take off, hold directional controls, rotate, hover, land, and disconnect. Simulation is enabled by default.
+[Getting Started](#getting-started) · [Capabilities](#capabilities) · [Documentation](#documentation)
 
-Ground and aerial channels have distinct source roles. Model selection and tracker settings are defined in the [model registry](backend/models/README.md). The default ground model is YOLO26n with ByteTrack; the aerial VisDrone profile uses YOLO11n with BoT-SORT. An optional general aerial profile supports closer footage.
+</div>
 
-## Technology
+---
 
-| Backend | Frontend |
+## Overview
+
+AERO-GUARD brings video monitoring, person detection, suspect selection, and aerial workflows into one interface. A FastAPI vision engine processes camera feeds while a Next.js dashboard provides live views, tracking overlays, alerts, and operator controls.
+
+Two dedicated perspectives keep the workflows clear:
+
+| Ground CCTV | Aerial Drone |
 | --- | --- |
-| Python 3.12, FastAPI, OpenCV, Ultralytics | Next.js 16, React, TypeScript, Tailwind CSS |
-| MJPEG, WebSockets, UDP Tello SDK transport | Redux Toolkit, TanStack Query |
-| pytest and local UDP integration tests | Vitest, Testing Library, Playwright |
+| Webcam, IP camera, and uploaded footage | Aerial footage, supported live sources, and simulation |
+| Eye-level person detection and tracking | Detection profiles for aerial scenes |
+| Frozen-frame suspect selection | Optional ground-to-aerial appearance matching |
+| Restricted-zone monitoring | Separate Tello manual control panel |
 
-## Local setup
+## Capabilities
 
-Use Python 3.12 and Node.js 20.9 or newer. Run the backend and frontend in separate terminals.
+- **Person detection and tracking** — bounding boxes, confidence scores, and tracking IDs.
+- **Live monitoring** — MJPEG previews, WebSocket updates, and isolated camera channels.
+- **Suspect workflows** — freeze a ground frame, select tracked people, and capture portraits.
+- **Optional re-identification** — appearance matching across ground and aerial views using X-TFCLIP.
+- **Incident evidence** — restricted zones, intrusion alerts, snapshots, and recordings.
+- **Tello controls** — connect, take off, move, rotate, hover, land, and disconnect.
+- **Simulation and video testing** — explore workflows before connecting hardware.
 
-### Backend
+## System Design
 
-From the repository root on macOS or Linux:
+```mermaid
+flowchart LR
+    A[Camera feeds and uploaded video] --> B[FastAPI vision backend]
+    B --> C[Detection and tracking]
+    C --> D[Zones, alerts, and evidence]
+    C --> E[Optional re-identification]
+    B -->|MJPEG and WebSockets| F[Next.js dashboard]
+    F -->|Manual control API| G[Tello controller]
+    G --> H[Simulation or Tello SDK over Wi-Fi]
+```
+
+| Layer | Technologies |
+| --- | --- |
+| Dashboard | Next.js 16, React, TypeScript, Tailwind CSS |
+| Application state | Redux Toolkit, TanStack Query |
+| Vision backend | Python, FastAPI, OpenCV, Ultralytics |
+| Detection profiles | YOLO26n / ByteTrack; YOLO11n VisDrone / BoT-SORT |
+| Verification | pytest, Vitest, Testing Library, Playwright |
+
+## Getting Started
+
+**Requirements:** Python 3.12, Node.js 20.9+, and npm. Initial installation and model downloads require internet access.
+
+### 1. Start the backend
+
+Run from the repository root on macOS or Linux:
 
 ```sh
 cd backend
@@ -37,20 +72,31 @@ python -m pip install -r requirements-test.txt
 cp .env.example .env
 ```
 
-On Windows PowerShell, create the environment with `py -3.12 -m venv .venv`, activate it with `.\.venv\Scripts\Activate.ps1`, and copy the template with `Copy-Item .env.example .env`.
-
-Review `.env` before starting. For basic detection without the optional ReID checkpoint, set `REID_ENABLED=false`. To enable ReID, follow the [ReID setup guide](docs/person-reidentification.md). Optional external services require their own configuration; keep credentials out of version control.
-
-With the virtual environment active, download the registered detection checkpoints and start the API:
+Set `REID_ENABLED=false` in `.env` for an initial detection-only setup. Enable it after completing the [ReID installation](docs/person-reidentification.md).
 
 ```sh
 python scripts/download_models.py
 python -m uvicorn main:app --host 127.0.0.1 --port 8000
 ```
 
-`requirements-test.txt` includes runtime and test dependencies. Deployments that do not run tests can install `requirements.txt` instead.
+<details>
+<summary>Windows PowerShell setup</summary>
 
-### Frontend
+```powershell
+cd backend
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-test.txt
+Copy-Item .env.example .env
+```
+
+Configure `.env`, then run the same model-download and Uvicorn commands shown above.
+
+</details>
+
+### 2. Start the dashboard
+
+In a separate terminal, from the repository root:
 
 ```sh
 cd frontend
@@ -58,41 +104,51 @@ npm ci
 npm run dev
 ```
 
-- Dashboard: <http://127.0.0.1:3000>
-- API documentation: <http://127.0.0.1:8000/docs>
+| Service | Local address |
+| --- | --- |
+| Dashboard | <http://127.0.0.1:3000> |
+| Interactive API docs | <http://127.0.0.1:8000/docs> |
 
-The frontend proxies requests to the local backend by default. Set `BACKEND_ORIGIN` when using a different backend address. Shared defaults live in `frontend/src/constants/deployment.json`; browser API and WebSocket overrides are defined in `frontend/src/constants/network.ts`.
+### 3. Open a feed
 
-## Using the dashboard
+Choose **Ground CCTV** or **Aerial Drone**, then select a source or upload a video. Use a synthetic feed to explore the interface. Ground feeds support frozen-frame suspect selection; cross-camera matching requires the optional ReID module.
 
-1. Select **Ground CCTV** for eye-level camera footage or **Aerial Drone** for drone footage.
-2. Choose a source or upload a video. Synthetic feeds demonstrate application behavior using simulated targets.
-3. On a ground feed, freeze a frame to select suspects. Enable the optional ReID module when using cross-camera matching.
-4. Use the separate **Tello manual control** panel for Tello movement. The older mission controls use simulated avionics.
+## Tello Manual Control
 
-Preview capture can run independently of inference, and slower processing can skip source frames. Synthetic results and detection confidence do not establish model accuracy. See [video testing and suspect selection](docs/video-testing-and-suspect-selection.md) for playback and selection behavior.
+The manual panel starts in **simulation mode**. To connect a real Tello:
 
-## Tello connection
+1. Connect the backend computer to the drone's Wi-Fi network and close competing control apps.
+2. Set `DRONE_CONTROL_MODE=tello` in `backend/.env`.
+3. Restart the backend with one worker and select **Connect controls** with the aircraft on the ground.
 
-Control starts in `DRONE_CONTROL_MODE=simulation`, which does not connect to an aircraft. For a real Tello:
+SDK acknowledgment confirms the control connection. The manual panel supports held movement, rotation, hover, takeoff, and landing; older mission controls use simulated avionics.
 
-1. Connect the computer running the backend to the drone's Wi-Fi network and close competing control apps.
-2. Set `DRONE_CONTROL_MODE=tello` in `backend/.env` and restart the backend with a single worker.
-3. With the aircraft on the ground, select **Connect controls** in the manual panel. SDK acknowledgment confirms the control connection; joining Wi-Fi alone does not.
+> **Development status:** real-flight smoothness remains unverified. Control state is command-derived; Tello video, measured telemetry, and autonomous following are separate integrations. Automated tests use a local UDP emulator.
 
-Manual movement uses the Tello SDK protocol. It does not automatically provide Tello video, measured flight telemetry, or autonomous person-following. Aircraft state in the panel is command-derived. Real-flight smoothness and parity with the official Tello app remain unverified; the reported control lag is not established as fixed by automated tests.
+See the [Tello control guide](docs/tello-manual-control.md) for connection settings and operating limitations.
 
-Read [Tello manual control](docs/tello-manual-control.md) for configuration, input expiry, connection limitations, and trusted-local-network operation.
+## Configuration
 
-## Tests and checks
+| Location | Purpose |
+| --- | --- |
+| `backend/.env` | Model profiles, devices, playback, ReID, and Tello settings |
+| `backend/app/core/` | Shared backend configuration and constants |
+| `backend/models/registry.json` | Detection checkpoints and verification metadata |
+| `frontend/src/constants/` | Deployment defaults, network paths, and UI tokens |
 
-With the backend virtual environment active, from `backend`:
+Set `BACKEND_ORIGIN` for a different backend address. Keep credentials in local environment configuration. Optional external services need separate setup.
+
+Preview and inference rates depend on hardware. Playback can skip source frames when processing falls behind; confidence scores and synthetic demonstrations are not accuracy benchmarks.
+
+## Development Checks
+
+**Backend** — with the virtual environment active, from `backend`:
 
 ```sh
 python -m pytest tests -q
 ```
 
-From `frontend`:
+**Frontend** — from `frontend`:
 
 ```sh
 npm test
@@ -102,41 +158,36 @@ npm run build
 npm run test:e2e
 ```
 
-Browser tests require Chrome by default. They start isolated local frontend/backend servers and exercise the real manual-control API against a loopback UDP emulator. They do not fly an aircraft. Backend integration tests also require permission to bind local sockets. Production builds require access to the configured Google Fonts resources; browser tests use an offline font fixture.
+Browser tests use Chrome by default and start isolated local servers. Integration tests require local socket access. Production builds fetch the configured Google Fonts; browser tests use an offline font fixture.
 
-GitHub Actions runs backend tests, model verification, synthetic-video pipeline checks, API import checks, and frontend type checking, linting, and production build.
-
-## Project structure
+## Repository Layout
 
 ```text
 backend/
-  main.py                         FastAPI application
-  app/api/v1/                     HTTP and WebSocket routes
-  app/core/                       Environment settings, constants, and paths
-  app/schemas/                    Request and response contracts
-  app/services/drone_control/     Tello controller and UDP transport
-  app/services/streaming/         Sources, channel coordination, frame stages
-  app/services/tracking/          Tracking helpers and target matching
-  app/services/zone/              Restricted-zone geometry
-  app/services/alert/             Alerts and evidence capture
-  models/                         Detection registry and checkpoints
-  tests/                          Unit, workflow, and UDP integration tests
+├── app/api/          HTTP and WebSocket endpoints
+├── app/core/         Configuration and paths
+├── app/schemas/      Shared request and response contracts
+├── app/services/     Vision, streaming, tracking, alerts, and drone control
+├── models/           Checkpoint registry
+└── tests/            Unit and integration tests
 frontend/
-  src/components/tactical/        Dashboard and atomic UI components
-  src/hooks/                      State, effects, and interaction workflows
-  src/services/                   API clients and queries
-  src/types/                      Shared contracts and component props
-  src/constants/                  Network settings and visual tokens
-  src/utils/                      Reusable domain helpers
-  tests/                          Unit, architecture, and browser tests
-docs/                             Setup, workflow, and architecture guides
+├── src/components/   Dashboard components
+├── src/hooks/        State and interaction workflows
+├── src/services/     API clients and queries
+├── src/types/        Shared TypeScript contracts
+├── src/constants/    Network and visual configuration
+├── src/utils/        Reusable domain logic
+└── tests/            Unit, architecture, and browser tests
+docs/                 Setup and workflow guides
 ```
 
 ## Documentation
 
-- [Video testing and suspect selection](docs/video-testing-and-suspect-selection.md)
-- [Detection model configuration](backend/models/README.md)
-- [Person re-identification](docs/person-reidentification.md)
-- [Tello manual control](docs/tello-manual-control.md)
-- [System documentation](docs/AERO_GUARD_SYSTEM_DOCUMENTATION.md)
-- [Repository engineering guidelines](AGENTS.md)
+| Guide | Contents |
+| --- | --- |
+| [Video and suspect selection](docs/video-testing-and-suspect-selection.md) | Uploads, playback, and frozen-frame selection |
+| [Detection models](backend/models/README.md) | Checkpoints, profiles, and trackers |
+| [Person re-identification](docs/person-reidentification.md) | X-TFCLIP setup and cross-camera matching |
+| [Tello manual control](docs/tello-manual-control.md) | Simulation, Wi-Fi connection, and control behavior |
+| [System documentation](docs/AERO_GUARD_SYSTEM_DOCUMENTATION.md) | Broader project architecture |
+| [Engineering guidelines](AGENTS.md) | Repository conventions |
