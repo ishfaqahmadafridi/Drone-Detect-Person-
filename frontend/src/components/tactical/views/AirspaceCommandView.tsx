@@ -1,5 +1,5 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { COMMAND_VIEW_TITLES, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import { useToggle } from "@/hooks/useToggle";
@@ -28,17 +28,9 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
     <div className="flex flex-col gap-4 min-w-0">
       {/* 1. Operations Header & Status Pill */}
       <div className={TACTICAL_VIEW_STYLES.AirspaceCommandView_div_className}>
-        <div>
-          <div className={TACTICAL_VIEW_STYLES.DeviceDeckHeader_div_className}>
-            OPERATIONS / SECTOR 04
-          </div>
-          <h1 className={TACTICAL_VIEW_STYLES.AirspaceCommandView_h1_className}>
-            Airspace Command
-          </h1>
-          <p className={TACTICAL_VIEW_STYLES.AirspaceCommandView_p_className}>
-            North perimeter, Sector 04
-          </p>
-        </div>
+        <h1 className={TACTICAL_VIEW_STYLES.AirspaceCommandView_h1_className}>
+          {COMMAND_VIEW_TITLES[activeViewMode]}
+        </h1>
 
         <div className="flex items-center">
           <span

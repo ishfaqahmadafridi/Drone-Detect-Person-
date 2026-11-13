@@ -1010,9 +1010,8 @@ export const TACTICAL_VIEW_STYLES = {
   StreamZoomControls_button_className: "bg-blue-600/25 text-slate-50 border border-blue-500/50 shadow-sm font-semibold",
   StreamZoomControls_button_className_2: "text-slate-400 hover:text-slate-100 hover:bg-slate-800/80",
   DroneDashboard_div_className: "flex flex-col h-screen w-screen overflow-hidden bg-[#F4F6F9] text-slate-100",
-  AirspaceCommandView_div_className: "flex items-center justify-between pb-4 border-b border-slate-700/60 select-none",
-  AirspaceCommandView_h1_className: "text-xl sm:text-2xl font-bold text-slate-100 tracking-tight mt-0.5",
-  AirspaceCommandView_p_className: "text-xs text-slate-400 mt-1",
+  AirspaceCommandView_div_className: "flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-700/60 select-none",
+  AirspaceCommandView_h1_className: "text-lg sm:text-xl font-semibold text-slate-100 tracking-tight",
   AirspaceCommandView_span_className: "border-emerald-500/50 bg-emerald-950/30 text-emerald-400",
   AirspaceCommandView_span_className_2: "border-blue-500/50 bg-blue-950/30 text-blue-400",
   useZoneCanvas_fillStyle: "rgba(0, 242, 254, 0.2)",
@@ -1069,3 +1068,5 @@ export const BRAND_IDENTITY = {
     offline: { label: "Offline", description: "Backend telemetry disconnected", className: "border-slate-700/80 bg-slate-900 text-slate-400" },
   },
 } as const;
+
+export const COMMAND_VIEW_TITLES = { aerial: "Airspace Command", ground: "Perimeter Command" } as const;
