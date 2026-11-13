@@ -1,10 +1,11 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { BRAND_IDENTITY, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import React from "react";
+import { BrandMark } from "../branding/BrandMark";
 import { SidebarHeaderProps } from "@/types";
-import { Shield, ChevronLeft, ChevronRight, Radio, Camera } from "lucide-react";
+import { ChevronLeft, ChevronRight, Radio, Camera } from "lucide-react";
 
 export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   isCollapsed,
@@ -18,17 +19,15 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
     <div className={TACTICAL_VIEW_STYLES.SidebarHeader_div_className}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5 overflow-hidden">
-          <div className={TACTICAL_VIEW_STYLES.SidebarHeader_div_className_2}>
-            <Shield className={TACTICAL_VIEW_STYLES.SidebarHeader_Shield_className} />
-          </div>
+          <BrandMark className={BRAND_IDENTITY.sidebarMarkClass} label={isCollapsed ? BRAND_IDENTITY.name : ""} />
 
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
               <span className={TACTICAL_VIEW_STYLES.SidebarHeader_span_className}>
-                AERO-GUARD
+                {BRAND_IDENTITY.name}
               </span>
               <span className={TACTICAL_VIEW_STYLES.SidebarHeader_span_className_2}>
-                DEFENSE HUD v2.5
+                {BRAND_IDENTITY.tagline}
               </span>
             </div>
           )}

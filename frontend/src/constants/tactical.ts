@@ -577,9 +577,6 @@ export const TACTICAL_VIEW_STYLES = {
   FlightDeckHeader_Navigation_className: "w-4 h-4 text-cyan-400",
   AudioAlertToggle_button_className: "bg-red-500/20 text-red-300 border-red-500/50 hover:bg-red-500/30",
   AudioAlertToggle_button_className_2: "bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700",
-  BrandCluster_div_className: "w-7 h-7 rounded-md bg-slate-800/80 border border-slate-700/80 flex items-center justify-center shrink-0",
-  BrandCluster_Shield_className: "w-4 h-4 text-slate-200",
-  BrandCluster_span_className: "font-semibold text-sm tracking-wider text-slate-100 uppercase",
   CameraWallTrigger_button_className: "flex items-center gap-1.5 px-3 py-1.5 rounded-md font-display text-xs font-semibold uppercase tracking-wider bg-blue-600/15 hover:bg-blue-600/25 active:bg-blue-600/35 text-blue-200 border border-blue-500/40 hover:border-blue-400/70 transition-all cursor-pointer",
   Header_header_className: "h-14 border-b border-slate-700/60 bg-[#F4F6F9] px-6 flex items-center justify-between z-30 shrink-0 select-none",
   HeaderActions_VolumeX_className: "w-3.5 h-3.5 text-amber-400",
@@ -827,8 +824,6 @@ export const TACTICAL_VIEW_STYLES = {
   SidebarFooter_div_className_2: "flex items-center justify-between text-[10px] font-mono-code text-slate-400 px-1 pt-1",
   SidebarFooter_span_className: "text-emerald-400 font-bold shrink-0 ml-1",
   SidebarHeader_div_className: "flex flex-col border-b border-slate-800/80 p-3.5",
-  SidebarHeader_div_className_2: "relative p-2 rounded-lg bg-cyan-950/60 border border-cyan-400/40 text-cyan-400 shrink-0",
-  SidebarHeader_Shield_className: "w-5 h-5 text-cyan-300",
   SidebarHeader_span_className: "font-display font-black text-sm tracking-widest text-slate-50 uppercase truncate",
   SidebarHeader_span_className_2: "font-mono-code text-[10px] text-cyan-400/80 tracking-wider truncate flex items-center gap-1",
   SidebarHeader_button_className: "p-1.5 rounded-md text-slate-400 hover:text-cyan-300 hover:bg-slate-800/80 transition-colors shrink-0",
@@ -1054,3 +1049,23 @@ export const DOMAIN_BADGE_STYLES = {
 } as const;
 
 export const TELEMETRY_DISPLAY = { millisecondsPerSecond: 1000 } as const;
+
+export const BRAND_IDENTITY = {
+  name: "AERO-GUARD",
+  tagline: "AERIAL SECURITY",
+  markPath: "/brand/aero-guard-mark.svg",
+  markSize: 64,
+  clusterClass: "flex min-w-0 items-center gap-3 select-none",
+  headerMarkClass: "size-9 shrink-0 rounded-[9px] sm:size-10 sm:rounded-[10px]",
+  sidebarMarkClass: "size-9 shrink-0 rounded-[9px]",
+  wordmarkGroupClass: "flex min-w-0 flex-col gap-0.5",
+  wordmarkClass: "whitespace-nowrap text-sm font-bold leading-none tracking-[0.12em] text-slate-100 sm:text-[15px]",
+  taglineClass: "text-[8px] font-semibold leading-none tracking-[0.24em] text-slate-400 sm:text-[9px]",
+  connectionDividerClass: "ml-1 border-l border-slate-700/80 pl-3 sm:ml-3 sm:pl-4",
+  connectionClass: "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2 py-1 text-[10px] font-semibold leading-none sm:px-2.5 sm:text-[11px]",
+  connectionIconClass: "size-3.5 shrink-0",
+  connection: {
+    live: { label: "Live", description: "Backend telemetry connected", className: "border-emerald-500/20 bg-emerald-950 text-emerald-200" },
+    offline: { label: "Offline", description: "Backend telemetry disconnected", className: "border-slate-700/80 bg-slate-900 text-slate-400" },
+  },
+} as const;

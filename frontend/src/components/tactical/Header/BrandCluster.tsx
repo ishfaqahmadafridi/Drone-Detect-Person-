@@ -1,29 +1,23 @@
 "use client";
-import { STATUS_ICON, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
+import { BRAND_IDENTITY } from "@/constants/tactical";
+import type { BrandClusterProps } from "@/types";
+import { BrandMark } from "../branding/BrandMark";
+import { TelemetryConnectionBadge } from "./TelemetryConnectionBadge";
 
-import React from "react";
-import { BrandClusterProps } from "@/types";
-import { Shield, Wifi, WifiOff } from "lucide-react";
-
-export const BrandCluster: React.FC<BrandClusterProps> = ({ isConnected }) => {
+export function BrandCluster({ isConnected }: BrandClusterProps) {
   return (
-    <div className="flex items-center gap-2.5 select-none">
-      <div className={TACTICAL_VIEW_STYLES.BrandCluster_div_className}>
-        <Shield className={TACTICAL_VIEW_STYLES.BrandCluster_Shield_className} />
+    <div className={BRAND_IDENTITY.clusterClass}>
+      <BrandMark className={BRAND_IDENTITY.headerMarkClass} />
+      <div className={BRAND_IDENTITY.wordmarkGroupClass}>
+        <span className={BRAND_IDENTITY.wordmarkClass}>{BRAND_IDENTITY.name}</span>
+        <span className={BRAND_IDENTITY.taglineClass}>{BRAND_IDENTITY.tagline}</span>
       </div>
-      <div className="flex items-center gap-2">
-        <span className={TACTICAL_VIEW_STYLES.BrandCluster_span_className}>
-          AERO-GUARD
-        </span>
-        {isConnected ? (
-          <Wifi aria-label="Telemetry connected" className={`${STATUS_ICON.base} ${STATUS_ICON.ok}`} />
-        ) : (
-          <WifiOff aria-label="Connecting to telemetry" className={`${STATUS_ICON.base} ${STATUS_ICON.warn}`} />
-        )}
+      <div className={BRAND_IDENTITY.connectionDividerClass}>
+        <TelemetryConnectionBadge isConnected={isConnected} />
       </div>
     </div>
   );
-};
+}
 
 export default BrandCluster;

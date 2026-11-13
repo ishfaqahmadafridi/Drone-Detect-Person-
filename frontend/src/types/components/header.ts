@@ -63,3 +63,8 @@ export interface AudioAlertToggleProps {
 export interface HeaderRefreshButtonProps {
   onRefresh: () => void;
 }
+
+export interface BrandMarkProps {
+  className?: string;
+  label?: string;
+}
