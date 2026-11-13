@@ -75,3 +75,15 @@ def test_promoted_camera_overrides_matching_global_view(monkeypatch):
     monkeypatch.setattr(channels, "_channels", {"ground": promoted})
     assert channels.get_stream_session("ground") is promoted
     assert channels.get_stream_session() is default
+
+
+@pytest.mark.parametrize("view,source", [("aerial", "webcam"), ("ground", "tello")])
+def test_invalid_source_perspective_preserves_existing_stream(view, source):
+    streamer, perspective, tracking = MagicMock(), MagicMock(), MagicMock()
+    perspective.config.view_mode = view
+    controller = StreamLifecycleController(streamer, perspective, tracking)
+    with pytest.raises(HTTPException) as error:
+        controller.set_source(source)
+    assert error.value.status_code == 409
+    streamer.invalidate.assert_not_called()
+    perspective.set_source.assert_not_called()

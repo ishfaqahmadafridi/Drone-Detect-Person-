@@ -1,15 +1,17 @@
 "use client";
 
+import { useStore } from "react-redux";
 import { useEffect, useRef, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setTelemetryData, setConnectionStatus } from "@/store/slices/telemetrySlice";
 import { useAudioAlert } from "@/hooks/useAudioAlert";
 import { isThreatDanger } from "@/utils/threatUtils";
 import { getWebSocketTelemetryUrl, NETWORK_CONFIG } from "@/constants/network";
-import { TelemetryData } from "@/types";
+import { RootState, TelemetryData } from "@/types";
 
 export function useTelemetrySocket() {
   const dispatch = useAppDispatch();
+  const appStore = useStore<RootState>();
   const channel = useAppSelector(state => state.telemetry.view_mode) === "ground" ? "ground" : "aerial";
   const { playIntrusionSiren } = useAudioAlert();
   const wsRef = useRef<WebSocket | null>(null);
@@ -23,6 +25,11 @@ export function useTelemetrySocket() {
 
   const connect = useCallback(() => {
     if (typeof window === "undefined") return;
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+    dispatch(setConnectionStatus(false));
 
     if (wsRef.current) {
       try {
@@ -37,15 +44,18 @@ export function useTelemetrySocket() {
 
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
+    const isCurrentSocket = () => wsRef.current === ws && appStore.getState().telemetry.view_mode === channel;
 
     ws.onopen = () => {
+      if (!isCurrentSocket()) return;
       dispatch(setConnectionStatus(true));
     };
 
     ws.onmessage = (event) => {
-      if (wsRef.current !== ws) return;
+      if (!isCurrentSocket()) return;
       try {
         const data: TelemetryData = JSON.parse(event.data);
+        if (data.view_mode && data.view_mode !== channel) return;
         dispatch(setTelemetryData(data));
 
         if (isThreatDanger(data.threat_level)) {
@@ -57,7 +67,7 @@ export function useTelemetrySocket() {
     };
 
     ws.onclose = () => {
-      if (wsRef.current !== ws) return;
+      if (!isCurrentSocket()) return;
       dispatch(setConnectionStatus(false));
       reconnectTimeoutRef.current = setTimeout(() => {
         connectRef.current();
@@ -71,7 +81,7 @@ export function useTelemetrySocket() {
         // ignore
       }
     };
-  }, [dispatch, channel]);
+  }, [dispatch, channel, appStore]);
 
   useEffect(() => {
     connectRef.current = connect;

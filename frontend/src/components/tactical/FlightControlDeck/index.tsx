@@ -1,2 +1,2 @@
-export * from "./FlightControlDeck";
-export { default } from "./FlightControlDeck";
+export * from "./DeviceDeckCard";
+export { default } from "./DeviceDeckCard";

@@ -11,10 +11,6 @@ import { SlidersHorizontal } from "lucide-react";
 import { DroneMovementPanel } from "./manual/DroneMovementPanel";
 
 export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
-  avionics,
-  flightState,
-  altitude,
-  batteryPercent,
   isCommandPending,
   onCommand,
   viewMode = "aerial",
@@ -23,31 +19,15 @@ export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
 }) => {
   return (
     <div className={TACTICAL_VIEW_STYLES.DeviceDeckCard_div_className}>
-      {/* 1. Header Cluster */}
-      <DeviceDeckHeader viewMode={viewMode} />
+      {viewMode === "ground" ? (
+        <>
+          <DeviceDeckHeader viewMode={viewMode} />
+          <DeviceDeckGrid />
+          <DeviceDeckActions isCommandPending={isCommandPending} onCommand={onCommand} viewMode={viewMode} />
+        </>
+      ) : <DroneMovementPanel />}
 
-      {/* 2. Sensor Telemetry 2-Column Grid */}
-      <DeviceDeckGrid
-        altitude={altitude}
-        altitudeM={avionics?.altitude_m}
-        groundSpeedMs={avionics?.ground_speed_ms}
-        compassHeadingDeg={avionics?.compass_heading_deg}
-        gpsSats={avionics?.gps_sats}
-        batteryPercent={batteryPercent || avionics?.battery_percent}
-        latencyMs={48}
-        viewMode={viewMode}
-      />
-
-      {/* 3. Flight / Sensor Control 2x2 Grid */}
-      <DeviceDeckActions
-        flightState={flightState}
-        isCommandPending={isCommandPending}
-        onCommand={onCommand}
-        viewMode={viewMode}
-      />
-
-      {/* 4. Detection Tuning Trigger */}
-      {viewMode === "aerial" && <DroneMovementPanel />}
+      {/* Detection tuning */}
       {onToggleTuning && (
         <button
           onClick={onToggleTuning}

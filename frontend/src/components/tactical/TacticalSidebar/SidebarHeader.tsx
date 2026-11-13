@@ -20,7 +20,6 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
         <div className="flex items-center gap-2.5 overflow-hidden">
           <div className={TACTICAL_VIEW_STYLES.SidebarHeader_div_className_2}>
             <Shield className={TACTICAL_VIEW_STYLES.SidebarHeader_Shield_className} />
-            <div className={TACTICAL_VIEW_STYLES.SidebarHeader_div_className_3} />
           </div>
 
           {!isCollapsed && (
@@ -29,7 +28,6 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
                 AERO-GUARD
               </span>
               <span className={TACTICAL_VIEW_STYLES.SidebarHeader_span_className_2}>
-                <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_2} />
                 DEFENSE HUD v2.5
               </span>
             </div>

@@ -1,5 +1,43 @@
 import { DroneAvionics } from "../index";
-import type { DroneDirection, DroneDirectionOption } from "../droneControl";
+import type { DroneControlStatus, DroneDirection, DroneDirectionOption, DroneManualAction, DronePadLayout, DroneTelemetryTile, DroneVideoStatus } from "../droneControl";
+
+export interface DronePadProps {
+  pad: DronePadLayout;
+  disabled: boolean;
+  held: readonly DroneDirection[];
+  onPress: (direction: DroneDirection) => void;
+  onRelease: (direction: DroneDirection) => void;
+}
+
+export interface DroneStatusHeaderProps {
+  status: DroneControlStatus | null;
+  message: string;
+}
+
+export interface DroneTelemetryStripProps {
+  tiles: readonly DroneTelemetryTile[];
+}
+
+export interface DroneFlightActionsProps {
+  status: DroneControlStatus | null;
+  pending: boolean;
+  ownsControl: boolean;
+  onConnect: (confirmedLanded?: boolean) => void;
+  onAction: (action: DroneManualAction | "disconnect") => void;
+}
+
+export interface DroneCameraControlProps {
+  video: DroneVideoStatus | null;
+  videoError: string;
+  videoPending: boolean;
+  disabled: boolean;
+  onStart: () => void;
+}
+
+export interface DroneEmergencyButtonProps {
+  pending: boolean;
+  onConfirm: () => void;
+}
 
 export interface DroneDirectionButtonProps {
   option: DroneDirectionOption;
@@ -45,35 +83,7 @@ export interface AvionicsActionButtonsProps {
   onConnectAirLink?: () => void;
 }
 
-export interface FlightControlDeckProps {
-  flightState: string;
-  altitude: number;
-  batteryPercent: number;
-  isCommandPending: boolean;
-  onCommand: (action: string) => void;
-}
-
-export interface FlightDeckHeaderProps {
-  className?: string;
-}
-
-export interface FlightTelemetryBarProps {
-  altitude: number;
-  batteryPercent: number;
-  flightState: string;
-}
-
-export interface FlightActionGridProps {
-  flightState: string;
-  isCommandPending: boolean;
-  onCommand: (action: string) => void;
-}
-
 export interface DeviceDeckCardProps {
-  avionics?: DroneAvionics;
-  flightState: string;
-  altitude: number;
-  batteryPercent: number;
   isCommandPending: boolean;
   onCommand: (action: string) => void;
   viewMode?: "aerial" | "ground";
@@ -85,19 +95,7 @@ export interface DeviceDeckHeaderProps {
   viewMode?: "aerial" | "ground";
 }
 
-export interface DeviceDeckGridProps {
-  altitude: number;
-  altitudeM?: number;
-  groundSpeedMs?: number;
-  compassHeadingDeg?: number;
-  gpsSats?: number;
-  batteryPercent?: number;
-  latencyMs?: number;
-  viewMode?: "aerial" | "ground";
-}
-
 export interface DeviceDeckActionsProps {
-  flightState: string;
   isCommandPending: boolean;
   onCommand: (action: string) => void;
   viewMode?: "aerial" | "ground";

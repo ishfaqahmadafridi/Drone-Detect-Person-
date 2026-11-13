@@ -1,16 +1,16 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { STATUS_ICON, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import React from "react";
 import { ZoneBannerProps } from "@/types";
-import { Check, RotateCcw, Trash2, X } from "lucide-react";
+import { Check, Crosshair, RotateCcw, Trash2, X } from "lucide-react";
 
 export const ZoneBanner: React.FC<ZoneBannerProps> = ({ onSave, onReset, onClear, onCancel }) => {
   return (
     <div className={TACTICAL_VIEW_STYLES.ZoneBanner_div_className}>
       <span className={TACTICAL_VIEW_STYLES.ZoneBanner_span_className}>
-        🎯 <strong>ZONE EDITOR:</strong> Drag points or click to place vertices.
+        <Crosshair aria-hidden="true" className={STATUS_ICON.base} /> <strong>ZONE EDITOR:</strong> Drag points or click to place vertices.
       </span>
       <div className="flex gap-1.5">
         <button

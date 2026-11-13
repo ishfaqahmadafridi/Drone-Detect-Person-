@@ -64,3 +64,10 @@ export interface EvidenceListResponse {
   count: number;
   records: SnapshotItem[];
 }
+
+export interface StreamSourceResponse {
+  message: string;
+  source_type: StreamSourceType;
+  source_path: string;
+  effective_url?: string | null;
+}

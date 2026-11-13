@@ -1,5 +1,6 @@
 """Serialize source and perspective changes with capture and inference."""
 from fastapi import HTTPException
+from app.core.constants import STREAM_SOURCE_TYPES_BY_VIEW
 
 
 class StreamLifecycleController:
@@ -23,6 +24,10 @@ class StreamLifecycleController:
 
     def set_source(self, source_type, source_path=None, transport="tcp"):
         with self.streamer.selection.lock, self.streamer.source_lock:
+            view = self.perspective.config.view_mode
+            allowed = STREAM_SOURCE_TYPES_BY_VIEW.get(view)
+            if allowed is not None and source_type not in allowed:
+                raise HTTPException(409, f"Source '{source_type}' is unavailable in the {view} perspective.")
             self.streamer.invalidate()
             self.perspective.pipeline_processor.detector.reset_tracking()
             self.tracking.set_tracking_mode("auto")

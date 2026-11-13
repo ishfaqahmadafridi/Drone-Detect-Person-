@@ -1,6 +1,7 @@
 import React from "react";
-import { SUSPECT_FREEZE_STYLES, VIDEO_TESTING } from "@/constants/tactical";
+import { STATUS_ICON, SUSPECT_FREEZE_STYLES, VIDEO_TESTING } from "@/constants/tactical";
 import type { FrozenSuspectChoicesProps } from "@/types";
+import { Check } from "lucide-react";
 
 export const FrozenSuspectChoices: React.FC<FrozenSuspectChoicesProps> = ({
   snapshot, selectedIds, pending, onToggle,
@@ -15,7 +16,7 @@ export const FrozenSuspectChoices: React.FC<FrozenSuspectChoicesProps> = ({
         onClick={() => onToggle(person.id)}
         disabled={pending}
       >
-        {selectedIds.includes(person.id) ? "✓ Selected" : "Select"} #{person.id}
+        {selectedIds.includes(person.id) ? <><Check aria-hidden="true" className={STATUS_ICON.base} /> Selected</> : "Select"} #{person.id}
       </button>
     ))}
   </div>

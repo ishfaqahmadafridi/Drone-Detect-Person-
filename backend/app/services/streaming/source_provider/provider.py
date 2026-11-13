@@ -72,6 +72,10 @@ class StreamSourceProvider:
     # ------------------------------------------------------------------
 
     @property
+    def last_frame_at(self):
+        return getattr(self._state.active_source, "last_frame_at", None)
+
+    @property
     def source_type(self) -> str:
         return self._state.source_type
 

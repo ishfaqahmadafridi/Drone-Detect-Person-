@@ -54,3 +54,14 @@ export interface DetectedPersonsModalProps {
   onClose: () => void;
   viewMode?: "aerial" | "ground";
 }
+
+export interface TelemetryCardMetrics {
+  totalPersons: number;
+  intrudersCount: number;
+  fps: number;
+  evidenceCount?: number;
+}
+
+export interface TelemetryCardDefinition extends TelemetryCardTileProps {
+  id: string;
+}

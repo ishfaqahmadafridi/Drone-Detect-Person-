@@ -1,6 +1,6 @@
 """Manual control API; video source selection is intentionally independent."""
 from fastapi import APIRouter
-from app.schemas.drone import DroneControlSession, DroneControlAction, DroneControlInput, DroneControlStatus
+from app.schemas.drone import DroneControlSession, DroneControlConnect, DroneControlAction, DroneControlInput, DroneControlStatus, DroneVideoStatus
 from app.services.drone_control.controller import drone_movement_controller
 
 router = APIRouter(prefix="/drone/manual", tags=["Manual Drone Control"])
@@ -12,8 +12,8 @@ def status():
 
 
 @router.post("/connect", response_model=DroneControlStatus)
-def connect(request: DroneControlSession):
-    return drone_movement_controller.connect(request.session_id)
+def connect(request: DroneControlConnect):
+    return drone_movement_controller.connect(request.session_id, confirmed_landed=request.confirmed_landed)
 
 
 @router.post("/input", response_model=DroneControlStatus)
@@ -26,6 +26,29 @@ def action(request: DroneControlAction):
     return drone_movement_controller.action(request.session_id, request.action)
 
 
+@router.post("/emergency", response_model=DroneControlStatus)
+def emergency(request: DroneControlSession):
+    return drone_movement_controller.emergency(request.session_id)
+
+
 @router.post("/disconnect", response_model=DroneControlStatus)
 def disconnect(request: DroneControlSession):
     return drone_movement_controller.disconnect(request.session_id)
+
+
+def _aerial_stream():
+    # Lazy import keeps isolated controller tests independent of vision startup.
+    from app.services.streaming.channels import get_stream_session
+    return get_stream_session(channel="aerial")
+
+
+@router.post("/video", response_model=DroneVideoStatus)
+def start_camera(request: DroneControlSession):
+    from app.services.drone_control.video import start_video
+    return start_video(drone_movement_controller, request.session_id, _aerial_stream())
+
+
+@router.get("/video", response_model=DroneVideoStatus)
+def camera_status():
+    from app.services.drone_control.video import video_status
+    return video_status(_aerial_stream())

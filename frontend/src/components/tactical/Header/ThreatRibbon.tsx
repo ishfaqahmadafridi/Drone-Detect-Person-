@@ -1,16 +1,13 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { STATUS_ICON, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import React from "react";
 import { ThreatRibbonProps } from "@/types";
+import { ShieldAlert, ShieldCheck } from "lucide-react";
 
 export const ThreatRibbon: React.FC<ThreatRibbonProps> = ({ threatLevel, alertMsg }) => {
   const isDanger = threatLevel === "INTRUSION";
-
-  const dotColor = isDanger
-    ? TACTICAL_VIEW_STYLES.BatteryHealthGauge_div_className_4
-    : TACTICAL_VIEW_STYLES.CardHeader_span_className_2;
 
   const pillStyle = isDanger
     ? TACTICAL_VIEW_STYLES.ThreatRibbon_color
@@ -26,7 +23,9 @@ export const ThreatRibbon: React.FC<ThreatRibbonProps> = ({ threatLevel, alertMs
       aria-live="polite"
       className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs font-mono-code font-medium tracking-wide ${pillStyle}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+      {isDanger
+        ? <ShieldAlert aria-hidden="true" className={`${STATUS_ICON.base} ${STATUS_ICON.danger}`} />
+        : <ShieldCheck aria-hidden="true" className={`${STATUS_ICON.base} ${STATUS_ICON.ok}`} />}
       <span>{displayLabel}</span>
     </div>
   );

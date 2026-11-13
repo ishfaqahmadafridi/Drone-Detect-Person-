@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { ALERTS_QUERY_KEY } from "@/services/queries/useAlertsQuery";
@@ -14,6 +14,7 @@ import { usePerspectiveSelection } from "./usePerspectiveSelection";
 import { streamApi } from "@/services/api/streamApi";
 import { TacticalNavTab } from "@/types";
 import { TAB_ROUTE_MAP, ROUTE_TAB_MAP } from "@/constants";
+import { SIDEBAR_AUTO_COLLAPSE_QUERY } from "@/constants/tactical";
 
 export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
   const queryClient = useQueryClient();
@@ -32,6 +33,15 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
   const activeTab = selectedTab ?? routeTab;
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
+  // Narrow screens start collapsed (read after mount to keep SSR markup stable) and follow resizes.
+  useEffect(() => {
+    const query = window.matchMedia(SIDEBAR_AUTO_COLLAPSE_QUERY);
+    const sync = () => setIsSidebarCollapsed(query.matches);
+    const frame = requestAnimationFrame(sync);
+    query.addEventListener("change", sync);
+    return () => { cancelAnimationFrame(frame); query.removeEventListener("change", sync); };
+  }, []);
+
   const { view_mode } = useAppSelector((state) => state.telemetry);
   const selectPerspective = usePerspectiveSelection();
 
@@ -47,7 +57,7 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
 
   const handleCaptureSnapshot = async () => {
     try {
-      await streamApi.captureSnapshot();
+      await streamApi.captureSnapshot(view_mode);
       queryClient.invalidateQueries({ queryKey: SNAPSHOTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ALERTS_QUERY_KEY });
     } catch (e) {

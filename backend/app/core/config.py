@@ -27,14 +27,37 @@ class TelloControlConfig:
     command_timeout: float = float(os.getenv("TELLO_COMMAND_TIMEOUT_SECONDS", "10"))
     send_interval: float = float(os.getenv("TELLO_SEND_INTERVAL_SECONDS", "0.05"))
     input_timeout: float = float(os.getenv("TELLO_INPUT_TIMEOUT_SECONDS", "0.6"))
+    # takeoff/land are acknowledged only after the manoeuvre finishes.
+    flight_command_timeout: float = float(os.getenv("TELLO_FLIGHT_COMMAND_TIMEOUT_SECONDS", "20"))
+    # Only the idempotent SDK-mode handshake is retried; flight commands never are.
+    connect_attempts: int = int(os.getenv("TELLO_CONNECT_ATTEMPTS", "3"))
+    # Minimum spacing before an acknowledged command; Tello drops commands sent too close together.
+    command_gap: float = float(os.getenv("TELLO_COMMAND_GAP_SECONDS", "0.1"))
+    state_port: int = int(os.getenv("TELLO_STATE_PORT", "8890"))
+    state_poll_interval: float = float(os.getenv("TELLO_STATE_POLL_SECONDS", "0.5"))
+    state_join_timeout: float = float(os.getenv("TELLO_STATE_JOIN_TIMEOUT_SECONDS", "1"))
+    state_stale: float = float(os.getenv("TELLO_STATE_STALE_SECONDS", "2.0"))
+    min_takeoff_battery: int = int(os.getenv("TELLO_MIN_TAKEOFF_BATTERY_PERCENT", "20"))
 
     def __post_init__(self):
         if self.mode not in {"simulation", "tello"}:
             raise ValueError("DRONE_CONTROL_MODE must be simulation or tello")
-        if min(self.command_timeout, self.send_interval, self.input_timeout) <= 0:
+        if min(self.command_timeout, self.send_interval, self.input_timeout,
+               self.flight_command_timeout, self.state_stale,
+               self.state_poll_interval, self.state_join_timeout) <= 0:
             raise ValueError("Tello control timeouts must be positive")
         if self.input_timeout <= self.send_interval:
             raise ValueError("Tello input timeout must exceed send interval")
+        if self.connect_attempts < 1 or self.command_gap < 0:
+            raise ValueError("Tello connect attempts must be >= 1 and command gap >= 0")
+        if not 0 <= self.min_takeoff_battery <= 100:
+            raise ValueError("Tello minimum takeoff battery must be 0-100")
+
+TELLO_VIDEO_HOST = os.getenv("TELLO_VIDEO_HOST", "0.0.0.0")
+TELLO_VIDEO_PORT = int(os.getenv("TELLO_VIDEO_PORT", "11111"))
+TELLO_VIDEO_TIMEOUT_MS = int(os.getenv("TELLO_VIDEO_TIMEOUT_MS", "4000"))
+TELLO_VIDEO_STALE_SECONDS = float(os.getenv("TELLO_VIDEO_STALE_SECONDS", "3"))
+TELLO_VIDEO_URL = f"udp://{TELLO_VIDEO_HOST}:{TELLO_VIDEO_PORT}?overrun_nonfatal=1&timeout={TELLO_VIDEO_TIMEOUT_MS * 1000}"
 
 TARGET_CLICK_MARGIN_PX = float(os.getenv("TARGET_CLICK_MARGIN_PX", "35"))
 TARGET_CLICK_RADIUS_PX = float(os.getenv("TARGET_CLICK_RADIUS_PX", "80"))

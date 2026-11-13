@@ -69,7 +69,7 @@ class EvidenceRecorder:
         snapshot_saved_path = None
         if is_active_alert and (now - self.last_snapshot_time >= self.snapshot_cooldown):
             self.last_snapshot_time = now
-            timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:19]
+            timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
             view_mode = str(details.get("view_mode", "aerial")).lower()
             filename = f"alert_{threat_level.lower()}_{view_mode}_{timestamp_str}.jpg"
             filepath = os.path.join(self.snapshots_dir, filename)
@@ -135,17 +135,20 @@ class EvidenceRecorder:
 
         return snapshot_saved_path
 
-    def capture_manual_snapshot(self, frame: Any, view_mode: str = "aerial") -> str:
+    def capture_manual_snapshot(self, frame: Any = None, view_mode: str = "aerial", *, jpeg: Optional[bytes] = None) -> str:
         """
         Instantly saves unthrottled manual evidence snapshot requested by operator,
         and indexes it into the SQLite database.
         """
-        timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:19]
+        timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
         clean_view = str(view_mode).lower().strip()
         filename = f"manual_{clean_view}_{timestamp_str}.jpg"
         filepath = os.path.join(self.snapshots_dir, filename)
-        if cv2 is not None and frame is not None:
-            cv2.imwrite(filepath, frame)
+        if jpeg is not None:
+            with open(filepath, "wb") as output:
+                output.write(jpeg)
+        elif cv2 is None or frame is None or not cv2.imwrite(filepath, frame):
+            raise OSError("Failed to save manual snapshot")
 
         file_size_kb = round(os.path.getsize(filepath) / 1024, 1) if os.path.exists(filepath) else 0.0
 
@@ -166,6 +169,6 @@ class EvidenceRecorder:
             )
             evidence_repository.insert(db_dto)
         except Exception as db_err:
-            print(f"[WARN] Failed to insert manual snapshot into database: {db_err}")
+            raise OSError("Failed to index manual snapshot") from db_err
 
         return filename

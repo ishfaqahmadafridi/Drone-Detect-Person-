@@ -213,7 +213,7 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
       ) : (
         <div className={TACTICAL_VIEW_STYLES.GroundStep3Form_div_className_4}>
           <CheckCircle2 className={TACTICAL_VIEW_STYLES.GroundStep3Form_CheckCircle2_className} />
-          <span>Parameters validated • Ready to test socket reachability</span>
+          <span>Parameters validated. Ready to test the connection.</span>
         </div>
       )}
 

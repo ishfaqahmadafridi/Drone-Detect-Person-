@@ -16,7 +16,6 @@ export const PerimeterCardHeader: React.FC<PerimeterCardHeaderProps> = ({
       <div className="flex items-center gap-2.5">
         <div className={TACTICAL_VIEW_STYLES.PerimeterCardHeader_div_className_2}>
           <Video className={TACTICAL_VIEW_STYLES.PerimeterCardHeader_Video_className} />
-          <div className={TACTICAL_VIEW_STYLES.PerimeterCardHeader_div_className_3} />
         </div>
         <div>
           <h3 className={TACTICAL_VIEW_STYLES.PerimeterCardHeader_h3_className}>

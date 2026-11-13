@@ -98,9 +98,6 @@ export interface SidebarBottomSectionProps {
 }
 
 export interface SidebarSystemHealthProps {
-  telemetryHz?: number;
-  inferenceFps?: number;
-  lastSync?: string;
   isCollapsed?: boolean;
 }
 

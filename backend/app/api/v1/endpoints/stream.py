@@ -10,6 +10,7 @@ from app.services.streaming.channels import get_stream_session, select_camera_se
 from app.services.streaming.connection_prober import stream_connection_service
 from app.schemas.config import StreamSourceRequest, StreamTestConnectionResponse
 from app.core.config import UPLOADS_DIR
+from app.core.constants import PUBLIC_STREAM_SOURCE_TYPES
 
 router = APIRouter()
 
@@ -27,7 +28,7 @@ def get_video_feed(stream_service=Depends(get_stream_session)):
 
 @router.post("/stream/source")
 def switch_source(req: StreamSourceRequest, stream_service=Depends(get_stream_session)):
-    valid_types = ["synthetic", "webcam", "file", "rtsp", "http"]
+    valid_types = sorted(PUBLIC_STREAM_SOURCE_TYPES)
     if req.source_type not in valid_types:
         raise HTTPException(status_code=400, detail=f"Invalid source_type. Must be one of {valid_types}")
     

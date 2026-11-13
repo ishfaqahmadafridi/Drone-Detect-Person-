@@ -1,8 +1,7 @@
 "use client";
 
-import { useToggle } from "@/hooks/useToggle";
 import React from "react";
-import { useTelemetryMetrics } from "@/hooks";
+import { useTelemetryCards } from "@/hooks/useTelemetryCards";
 import { TelemetryCardsProps } from "@/types";
 import { DetectedPersonsModal } from "./DetectedPersonsModal";
 import { TelemetryCardTile } from "./TelemetryCardTile";
@@ -11,59 +10,7 @@ export const TelemetryCards: React.FC<TelemetryCardsProps> = ({
   viewMode: propViewMode,
   layout = "horizontal",
 }) => {
-  const [isModalOpen, setIsModalOpen] = useToggle(false);
-  const {
-    totalPersons,
-    intrudersCount,
-    fps,
-    viewMode: hookViewMode,
-  } = useTelemetryMetrics();
-
-  const activeViewMode = propViewMode || hookViewMode || "aerial";
-
-  // Data matching the 5 telemetry cards in the target enterprise operations dashboard
-  const cards = [
-    {
-      id: "persons",
-      title: "Total Persons",
-      value: String(totalPersons).padStart(2, "0"),
-      subText: "Detected tracks",
-      isAlert: false,
-      onClick: () => setIsModalOpen(true),
-    },
-    {
-      id: "intruders",
-      title: "Active Intruders",
-      value: String(intrudersCount).padStart(2, "0"),
-      subText: "Restricted zone",
-      isAlert: intrudersCount > 0,
-      onClick: () => setIsModalOpen(true),
-    },
-    {
-      id: "processing",
-      title: "Processing FPS",
-      value: fps.toFixed(1),
-      subText: "Analyzed frames / second",
-      isAlert: false,
-      onClick: () => setIsModalOpen(true),
-    },
-    {
-      id: "evidence",
-      title: "Evidence Captures",
-      value: "12",
-      subText: "Demo session",
-      isAlert: false,
-      onClick: undefined,
-    },
-    {
-      id: "latency",
-      title: "Frame Interval",
-      value: fps > 0 ? `${Math.round(1000 / fps)} ms` : "--",
-      subText: "Measured processing interval",
-      isAlert: false,
-      onClick: undefined,
-    },
-  ];
+  const { cards, isModalOpen, activeViewMode, closeModal } = useTelemetryCards(propViewMode);
 
   const gridClass =
     layout === "horizontal"
@@ -88,7 +35,7 @@ export const TelemetryCards: React.FC<TelemetryCardsProps> = ({
       {/* Real-time Target Inspector Modal */}
       <DetectedPersonsModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         viewMode={activeViewMode}
       />
     </>

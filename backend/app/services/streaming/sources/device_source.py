@@ -20,6 +20,7 @@ class DeviceFrameSource(BaseFrameSource):
         self.transport = "udp" if str(transport).lower() == "udp" else "tcp"
         self.end_behavior = end_behavior
         self._cap = None
+        self.last_frame_at = None
         self._is_network_rtsp = is_rtsp_source(source_path)
         self._is_video_file = is_video_file(source_path)
         self._playback = FilePlayback(end_behavior)
@@ -63,6 +64,7 @@ class DeviceFrameSource(BaseFrameSource):
             else:
                 ok, frame = self._cap.read()
             if ok and frame is not None:
+                self.last_frame_at = time.monotonic()
                 return True, frame
         except Exception:
             # The provider owns simulation fallback for unavailable captures.

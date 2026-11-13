@@ -1,9 +1,11 @@
 # Tello manual movement
 
-The aerial flight decks now include a separate **Tello manual control** panel.
-It supports hold-to-move left/right, forward/backward, up/down, yaw, takeoff,
-land, and neutral/hover. The existing mission controls still use the older
-simulated avionics service; use the new manual panel for Tello operations.
+The aerial deck contains a single **Tello flight control** panel: mode and
+flight-state badges, live telemetry tiles (battery, height, temperature, link),
+an emergency motor stop, one primary action per state (Connect → Take off ⇄
+Land), and two hold-to-move pads. Keyboard: **WASD** moves, **↑/↓** climb and
+descend, **←/→** rotate; keys are ignored while typing in a form field. The duplicate simulated flight-action buttons have been removed from the flight
+decks. Use this single panel for flight controls; telemetry tiles remain separate.
 
 ## Try simulation
 
@@ -31,6 +33,15 @@ Simulation validates control state and command flow, not aircraft physics.
    TELLO_COMMAND_TIMEOUT_SECONDS=10
    TELLO_SEND_INTERVAL_SECONDS=0.05
    TELLO_INPUT_TIMEOUT_SECONDS=0.6
+   # takeoff/land are acknowledged only after the manoeuvre completes.
+   TELLO_FLIGHT_COMMAND_TIMEOUT_SECONDS=20
+   # Only the non-moving SDK-mode handshake is retried; flight commands never are.
+   TELLO_CONNECT_ATTEMPTS=3
+   TELLO_COMMAND_GAP_SECONDS=0.1
+   # Tello state broadcast (battery, height, temperature) and pre-flight battery floor.
+   TELLO_STATE_PORT=8890
+   TELLO_STATE_STALE_SECONDS=2.0
+   TELLO_MIN_TAKEOFF_BATTERY_PERCENT=20
    ```
 
 3. Start with the aircraft on the ground. Select **Connect controls** to enter
@@ -49,6 +60,35 @@ no-command automatic landing behavior rather than indefinitely keeping an
 abandoned connection alive. Network failure can prevent delivery of neutral;
 this is not a guarantee of instantaneous physical stopping.
 
+## SDK choice and reliability
+
+The controller speaks Ryze's published Tello SDK text protocol directly over
+UDP. That protocol *is* the official SDK; Ryze ships no maintained Python
+package. Third-party wrappers such as `djitellopy` were deliberately not adopted:
+they resend commands — including `takeoff` — on timeout, and claim the
+telemetry/video ports this backend already owns.
+
+Hardening against intermittent failures:
+
+| Symptom | Cause | Handling |
+| --- | --- | --- |
+| Connect sometimes fails first time | First `command` datagram lost or ignored while Wi-Fi settles | Handshake retried `TELLO_CONNECT_ATTEMPTS` times (it never moves the aircraft) |
+| Takeoff "times out" but the drone flew | Tello acknowledges only after the climb completes | Separate `TELLO_FLIGHT_COMMAND_TIMEOUT_SECONDS` (20 s) |
+| Command occasionally ignored | Sent immediately after an `rc` packet | `TELLO_COMMAND_GAP_SECONDS` spacing before acknowledged commands |
+| Late `ok` confirms the wrong command | No request IDs in the protocol | Pending replies drained before each command |
+| "Address already in use" after restart | Previous socket still tearing down | `SO_REUSEADDR`; clear error naming the port |
+| Silent failure off the TELLO network | ICMP port unreachable | Reported as "Tello unreachable" with the Wi-Fi hint |
+| Low-battery takeoff marks state unknown | Aircraft rejects takeoff | Pre-flight battery check refuses locally; no packet sent |
+
+Telemetry (battery, height, temperature) is read from the state broadcast on
+UDP 8890 and shown in the panel. When it goes stale the panel says the link may
+be lost. Telemetry is advisory: if the port cannot be bound, control still works.
+
+**Emergency stop** sends the SDK `emergency` command (motors off immediately;
+an airborne drone falls). It requires a confirmation click and is sent without
+waiting behind a pending takeoff or landing. Afterwards the state is unknown
+until the operator confirms the aircraft is on the ground.
+
 ## Connection and state behavior
 
 - One browser control session owns the aircraft at a time. Expired sessions may
@@ -56,6 +96,12 @@ this is not a guarantee of instantaneous physical stopping.
 - Takeoff and landing are explicit acknowledged commands. A timeout closes the
   transport, marks state unknown, and does not automatically retry. Reconnect
   and confirm landing before attempting another takeoff.
+- The browser allows 45 seconds for acknowledged control operations; movement
+  input retains its separate 2-second request limit. If backend command budgets
+  are increased, also adjust `DRONE_MOVEMENT.controlTimeoutMs` in
+  `frontend/src/constants/tactical.ts`.
+- Camera startup pauses browser heartbeats while the backend holds the command
+  lock, then renews the ownership lease before control input resumes.
 - Acknowledged commands are serialized with RC transmission; pending RC replies
   are drained first. Tello's text UDP protocol does not provide request IDs, so
   this cannot guarantee correlation of arbitrarily delayed acknowledgements.
@@ -64,9 +110,15 @@ this is not a guarantee of instantaneous physical stopping.
 - This service keeps control state in one process. Run a single backend worker.
   The existing app has no operator authentication: use it only on a trusted local
   network until authentication and access control are implemented.
-- The panel's aircraft state is command-derived, not measured telemetry. It does
-  not replace the simulated battery/altitude tiles with genuine Tello readings.
-- No video changes or automatic person-following commands are introduced.
+- The panel's aircraft state is command-derived. Battery, height, and temperature
+  come from Tello state broadcasts and are marked stale when updates stop.
+- Airspace and Settings share the manual control panel. Settings no longer
+  routes launch actions through the legacy simulation endpoint.
+- Manual evidence capture uses the selected channel's last processed JPEG. It
+  returns a conflict until a current frame exists, without advancing the camera
+  or running a second inference pass.
+- Camera streaming uses a separate SDK request and the existing aerial pipeline.
+  No automatic person-following commands are introduced.
 
 ## Evidence and verification
 
@@ -122,3 +174,36 @@ These tests require permission to bind local sockets. They do not connect to the
 Tello Wi-Fi network or validate actual flight smoothness. A real aircraft
 connection is confirmed only when Tello acknowledges SDK initialization; selecting
 a Wi-Fi network alone is not that confirmation.
+
+## Recovering an unknown flight state
+
+A rejected or timed-out flight command disables movement. Reconnecting alone
+must not assume the aircraft landed. Once the operator physically verifies the
+aircraft is on the ground with propellers stopped, the manual panel offers
+**Confirm drone is on the ground and reconnect**. This explicitly records the
+operator confirmation and initializes the SDK connection; it sends no takeoff
+or landing command. Confirmation is not measured aircraft telemetry. Do not use
+this recovery while the aircraft is airborne.
+
+## Live Tello camera
+
+After a successful SDK connection on the ground, the panel requests `streamon`
+through the same serialized command transport and selects the aerial Tello source.
+OpenCV's FFmpeg backend decodes UDP video on port 11111. Frames enter the existing
+detection and MJPEG pipeline; no additional inference loop is created. Starting
+video does not take off or land.
+
+The camera message distinguishes requested video from recently decoded frames.
+If video is missing or stops, simulation fallback keeps the viewer open. A waiting
+message does not confirm live video. Use **Start Tello camera** on the ground to
+retry. Select Synthetic Drone or uploaded footage to leave the camera source.
+
+Keep the laptop on Tello Wi-Fi and local UDP port 11111 available. Configure
+`TELLO_VIDEO_HOST`, `TELLO_VIDEO_PORT`, `TELLO_VIDEO_TIMEOUT_MS`, and
+`TELLO_VIDEO_STALE_SECONDS` for the receiver. The standard aircraft destination
+is port 11111; changing the receiver port alone does not reconfigure the drone.
+
+Automated checks cover streamon, source switching, freshness, bounded capture
+settings, and browser messages using loopback UDP and mocked capture. Actual
+aircraft video decoding remains unverified. Camera-start failure preserves the
+flight connection/state.

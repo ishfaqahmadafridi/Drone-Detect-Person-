@@ -4,13 +4,17 @@ import { DRONE_MOVEMENT } from "@/constants/tactical";
 
 export const DroneDirectionButton: React.FC<DroneDirectionButtonProps> = ({
   option, disabled, active, onPress, onRelease,
-}) => (
+}) => {
+  const Icon = option.icon;
+  return (
   <button
     type="button"
     disabled={disabled}
     aria-label={`Hold to move ${option.label.toLowerCase()}`}
+    aria-keyshortcuts={option.key.replace("Key", "")}
+    title={`${option.label} (${option.keyLabel})`}
     aria-pressed={active}
-    className={`${DRONE_MOVEMENT.buttonClass} ${active ? DRONE_MOVEMENT.activeClass : ""}`}
+    className={`${DRONE_MOVEMENT.directionButtonClass} ${DRONE_MOVEMENT.directionStateClass[active ? "active" : "idle"]}`}
     onPointerDown={event => {
       if (event.button !== 0) return;
       event.preventDefault();
@@ -34,6 +38,7 @@ export const DroneDirectionButton: React.FC<DroneDirectionButtonProps> = ({
       }
     }}
   >
-    {option.label}
+    <Icon aria-hidden="true" className={DRONE_MOVEMENT.directionIconClass} />
   </button>
-);
+  );
+};

@@ -17,13 +17,8 @@ export const TacticalWorkspace: React.FC<TacticalWorkspaceProps> = ({
   threatLevel,
   viewMode,
   onViewSelect,
-  flightState,
-  altitude,
-  batteryPercent,
   isCommandPending,
   onCommand,
-  onConnectAirLink,
-  onOpenFlightDeck,
   onRefresh,
   onSnapshotTrigger,
 }) => {
@@ -47,14 +42,8 @@ export const TacticalWorkspace: React.FC<TacticalWorkspaceProps> = ({
       {/* Primary Workspace Center: Dynamic Mission Command Viewport */}
       <MissionCommandViewport
         activeTab={activeTab}
-        avionics={avionics}
-        flightState={flightState}
-        altitude={altitude}
-        batteryPercent={batteryPercent}
         isCommandPending={isCommandPending}
         onCommand={onCommand}
-        onConnectAirLink={onConnectAirLink}
-        onOpenFlightDeck={onOpenFlightDeck}
         onRefresh={onRefresh}
         onSnapshotTrigger={onSnapshotTrigger}
         viewMode={viewMode}
