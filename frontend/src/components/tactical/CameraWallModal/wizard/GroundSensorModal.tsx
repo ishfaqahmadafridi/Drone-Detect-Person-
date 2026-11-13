@@ -44,7 +44,7 @@ export const GroundSensorModal: React.FC<GroundSensorModalProps> = ({
                 CONNECT GROUND SENSOR UPLINK
               </span>
               <span className={TACTICAL_VIEW_STYLES.GroundSensorModal_span_className_2}>
-                Wall CCTV (Wired PoE / Wireless Wi-Fi) • Mobile Patrol Smartphone
+                Wall CCTV or mobile phone camera
               </span>
             </div>
           </div>

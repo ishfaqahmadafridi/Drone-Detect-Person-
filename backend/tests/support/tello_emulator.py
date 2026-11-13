@@ -12,6 +12,7 @@ class TelloEmulator:
         self.packets = []
         self.reject = None
         self.drop = None
+        self.delays = {}  # command -> seconds before the acknowledgement is sent
         self.lock = threading.Lock()
         self.stop = threading.Event()
         self.thread = threading.Thread(target=self._run, daemon=True)
@@ -29,13 +30,24 @@ class TelloEmulator:
             with self.lock:
                 self.packets.append(command)
                 reject, drop = self.reject == command, self.drop == command
+                delay = self.delays.get(command, 0)
                 if reject:
                     self.reject = None
                 if drop:
                     self.drop = None
             if command.startswith("rc ") or drop:
                 continue
-            self.socket.sendto(b"error" if reject else b"ok", address)
+            reply = b"error" if reject else b"ok"
+            if delay:
+                threading.Timer(delay, self._reply, (reply, address)).start()
+            else:
+                self._reply(reply, address)
+
+    def _reply(self, reply, address):
+        try:
+            self.socket.sendto(reply, address)
+        except OSError:
+            pass  # Emulator closed before a delayed reply fired.
 
     def snapshot(self):
         with self.lock:

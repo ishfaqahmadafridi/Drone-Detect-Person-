@@ -41,7 +41,7 @@ export const AerialFeedCard: React.FC<AerialFeedCardProps> = ({ isActive, onSele
           className="w-full h-full object-contain pointer-events-none"
         />
         <div className={TACTICAL_VIEW_STYLES.AerialFeedCard_div_className_4}>
-          AI DETECT: ACTIVE • 1080p @ 25FPS
+          AI DETECTION ACTIVE
         </div>
       </div>
     </div>

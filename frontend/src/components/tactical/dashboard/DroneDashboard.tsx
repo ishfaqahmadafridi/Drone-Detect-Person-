@@ -46,13 +46,8 @@ export const DroneDashboard: React.FC<DroneDashboardProps> = ({ initialTab }) =>
         threatLevel={threatLevel}
         viewMode={viewMode}
         onViewSelect={handleViewSelect}
-        flightState={flight.flightState}
-        altitude={flight.altitude}
-        batteryPercent={flight.batteryPercent}
         isCommandPending={flight.isCommandPending}
         onCommand={flight.handleCommand}
-        onConnectAirLink={flight.handleConnectDroneLink}
-        onOpenFlightDeck={flight.handleLaunchDroneFlight}
         onRefresh={handleManualRefresh}
         onSnapshotTrigger={handleCaptureSnapshot}
       />

@@ -7,7 +7,7 @@ import { Film } from "lucide-react";
 import { PlayerPlaybackRibbonProps } from "@/types";
 
 export const PlayerPlaybackRibbon: React.FC<PlayerPlaybackRibbonProps> = ({
-  label = "RECORDED FOOTAGE • PLAYBACK MODE",
+  label = "RECORDED FOOTAGE",
 }) => {
   return (
     <div className="absolute top-3 left-4 z-20 flex items-center gap-2 pointer-events-none">

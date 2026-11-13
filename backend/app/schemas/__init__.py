@@ -18,7 +18,6 @@ from app.schemas.config import (
 from app.schemas.drone import (
     DroneCommandRequest,
     DroneCommandResponse,
-    DroneAvionicsData,
 )
 from app.schemas.telemetry import (
     DetectionItem,
@@ -47,7 +46,6 @@ __all__ = [
     "TargetSelectRequest",
     "DroneCommandRequest",
     "DroneCommandResponse",
-    "DroneAvionicsData",
     "DetectionItem",
     "TelemetryPayload",
     "EvidenceRecordBase",

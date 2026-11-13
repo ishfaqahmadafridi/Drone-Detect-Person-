@@ -6,6 +6,7 @@ import { useVideoStreamUrl } from "@/hooks/useVideoStreamUrl";
 
 export const ViewportStreamFeed: React.FC<ViewportStreamFeedProps> = ({
   streamKey,
+  isLoaded,
   onLoad,
   onError,
 }) => {
@@ -32,7 +33,9 @@ export const ViewportStreamFeed: React.FC<ViewportStreamFeedProps> = ({
             ? "grayscale(100%) contrast(140%) brightness(115%)"
             : "none",
         }}
-        className="w-full h-full object-contain pointer-events-none will-change-transform"
+        // A failed stream would show the browser's broken-image icon and alt text over the
+        // standby screen; keep the element (so it keeps retrying) but hide it until frames load.
+        className={`w-full h-full object-contain pointer-events-none will-change-transform ${isLoaded ? "" : "invisible"}`}
         suppressHydrationWarning
       />
     </div>

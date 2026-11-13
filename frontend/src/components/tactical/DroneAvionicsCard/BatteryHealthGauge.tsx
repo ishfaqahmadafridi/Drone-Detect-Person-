@@ -28,7 +28,6 @@ export const BatteryHealthGauge: React.FC<BatteryHealthGaugeProps> = ({
             <span>
               Health: <strong className={TACTICAL_VIEW_STYLES.BatteryHealthGauge_strong_className}>{health}%</strong>
             </span>
-            <span>•</span>
             <span>
               Flight Rem: <strong className={TACTICAL_VIEW_STYLES.BatteryHealthGauge_strong_className_2}>{flightTime}m</strong>
             </span>

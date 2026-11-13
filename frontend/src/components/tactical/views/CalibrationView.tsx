@@ -5,29 +5,19 @@ import { CalibrationViewProps } from "@/types";
 import { useAppSelector } from "@/store";
 import { TuningPanel } from "../TuningPanel";
 import { TelemetryCards } from "../TelemetryCards";
-import { DroneAvionicsCard } from "../DroneAvionicsCard";
+import { DroneMovementPanel } from "../FlightControlDeck/manual/DroneMovementPanel";
 import { PerimeterCameraCard } from "../PerimeterCameraCard";
 
-import { useStreamMutation } from "@/services/queries/useStreamMutation";
+import { useCalibrationView } from "@/hooks/useCalibrationView";
 
 export const CalibrationView: React.FC<CalibrationViewProps> = ({
-  avionics,
-  onOpenFlightDeck,
-  onConnectAirLink,
   viewMode: propViewMode,
   onOpenWall,
 }) => {
   const storeViewMode = useAppSelector((state) => state.telemetry.view_mode);
   const activeViewMode = propViewMode || storeViewMode || "aerial";
   const isGround = activeViewMode === "ground";
-  const activeSourceType = useAppSelector((state) => state.telemetry.source_type) || "synthetic";
-  const { switchSource } = useStreamMutation();
-
-  const handleReconnectGround = async () => {
-    await switchSource.mutateAsync({
-      sourceType: activeSourceType,
-    });
-  };
+  const { reconnectGround } = useCalibrationView();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -36,15 +26,11 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({
         <TelemetryCards viewMode={activeViewMode} />
         {isGround ? (
           <PerimeterCameraCard
-            onOpenWall={onOpenWall || onOpenFlightDeck}
-            onReconnectStream={handleReconnectGround}
+            onOpenWall={onOpenWall}
+            onReconnectStream={reconnectGround}
           />
         ) : (
-          <DroneAvionicsCard
-            avionics={avionics}
-            onOpenFlightDeck={onOpenFlightDeck}
-            onConnectAirLink={onConnectAirLink}
-          />
+          <DroneMovementPanel />
         )}
       </div>
     </div>

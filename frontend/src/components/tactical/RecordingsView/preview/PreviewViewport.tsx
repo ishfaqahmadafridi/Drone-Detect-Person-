@@ -53,8 +53,7 @@ export const PreviewViewport: React.FC<PreviewViewportProps> = ({
 
       {/* Tactical Watermark / OSD */}
       <div className={TACTICAL_VIEW_STYLES.PreviewViewport_div_className_7}>
-        <span className={TACTICAL_VIEW_STYLES.PreviewViewport_span_className} />
-        <span>EVIDENCE CAPTURE · {perspectiveLabel}</span>
+        <span>EVIDENCE CAPTURE, {perspectiveLabel}</span>
       </div>
 
       {/* Click-to-expand overlay hint */}

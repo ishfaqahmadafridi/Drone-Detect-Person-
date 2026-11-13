@@ -1,21 +1,13 @@
 """
-Drone Endpoints: Mission Flight Control, Avionics Telemetry, and Camera Health Diagnostics.
+Legacy simulated mission commands (CCTV presets and the simulated flight deck).
+Real Tello control lives in drone_control.py.
 """
 
 from fastapi import APIRouter, HTTPException
 from app.services.stream_service import stream_service
-from app.schemas.drone import DroneCommandRequest, DroneCommandResponse, DroneAvionicsData
-from app.services.streaming.drone_service import drone_avionics_service
+from app.schemas.drone import DroneCommandRequest, DroneCommandResponse
 
 router = APIRouter()
-
-@router.get("/drone/avionics", response_model=DroneAvionicsData)
-def get_drone_avionics():
-    """
-    Returns real-time drone avionics, 6S LiPo battery health, altitude, and RF link metrics.
-    """
-    snapshot = drone_avionics_service.get_avionics_snapshot()
-    return snapshot
 
 @router.post("/drone/command", response_model=DroneCommandResponse)
 def execute_flight_command(req: DroneCommandRequest):
@@ -35,8 +27,8 @@ def execute_flight_command(req: DroneCommandRequest):
 
     # If action is connect_webcam, also switch stream source to webcam
     if action_clean == "connect_webcam":
-        stream_service.set_source("webcam", "0")
         stream_service.set_view_mode("ground")
+        stream_service.set_source("webcam", "0")
     elif action_clean in ["takeoff", "patrol"]:
         # If launching drone flight, ensure stream source is aerial drone
         stream_service.set_source("synthetic")
@@ -44,39 +36,3 @@ def execute_flight_command(req: DroneCommandRequest):
 
     res = stream_service.execute_drone_command(action_clean, req.target_altitude)
     return res
-
-@router.get("/drone/camera/status")
-def get_camera_status():
-    """
-    Provides camera sensor link health, resolution, working condition, and active detection state.
-    In aerial mode: returns drone-mounted gimbal camera telemetry.
-    In ground mode: returns fixed CCTV perimeter camera health.
-    """
-    active_view = stream_service.detector.active_view
-
-    if active_view == "ground":
-        return {
-            "camera_online": True,
-            "camera_type": "FIXED_CCTV",
-            "camera_resolution": "1920x1080 (FHD)",
-            "camera_fps": 25.0,
-            "power_source": "PoE 48V (Mains)",
-            "mount_height_m": 2.8,
-            "ir_cut": "AUTO",
-            "tamper_status": "SECURE",
-            "camera_detecting": True,
-            "source_type": stream_service.source_type,
-            "view_mode": "ground"
-        }
-
-    avionics = drone_avionics_service.get_avionics_snapshot()
-    return {
-        "camera_online": avionics["camera_online"],
-        "camera_type": "UAV_GIMBAL",
-        "camera_resolution": avionics["camera_resolution"],
-        "camera_fps": avionics["camera_fps"],
-        "camera_sensor_temp_c": avionics["camera_sensor_temp_c"],
-        "camera_detecting": avionics["camera_detecting"],
-        "source_type": stream_service.source_type,
-        "view_mode": "aerial"
-    }

@@ -31,7 +31,7 @@ export const ModalImageStage: React.FC<ModalImageStageProps> = ({ url, filename 
       <div className="absolute top-3 left-4 z-20 flex items-center gap-2 pointer-events-none">
         <span className={TACTICAL_VIEW_STYLES.ModalImageStage_span_className}>
           <Camera className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Gauge_className} />
-          OPTICAL SNAPSHOT • 1-FRAME AUDIT CAPTURE
+          SNAPSHOT
         </span>
       </div>
 

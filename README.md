@@ -36,7 +36,7 @@ Two dedicated perspectives keep the workflows clear:
 - **Suspect workflows** — freeze a ground frame, select tracked people, and capture portraits.
 - **Optional re-identification** — appearance matching across ground and aerial views using X-TFCLIP.
 - **Incident evidence** — restricted zones, intrusion alerts, snapshots, and recordings.
-- **Tello controls** — connect, take off, move, rotate, hover, land, and disconnect.
+- **Tello controls and camera** — SDK connection, camera streaming, takeoff, movement, hover, landing, and disconnect.
 - **Simulation and video testing** — explore workflows before connecting hardware.
 
 ## System Design
@@ -120,9 +120,9 @@ The manual panel starts in **simulation mode**. To connect a real Tello:
 2. Set `DRONE_CONTROL_MODE=tello` in `backend/.env`.
 3. Restart the backend with one worker and select **Connect controls** with the aircraft on the ground.
 
-SDK acknowledgment confirms the control connection. The manual panel supports held movement, rotation, hover, takeoff, and landing; older mission controls use simulated avionics.
+SDK acknowledgment confirms the control connection. The manual panel is the single flight-control interface for held movement, rotation, hover, takeoff, and landing.
 
-> **Development status:** real-flight smoothness remains unverified. Control state is command-derived; Tello video, measured telemetry, and autonomous following are separate integrations. Automated tests use a local UDP emulator.
+> **Development status:** real-flight smoothness remains unverified. Control state is command-derived. The camera is requested after connection, with separate feedback for arriving frames. Measured telemetry and autonomous following remain separate integrations. Automated tests use a local UDP emulator and mocked capture.
 
 See the [Tello control guide](docs/tello-manual-control.md) for connection settings and operating limitations.
 
@@ -169,7 +169,7 @@ npm run build
 npm run test:e2e
 ```
 
-Browser tests use Chrome by default and start isolated local servers. Integration tests require local socket access. Production builds fetch the configured Google Fonts; browser tests use an offline font fixture.
+Browser tests use Chrome by default and start isolated local servers. Integration tests require local socket access. The dashboard uses system fonts and requires no Google Fonts download when connected to the drone’s offline Wi-Fi.
 
 ## Repository Layout
 

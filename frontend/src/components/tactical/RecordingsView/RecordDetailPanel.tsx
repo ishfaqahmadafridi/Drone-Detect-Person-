@@ -1,9 +1,9 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { STATUS_ICON, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import React from "react";
-import { Clock, Camera, HardDrive } from "lucide-react";
+import { ArrowUpRight, Clock, Camera, HardDrive } from "lucide-react";
 import { RecordDetailPanelProps } from "@/types";
 import { useEvidenceMetadata } from "@/hooks";
 
@@ -58,7 +58,7 @@ export const RecordDetailPanel: React.FC<RecordDetailPanelProps> = ({ snap }) =>
           rel="noopener noreferrer"
           className={TACTICAL_VIEW_STYLES.RecordDetailPanel_a_className}
         >
-          OPEN FULL FRAME ↗
+          OPEN FULL FRAME <ArrowUpRight aria-hidden="true" className={STATUS_ICON.base} />
         </a>
       )}
     </div>

@@ -16,8 +16,7 @@ export const StreamStatusBadge: React.FC<StreamStatusBadgeProps> = ({
       className={`absolute top-10 right-3.5 z-20 pointer-events-none select-none ${className}`}
     >
       <div className={TACTICAL_VIEW_STYLES.StreamStatusBadge_div_className}>
-        <span className={TACTICAL_VIEW_STYLES.PerimeterNetworkStatus_span_className_2} />
-        <span>{isSimulation ? "SIMULATED • ONLINE" : "LIVE LINK • ONLINE"}</span>
+        <span>{isSimulation ? "SIMULATED FEED" : "LIVE FEED"}</span>
       </div>
     </div>
   );

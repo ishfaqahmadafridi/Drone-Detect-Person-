@@ -3,6 +3,7 @@ import { CHANNEL_REPLAY_PATH, PRIMARY_CAMERA_PATH } from "@/constants/network";
 import { apiClient } from "./client";
 import {
   StreamSourceType,
+  StreamSourceResponse,
   ModelsStatusResponse,
   TestConnectionPayload,
   TestConnectionResponse,
@@ -15,10 +16,10 @@ export const streamApi = {
   replayVideo: async (channel: "ground" | "aerial"): Promise<void> => {
     await apiClient.post(CHANNEL_REPLAY_PATH, {}, { params: { channel } });
   },
-  switchSource: async (sourceType: StreamSourceType, sourcePath?: string, channel?: "ground" | "aerial"): Promise<{ message: string }> => {
+  switchSource: async (sourceType: StreamSourceType, sourcePath?: string, channel?: "ground" | "aerial"): Promise<StreamSourceResponse> => {
     const safeSourceType = typeof sourceType === "string" ? sourceType : "synthetic";
     const safeSourcePath = typeof sourcePath === "string" && sourcePath.trim().length > 0 ? sourcePath.trim() : undefined;
-    const { data } = await apiClient.post<{ message: string }>("/stream/source", {
+    const { data } = await apiClient.post<StreamSourceResponse>("/stream/source", {
       source_type: safeSourceType,
       source_path: safeSourcePath,
     }, { params: { channel } });
@@ -57,8 +58,8 @@ export const streamApi = {
     return data;
   },
 
-  captureSnapshot: async (): Promise<{ message: string; filename: string; url: string; view_mode: string }> => {
-    const { data } = await apiClient.post<{ message: string; filename: string; url: string; view_mode: string }>("/snapshots/capture");
+  captureSnapshot: async (channel?: "ground" | "aerial"): Promise<{ message: string; filename: string; url: string; view_mode: string }> => {
+    const { data } = await apiClient.post<{ message: string; filename: string; url: string; view_mode: string }>("/snapshots/capture", {}, { params: { channel } });
     return data;
   },
 };

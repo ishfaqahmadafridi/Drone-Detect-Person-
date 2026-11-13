@@ -45,7 +45,7 @@ class PerspectiveController:
         Updates underlying video source stream.
         """
         self.source_provider.set_source(source_type, source_path, transport=transport)
-        self.telemetry_store.update(source_type=source_type)
+        self.telemetry_store.update(source_type=self.source_provider.source_type)
 
     def update_config(
         self,

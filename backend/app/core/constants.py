@@ -98,3 +98,24 @@ DEFAULT_CAMERA_FLEET = [{'id': 'CAM-01',
   'resolution': '1080p FHD @ 30 FPS',
   'ip_address': '10.10.20.117:8080'}]
 PRIMARY_CAMERA_VIEWS = {"CAM-01": "aerial", "CAM-02": "ground"}
+
+# Ryze Tello SDK text protocol (SDK 1.3 / 2.0). Protocol facts, not tunables.
+TELLO_CMD_SDK_MODE = "command"
+TELLO_CMD_TAKEOFF = "takeoff"
+TELLO_CMD_LAND = "land"
+TELLO_CMD_EMERGENCY = "emergency"
+TELLO_CMD_STREAM_ON = "streamon"
+TELLO_CMD_RC = "rc"
+TELLO_ACK_OK = "ok"
+# Acknowledged only after the manoeuvre completes, so they need the longer timeout.
+TELLO_FLIGHT_COMMANDS = frozenset({TELLO_CMD_TAKEOFF, TELLO_CMD_LAND})
+TELLO_RECV_BUFFER_BYTES = 1024
+TELLO_MAX_DRAIN_PACKETS = 64
+
+# Source families preserve aerial UAV and ground perimeter perspectives.
+STREAM_SOURCE_TYPES_BY_VIEW = {
+    "aerial": frozenset({"synthetic", "file", "rtsp", "http", "tello"}),
+    "ground": frozenset({"synthetic", "file", "rtsp", "http", "webcam"}),
+}
+# Tello selection requires the session-authenticated manual camera endpoint.
+PUBLIC_STREAM_SOURCE_TYPES = frozenset({"synthetic", "file", "rtsp", "http", "webcam"})

@@ -6,14 +6,8 @@ import { TacticalViewRouter } from "./views/TacticalViewRouter";
 
 export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
   activeTab,
-  avionics,
-  flightState,
-  altitude,
-  batteryPercent,
   isCommandPending,
   onCommand,
-  onConnectAirLink,
-  onOpenFlightDeck,
   onRefresh,
   onSnapshotTrigger,
   viewMode,
@@ -26,14 +20,8 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
       <TacticalViewRouter
         activeTab={activeTab}
         onSnapshotTrigger={onSnapshotTrigger || onRefresh}
-        flightState={flightState}
-        altitude={altitude}
-        batteryPercent={batteryPercent}
         isCommandPending={isCommandPending}
         onCommand={onCommand}
-        onConnectAirLink={onConnectAirLink}
-        onOpenFlightDeck={onOpenFlightDeck}
-        avionics={avionics}
         viewMode={viewMode}
         onOpenWall={onOpenWall}
         onTabChange={onTabChange}

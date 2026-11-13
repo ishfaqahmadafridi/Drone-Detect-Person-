@@ -1,10 +1,10 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { STATUS_ICON, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import React from "react";
 import { BrandClusterProps } from "@/types";
-import { Shield } from "lucide-react";
+import { Shield, Wifi, WifiOff } from "lucide-react";
 
 export const BrandCluster: React.FC<BrandClusterProps> = ({ isConnected }) => {
   return (
@@ -16,12 +16,11 @@ export const BrandCluster: React.FC<BrandClusterProps> = ({ isConnected }) => {
         <span className={TACTICAL_VIEW_STYLES.BrandCluster_span_className}>
           AERO-GUARD
         </span>
-        <span
-          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-            isConnected ? TACTICAL_VIEW_STYLES.BrandCluster_span_className_2 : TACTICAL_VIEW_STYLES.BrandCluster_span_className_3
-          }`}
-          title={isConnected ? "Telemetry Connected" : "Connecting..."}
-        />
+        {isConnected ? (
+          <Wifi aria-label="Telemetry connected" className={`${STATUS_ICON.base} ${STATUS_ICON.ok}`} />
+        ) : (
+          <WifiOff aria-label="Connecting to telemetry" className={`${STATUS_ICON.base} ${STATUS_ICON.warn}`} />
+        )}
       </div>
     </div>
   );

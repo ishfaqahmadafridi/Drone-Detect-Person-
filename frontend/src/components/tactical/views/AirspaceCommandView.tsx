@@ -13,12 +13,8 @@ import { TuningPanel } from "../TuningPanel";
 
 export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   onSnapshotTrigger,
-  flightState,
-  altitude,
-  batteryPercent,
   isCommandPending,
   onCommand,
-  avionics,
   onOpenWall,
   viewMode: propViewMode,
 }) => {
@@ -40,7 +36,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
             Airspace Command
           </h1>
           <p className={TACTICAL_VIEW_STYLES.AirspaceCommandView_p_className}>
-            North perimeter • Sector 04 • Operational overview
+            North perimeter, Sector 04
           </p>
         </div>
 
@@ -58,7 +54,7 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
       </div>
 
       {/* 2. Operations Command Layout: Primary Feed Column + Right Device Deck */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] 2xl:grid-cols-[1fr_360px] gap-5 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] 2xl:grid-cols-[1fr_360px] gap-5 items-start">
         {/* Left Column: Video Feed, 5-Metric Telemetry Cards */}
         <div className="flex flex-col gap-4 min-w-0">
           {/* Primary Optical / Radar Viewport */}
@@ -71,15 +67,11 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
         {/* Right Column: Device Deck (Flight Telemetry, Directives Grid & Calibration) */}
         <div className="flex flex-col gap-4 min-w-0">
           <DeviceDeckCard
-            avionics={avionics}
-            flightState={flightState}
-            altitude={altitude}
-            batteryPercent={batteryPercent}
             isCommandPending={isCommandPending}
             onCommand={onCommand}
             viewMode={activeViewMode}
             isTuningOpen={isTuningOpen}
-            onToggleTuning={() => setIsTuningOpen(!isTuningOpen)}
+            onToggleTuning={() => setIsTuningOpen(open => !open)}
           />
 
           {/* Expandable Detection Tuning Panel */}

@@ -7,7 +7,7 @@ try:
 except ImportError:
     cv2 = None
 
-from app.core.config import DEVICE_CAPTURE_BUFFER_SIZE, DEVICE_RTSP_TIMEOUT_US
+from app.core.config import DEVICE_CAPTURE_BUFFER_SIZE, DEVICE_RTSP_TIMEOUT_US, TELLO_VIDEO_TIMEOUT_MS
 
 _open_lock = RLock()
 _OPTIONS_KEY = "OPENCV_FFMPEG_CAPTURE_OPTIONS"
@@ -19,7 +19,7 @@ def is_rtsp_source(source_path):
 
 def is_video_file(source_path):
     return (isinstance(source_path, str) and not source_path.isdigit()
-            and not source_path.lower().startswith(("rtsp://", "rtsps://", "http://", "https://")))
+            and not source_path.lower().startswith(("rtsp://", "rtsps://", "http://", "https://", "udp://")))
 
 
 def release_capture(capture):
@@ -43,6 +43,11 @@ def open_capture(source_path, transport):
             if network:
                 os.environ[_OPTIONS_KEY] = f"rtsp_transport;{transport}|timeout;{DEVICE_RTSP_TIMEOUT_US}"
                 capture = cv2.VideoCapture(cap_arg, cv2.CAP_FFMPEG)
+            elif isinstance(source_path, str) and source_path.startswith("udp://"):
+                capture = cv2.VideoCapture(cap_arg, cv2.CAP_FFMPEG, [
+                    cv2.CAP_PROP_OPEN_TIMEOUT_MSEC, TELLO_VIDEO_TIMEOUT_MS,
+                    cv2.CAP_PROP_READ_TIMEOUT_MSEC, TELLO_VIDEO_TIMEOUT_MS,
+                ])
             else:
                 capture = cv2.VideoCapture(cap_arg)
             if not capture.isOpened():

@@ -13,15 +13,11 @@ export const TelemetryCardTile: React.FC<TelemetryCardTileProps> = ({
   isAlert = false,
   onClick,
 }) => {
-  return (
-    <div
-      onClick={onClick}
-      className={`${TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className}${
-        isAlert
-          ? TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_2
-          : TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_3
-      }`}
-    >
+  const className = `${TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className}${
+    onClick ? TACTICAL_VIEW_STYLES.TelemetryCardTile_interactive_className : ""
+  }${isAlert ? TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_2 : TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_3}`;
+  const body = (
+    <>
       <div>
         <div className={TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_4}>
           {title}
@@ -33,10 +29,14 @@ export const TelemetryCardTile: React.FC<TelemetryCardTileProps> = ({
 
       <div className={TACTICAL_VIEW_STYLES.TelemetryCardTile_div_className_6}>
         <span>{subText}</span>
-        <ArrowUpRight className={TACTICAL_VIEW_STYLES.TelemetryCardTile_ArrowUpRight_className} />
+        {onClick && <ArrowUpRight aria-hidden="true" className={TACTICAL_VIEW_STYLES.TelemetryCardTile_ArrowUpRight_className} />}
       </div>
-    </div>
+    </>
   );
+  // Only cards that open something are buttons (and show the arrow); the rest are plain readouts.
+  return onClick
+    ? <button type="button" onClick={onClick} className={className}>{body}</button>
+    : <div className={className}>{body}</div>;
 };
 
 export default TelemetryCardTile;

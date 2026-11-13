@@ -18,7 +18,7 @@ export const GroundSensorPill: React.FC<GroundSensorPillProps> = ({
       title={`Sensor: ${name} • Mount: ${mountHeight}`}
     >
       <Camera className={TACTICAL_VIEW_STYLES.FlightPhysicsGrid_Compass_className} />
-      <span>{sensorId} • Fixed</span>
+      <span>{sensorId} (fixed)</span>
     </div>
   );
 };

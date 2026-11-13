@@ -13,11 +13,13 @@ export const NETWORK_CONFIG = {
 } as const;
 
 export const DRONE_CONTROL_PATHS = {
+  video: "/drone/manual/video",
   status: "/drone/manual/status",
   connect: "/drone/manual/connect",
   input: "/drone/manual/input",
   action: "/drone/manual/action",
   disconnect: "/drone/manual/disconnect",
+  emergency: "/drone/manual/emergency",
 } as const;
 
 export function resolveVideoStreamUrl(path: string): string {

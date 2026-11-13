@@ -1,16 +1,141 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   Light theme (default). Tailwind colour utilities resolve through these
+   variables, so remapping the palette re-themes every component uniformly.
+   Neutrals mirror; accents keep >= 4.5:1 contrast for text and white-on-solid.
+   Cyan/sky/teal/purple collapse onto one blue accent.
+   ========================================================================== */
 :root {
-  --background: #0B0E14;
-  --foreground: #F1F5F9;
-  --tactical-blue: #3B82F6;
-  --tactical-emerald: #10B981;
-  --tactical-amber: #F59E0B;
-  --tactical-rose: #EF4444;
-  --tactical-border: rgba(255, 255, 255, 0.12);
-  --tactical-border-hover: rgba(255, 255, 255, 0.24);
-  --tactical-surface: #0F141F;
-  --tactical-surface-elevated: #151C2C;
+  --color-slate-50: oklch(12.9% 0.042 264.695);
+  --color-slate-100: oklch(20.8% 0.042 265.755);
+  --color-slate-200: oklch(27.9% 0.041 260.031);
+  --color-slate-300: oklch(37.2% 0.044 257.287);
+  --color-slate-400: oklch(44.6% 0.043 257.281);
+  --color-slate-500: oklch(55.4% 0.046 257.417);
+  --color-slate-600: oklch(55.4% 0.046 257.417);
+  --color-slate-700: oklch(86.9% 0.022 252.894);
+  --color-slate-800: oklch(92.9% 0.013 255.508);
+  --color-slate-900: oklch(96.8% 0.007 247.896);
+  --color-slate-950: oklch(98.4% 0.003 247.858);
+  --color-blue-50: oklch(28.2% 0.091 267.935);
+  --color-blue-100: oklch(37.9% 0.146 265.522);
+  --color-blue-200: oklch(42.4% 0.199 265.638);
+  --color-blue-300: oklch(48.8% 0.243 264.376);
+  --color-blue-400: oklch(48.8% 0.243 264.376);
+  --color-blue-500: oklch(54.6% 0.245 262.881);
+  --color-blue-600: oklch(48.8% 0.243 264.376);
+  --color-blue-700: oklch(42.4% 0.199 265.638);
+  --color-blue-800: oklch(88.2% 0.059 254.128);
+  --color-blue-900: oklch(93.2% 0.032 255.585);
+  --color-blue-950: oklch(97% 0.014 254.604);
+  --color-cyan-50: oklch(28.2% 0.091 267.935);
+  --color-cyan-100: oklch(37.9% 0.146 265.522);
+  --color-cyan-200: oklch(42.4% 0.199 265.638);
+  --color-cyan-300: oklch(48.8% 0.243 264.376);
+  --color-cyan-400: oklch(48.8% 0.243 264.376);
+  --color-cyan-500: oklch(54.6% 0.245 262.881);
+  --color-cyan-600: oklch(48.8% 0.243 264.376);
+  --color-cyan-700: oklch(42.4% 0.199 265.638);
+  --color-cyan-800: oklch(88.2% 0.059 254.128);
+  --color-cyan-900: oklch(93.2% 0.032 255.585);
+  --color-cyan-950: oklch(97% 0.014 254.604);
+  --color-sky-50: oklch(28.2% 0.091 267.935);
+  --color-sky-100: oklch(37.9% 0.146 265.522);
+  --color-sky-200: oklch(42.4% 0.199 265.638);
+  --color-sky-300: oklch(48.8% 0.243 264.376);
+  --color-sky-400: oklch(48.8% 0.243 264.376);
+  --color-sky-500: oklch(54.6% 0.245 262.881);
+  --color-sky-600: oklch(48.8% 0.243 264.376);
+  --color-sky-700: oklch(42.4% 0.199 265.638);
+  --color-sky-800: oklch(88.2% 0.059 254.128);
+  --color-sky-900: oklch(93.2% 0.032 255.585);
+  --color-sky-950: oklch(97% 0.014 254.604);
+  --color-teal-50: oklch(28.2% 0.091 267.935);
+  --color-teal-100: oklch(37.9% 0.146 265.522);
+  --color-teal-200: oklch(42.4% 0.199 265.638);
+  --color-teal-300: oklch(48.8% 0.243 264.376);
+  --color-teal-400: oklch(48.8% 0.243 264.376);
+  --color-teal-500: oklch(54.6% 0.245 262.881);
+  --color-teal-600: oklch(48.8% 0.243 264.376);
+  --color-teal-700: oklch(42.4% 0.199 265.638);
+  --color-teal-800: oklch(88.2% 0.059 254.128);
+  --color-teal-900: oklch(93.2% 0.032 255.585);
+  --color-teal-950: oklch(97% 0.014 254.604);
+  --color-emerald-50: oklch(26.2% 0.051 172.552);
+  --color-emerald-100: oklch(37.8% 0.077 168.94);
+  --color-emerald-200: oklch(43.2% 0.095 166.913);
+  --color-emerald-300: oklch(50.8% 0.118 165.612);
+  --color-emerald-400: oklch(50.8% 0.118 165.612);
+  --color-emerald-500: oklch(50.8% 0.118 165.612);
+  --color-emerald-600: oklch(50.8% 0.118 165.612);
+  --color-emerald-700: oklch(43.2% 0.095 166.913);
+  --color-emerald-800: oklch(90.5% 0.093 164.15);
+  --color-emerald-900: oklch(95% 0.052 163.051);
+  --color-emerald-950: oklch(97.9% 0.021 166.113);
+  --color-amber-50: oklch(27.9% 0.077 45.635);
+  --color-amber-100: oklch(41.4% 0.112 45.904);
+  --color-amber-200: oklch(47.3% 0.137 46.201);
+  --color-amber-300: oklch(55.5% 0.163 48.998);
+  --color-amber-400: oklch(55.5% 0.163 48.998);
+  --color-amber-500: oklch(55.5% 0.163 48.998);
+  --color-amber-600: oklch(55.5% 0.163 48.998);
+  --color-amber-700: oklch(47.3% 0.137 46.201);
+  --color-amber-800: oklch(92.4% 0.12 95.746);
+  --color-amber-900: oklch(96.2% 0.059 95.617);
+  --color-amber-950: oklch(98.7% 0.022 95.277);
+  --color-red-50: oklch(25.8% 0.092 26.042);
+  --color-red-100: oklch(39.6% 0.141 25.723);
+  --color-red-200: oklch(44.4% 0.177 26.899);
+  --color-red-300: oklch(50.5% 0.213 27.518);
+  --color-red-400: oklch(50.5% 0.213 27.518);
+  --color-red-500: oklch(57.7% 0.245 27.325);
+  --color-red-600: oklch(50.5% 0.213 27.518);
+  --color-red-700: oklch(44.4% 0.177 26.899);
+  --color-red-800: oklch(88.5% 0.062 18.334);
+  --color-red-900: oklch(93.6% 0.032 17.717);
+  --color-red-950: oklch(97.1% 0.013 17.38);
+  --color-rose-50: oklch(27.1% 0.105 12.094);
+  --color-rose-100: oklch(41% 0.159 10.272);
+  --color-rose-200: oklch(45.5% 0.188 13.697);
+  --color-rose-300: oklch(51.4% 0.222 16.935);
+  --color-rose-400: oklch(51.4% 0.222 16.935);
+  --color-rose-500: oklch(58.6% 0.253 17.585);
+  --color-rose-600: oklch(51.4% 0.222 16.935);
+  --color-rose-700: oklch(45.5% 0.188 13.697);
+  --color-rose-800: oklch(89.2% 0.058 10.001);
+  --color-rose-900: oklch(94.1% 0.03 12.58);
+  --color-rose-950: oklch(96.9% 0.015 12.422);
+  --color-purple-50: oklch(28.2% 0.091 267.935);
+  --color-purple-100: oklch(37.9% 0.146 265.522);
+  --color-purple-200: oklch(42.4% 0.199 265.638);
+  --color-purple-300: oklch(48.8% 0.243 264.376);
+  --color-purple-400: oklch(48.8% 0.243 264.376);
+  --color-purple-500: oklch(54.6% 0.245 262.881);
+  --color-purple-600: oklch(48.8% 0.243 264.376);
+  --color-purple-700: oklch(42.4% 0.199 265.638);
+  --color-purple-800: oklch(88.2% 0.059 254.128);
+  --color-purple-900: oklch(93.2% 0.032 255.585);
+  --color-purple-950: oklch(97% 0.014 254.604);
+}
+
+:root {
+  /* System fonts keep the dashboard available on the drone's offline Wi-Fi. */
+  --font-inter: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-jetbrains-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --background: #F4F6F9;
+  --foreground: #0F172A;
+  --tactical-blue: #1D4ED8;
+  --tactical-emerald: #047857;
+  --tactical-amber: #B45309;
+  --tactical-rose: #BE123C;
+  --tactical-border: #E2E8F0;
+  --tactical-border-hover: #CBD5E1;
+  --tactical-surface: #FFFFFF;
+  --tactical-surface-elevated: #FFFFFF;
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-raised: 0 8px 24px -8px rgba(15, 23, 42, 0.14);
+  --ease-out-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @theme inline {
@@ -22,15 +147,12 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  background-color: #0B0E14;
-  background-image: 
-    radial-gradient(ellipse at 50% 0%, rgba(30, 41, 59, 0.35) 0%, transparent 70%),
-    linear-gradient(to bottom, #0D121B, #0B0E14);
-  color: #F1F5F9;
+  background-color: var(--background);
+  color: var(--foreground);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   min-height: 100vh;
 }
@@ -39,17 +161,13 @@ body {
 .glass-panel {
   background: var(--tactical-surface);
   border: 1px solid var(--tactical-border);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-card);
 }
 
 .glass-panel-elevated {
   background: var(--tactical-surface-elevated);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 
-    0 12px 32px -8px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--tactical-border);
+  box-shadow: var(--shadow-raised);
 }
 
 /* Interactive Card Elevation & Micro-transitions */
@@ -62,7 +180,7 @@ body {
 .interactive-tactical-tile:hover {
   transform: translateY(-1px);
   border-color: var(--tactical-border-hover);
-  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-raised);
 }
 
 /* Global Button & Tactical Interactive States */
@@ -104,26 +222,26 @@ button:not(:disabled) {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(11, 14, 20, 0.6);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(100, 116, 139, 0.3);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.35);
+  background: rgba(100, 116, 139, 0.5);
 }
 
 /* Custom Sliders for Tuning Panel */
 input[type="range"] {
-  accent-color: #3B82F6;
+  accent-color: var(--tactical-blue);
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #E2E8F0;
+  border: 1px solid #CBD5E1;
   border-radius: 4px;
   height: 5px;
 }
@@ -134,9 +252,9 @@ input[type="range"]::-webkit-slider-thumb {
   height: 14px;
   width: 14px;
   border-radius: 50%;
-  background: #3B82F6;
+  background: var(--tactical-blue);
   border: 2px solid #FFFFFF;
   cursor: pointer;
   margin-top: -4.5px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
 }

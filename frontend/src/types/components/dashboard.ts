@@ -16,13 +16,8 @@ export interface TacticalWorkspaceProps {
   threatLevel: ThreatLevel;
   viewMode: "aerial" | "ground";
   onViewSelect: (view: "aerial" | "ground") => void;
-  flightState: string;
-  altitude: number;
-  batteryPercent: number;
   isCommandPending: boolean;
   onCommand: (action: string) => void;
-  onConnectAirLink?: () => void;
-  onOpenFlightDeck: () => void;
   onRefresh: () => void;
   onSnapshotTrigger: () => void;
 }

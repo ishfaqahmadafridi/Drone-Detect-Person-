@@ -76,8 +76,8 @@ export function useChannelPanel(channel: StreamChannel) {
     setPending(true);
     setError("");
     try {
-      await streamApi.switchSource(source, path, channel);
-      setSourceType(source);
+      const result = await streamApi.switchSource(source, path, channel);
+      setSourceType(result.source_type);
       setRevision(value => value + 1);
       setStreamError(false);
       setShowNetwork(false);

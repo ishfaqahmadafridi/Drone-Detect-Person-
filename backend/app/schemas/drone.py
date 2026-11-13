@@ -1,5 +1,5 @@
 """
-Pydantic Schemas for Drone Avionics, Flight Control Commands, and Camera Status.
+Pydantic schemas for Tello manual control, telemetry and legacy mission commands.
 """
 
 from typing import Optional
@@ -25,8 +25,21 @@ class DroneControlSession(BaseModel):
     session_id: UUID
 
 
+class DroneControlConnect(DroneControlSession):
+    confirmed_landed: bool = Field(False, strict=True)
+
+
 class DroneControlAction(DroneControlSession):
     action: Literal["takeoff", "land", "hover"]
+
+
+class DroneTelemetry(BaseModel):
+    """Latest Tello state broadcast (UDP 8890). Fields are None if the firmware omits them."""
+    battery_percent: Optional[int] = None
+    height_cm: Optional[int] = None
+    temperature_high_c: Optional[int] = None
+    age_s: float
+    fresh: bool
 
 
 class DroneControlStatus(BaseModel):
@@ -36,6 +49,13 @@ class DroneControlStatus(BaseModel):
     axes: DroneControlAxes
     input_expired: bool
     error: str
+    telemetry: Optional[DroneTelemetry] = None
+
+class DroneVideoStatus(BaseModel):
+    requested: bool
+    receiving: bool
+    message: str
+
 
 class DroneCommandRequest(BaseModel):
     action: str = Field(..., description="takeoff, land, patrol, hover, rtl, connect_webcam, connect_drone")
@@ -47,22 +67,3 @@ class DroneCommandResponse(BaseModel):
     flight_state: str
     altitude_m: float
     battery_percent: int
-
-class DroneAvionicsData(BaseModel):
-    flight_state: str
-    battery_percent: int
-    battery_voltage: float
-    battery_health_percent: int
-    battery_temp_c: float
-    flight_time_remaining_min: int
-    altitude_m: float
-    ground_speed_ms: float
-    gps_sats: int
-    gps_fix: str
-    compass_heading_deg: int
-    link_quality_percent: int
-    camera_online: bool
-    camera_resolution: str
-    camera_fps: float
-    camera_sensor_temp_c: float
-    camera_detecting: bool

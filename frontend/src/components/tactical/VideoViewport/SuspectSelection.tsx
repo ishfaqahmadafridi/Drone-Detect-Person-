@@ -62,7 +62,7 @@ export const SuspectSelection: React.FC<SuspectSelectionProps> = (props) => {
             onClick={props.onOpenAerialView}
             className={TACTICAL_VIEW_STYLES.SuspectSelection_button_className}
           >
-            <span>🚀 Open Aerial Drone View & Track Matches ({portraits.length} Active Suspects)</span>
+            <span>Open Aerial Drone View & Track Matches ({portraits.length} Active Suspects)</span>
           </button>
         </div>
       )}

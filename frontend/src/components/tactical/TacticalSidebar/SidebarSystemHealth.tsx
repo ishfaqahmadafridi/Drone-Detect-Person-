@@ -1,31 +1,24 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { STATUS_ICON, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import React from "react";
 import { SidebarSystemHealthProps } from "@/types";
 import { useTelemetryMetrics, useSystemClock } from "@/hooks";
+import { Activity } from "lucide-react";
 
-export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
-  telemetryHz = 10,
-  inferenceFps,
-  lastSync,
-  isCollapsed = false,
-}) => {
-  const { fps } = useTelemetryMetrics();
+export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({ isCollapsed = false }) => {
+  const { fps, isConnected } = useTelemetryMetrics();
   const { utcTime } = useSystemClock();
+  const linkTone = isConnected ? STATUS_ICON.ok : STATUS_ICON.warn;
 
   if (isCollapsed) {
     return (
       <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className}>
-        <span className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_span_className} />
-        <span>10Hz</span>
+        <Activity aria-label={isConnected ? "Telemetry live" : "Telemetry offline"} className={`${STATUS_ICON.base} ${linkTone}`} />
       </div>
     );
   }
-
-  const displayFps = (inferenceFps ?? (fps > 0 ? fps : 29.8)).toFixed(1);
-  const displaySync = lastSync || utcTime;
 
   return (
     <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_2}>
@@ -36,18 +29,18 @@ export const SidebarSystemHealth: React.FC<SidebarSystemHealthProps> = ({
       <div className="flex flex-col gap-2 font-mono-code text-xs">
         <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_4}>
           <span>Telemetry</span>
-          <span className={TACTICAL_VIEW_STYLES.ModalFooter_strong_className}>{telemetryHz} Hz</span>
+          <span className={`${TACTICAL_VIEW_STYLES.ModalFooter_strong_className} ${linkTone}`}>{isConnected ? "Live" : "Offline"}</span>
         </div>
 
         <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_4}>
           <span>Inference</span>
-          <span className={TACTICAL_VIEW_STYLES.ModalFooter_strong_className}>{displayFps} FPS</span>
+          <span className={TACTICAL_VIEW_STYLES.ModalFooter_strong_className}>{fps.toFixed(1)} FPS</span>
         </div>
 
         <div className={TACTICAL_VIEW_STYLES.SidebarSystemHealth_div_className_4}>
-          <span>Last sync</span>
+          <span>UTC time</span>
           <span className={TACTICAL_VIEW_STYLES.ModalFooter_strong_className} suppressHydrationWarning>
-            {displaySync}
+            {utcTime}
           </span>
         </div>
       </div>
