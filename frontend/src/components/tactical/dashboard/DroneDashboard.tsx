@@ -27,11 +27,7 @@ export const DroneDashboard: React.FC<DroneDashboardProps> = ({ initialTab }) =>
   return (
     <div className={TACTICAL_VIEW_STYLES.DroneDashboard_div_className}>
       {/* 1. Global Tactical Command Bar */}
-      <Header
-        onRefresh={handleManualRefresh}
-        avionics={flight.avionics}
-        viewMode={viewMode}
-      />
+      <Header />
 
       {/* 2. Workspace Body: Left Sidebar + Center Command Viewport */}
       <TacticalWorkspace

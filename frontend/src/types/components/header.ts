@@ -1,28 +1,13 @@
-import { ThreatLevel, DroneAvionics } from "../index";
+import { DroneAvionics } from "../index";
 
 // ==========================================
 // 1. Header Component Props
 // ==========================================
-export interface HeaderProps {
-  onRefresh: () => void;
-  avionics?: DroneAvionics;
-  viewMode?: "aerial" | "ground";
-}
 
 export interface BrandClusterProps {
   isConnected: boolean;
 }
 
-export interface ThreatRibbonProps {
-  threatLevel: ThreatLevel;
-  alertMsg: string;
-}
-
-export interface HeaderActionsProps {
-  onRefresh: () => void;
-  avionics?: DroneAvionics;
-  viewMode?: "aerial" | "ground";
-}
 
 export interface AvionicsQuickPillsProps {
   avionics?: DroneAvionics;
