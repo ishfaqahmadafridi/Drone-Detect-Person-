@@ -52,11 +52,6 @@ export interface DroneTelemetryTile {
   warn: boolean;
 }
 
-export interface GroundSensorSpec {
-  label: string;
-  value: string;
-}
-
 export interface DroneVideoStatus {
   requested: boolean;
   receiving: boolean;

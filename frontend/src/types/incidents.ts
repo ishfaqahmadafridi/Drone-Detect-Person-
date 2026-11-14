@@ -28,8 +28,10 @@ export interface SnapshotItem {
 export interface EvidenceMetadata {
   datePart: string;
   timePart: string;
-  perspectiveLabel: string;
-  perspectiveBadgeClass: string;
-  threatType: string;
-  threatBadgeClass: string;
+}
+
+export interface SnapshotList {
+  snapshots: SnapshotItem[];
+  /** Total saved snapshots; `snapshots` itself is capped by the backend. */
+  total: number;
 }

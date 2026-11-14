@@ -1,5 +1,5 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { COMMAND_VIEW_TITLES, TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import { useToggle } from "@/hooks/useToggle";
@@ -10,15 +10,16 @@ import { VideoViewport } from "../VideoViewport";
 import { DeviceDeckCard } from "../FlightControlDeck";
 import { TelemetryCards } from "../TelemetryCards";
 import { TuningPanel } from "../TuningPanel";
+import { SuspectSelection } from "../VideoViewport/SuspectSelection";
+import { usePerspectiveSelection } from "@/hooks/usePerspectiveSelection";
 
 export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
   onSnapshotTrigger,
-  isCommandPending,
-  onCommand,
   onOpenWall,
   viewMode: propViewMode,
 }) => {
   const [isTuningOpen, setIsTuningOpen] = useToggle(false);
+  const selectPerspective = usePerspectiveSelection();
   const storeViewMode = useAppSelector((state) => state.telemetry.view_mode);
   const activeViewMode = propViewMode || storeViewMode || "aerial";
   const activeSourceType = useAppSelector((state) => state.telemetry.source_type) || "synthetic";
@@ -28,17 +29,9 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
     <div className="flex flex-col gap-4 min-w-0">
       {/* 1. Operations Header & Status Pill */}
       <div className={TACTICAL_VIEW_STYLES.AirspaceCommandView_div_className}>
-        <div>
-          <div className={TACTICAL_VIEW_STYLES.DeviceDeckHeader_div_className}>
-            OPERATIONS / SECTOR 04
-          </div>
-          <h1 className={TACTICAL_VIEW_STYLES.AirspaceCommandView_h1_className}>
-            Airspace Command
-          </h1>
-          <p className={TACTICAL_VIEW_STYLES.AirspaceCommandView_p_className}>
-            North perimeter, Sector 04
-          </p>
-        </div>
+        <h1 className={TACTICAL_VIEW_STYLES.AirspaceCommandView_h1_className}>
+          {COMMAND_VIEW_TITLES[activeViewMode]}
+        </h1>
 
         <div className="flex items-center">
           <span
@@ -53,22 +46,20 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Operations Command Layout: Primary Feed Column + Right Device Deck */}
+      {/* 2. Mission metrics summary, directly under the heading */}
+      <TelemetryCards viewMode={activeViewMode} layout="horizontal" />
+
+      {/* 3. Operations Command Layout: Primary Feed Column + Right Device Deck */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] 2xl:grid-cols-[1fr_360px] gap-5 items-start">
-        {/* Left Column: Video Feed, 5-Metric Telemetry Cards */}
+        {/* Left Column: Video Feed */}
         <div className="flex flex-col gap-4 min-w-0">
           {/* Primary Optical / Radar Viewport */}
           <VideoViewport onSnapshotTrigger={onSnapshotTrigger} onManageCameras={onOpenWall} />
-
-          {/* 5-Metric Telemetry Cards in a single row */}
-          <TelemetryCards viewMode={activeViewMode} layout="horizontal" />
         </div>
 
         {/* Right Column: Device Deck (Flight Telemetry, Directives Grid & Calibration) */}
         <div className="flex flex-col gap-4 min-w-0">
           <DeviceDeckCard
-            isCommandPending={isCommandPending}
-            onCommand={onCommand}
             viewMode={activeViewMode}
             isTuningOpen={isTuningOpen}
             onToggleTuning={() => setIsTuningOpen(open => !open)}
@@ -76,6 +67,11 @@ export const AirspaceCommandView: React.FC<AirspaceCommandViewProps> = ({
 
           {/* Expandable Detection Tuning Panel */}
           {isTuningOpen && <TuningPanel />}
+
+          {/* Ground only: pick the suspect the drone will search for */}
+          {activeViewMode === "ground" && (
+            <SuspectSelection key="ground" channel="ground" onOpenAerialView={() => void selectPerspective("aerial")} />
+          )}
         </div>
       </div>
     </div>

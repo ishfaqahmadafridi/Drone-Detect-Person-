@@ -2,12 +2,16 @@
 
 import { useState, useMemo } from "react";
 import { useSnapshotsQuery } from "@/services/queries/useSnapshotsQuery";
-import { SnapshotItem } from "@/types";
+import { SnapshotItem, SnapshotFilter } from "@/types";
+import { EVIDENCE_UI } from "@/constants/tactical";
 
 export function useSnapshotGallery() {
-  const { data: snapshots = [], isLoading, refetch } = useSnapshotsQuery();
+  const { data, isLoading, refetch } = useSnapshotsQuery();
+  const snapshots = useMemo(() => data?.snapshots ?? [], [data]);
   const [selectedSnapshot, setSelectedSnapshot] = useState<SnapshotItem | null>(null);
-  const [filterMode, setFilterMode] = useState<"all" | "aerial" | "ground">("all");
+  const [filterMode, setFilter] = useState<SnapshotFilter>("all");
+  const [visibleCount, setVisibleCount] = useState<number>(EVIDENCE_UI.pageSize);
+  const setFilterMode = (filter: SnapshotFilter) => { setFilter(filter); setVisibleCount(EVIDENCE_UI.pageSize); };
 
   const openSnapshot = (snapshot: SnapshotItem) => {
     setSelectedSnapshot(snapshot);
@@ -33,7 +37,11 @@ export function useSnapshotGallery() {
 
   return {
     snapshots: filteredSnapshots,
-    totalCount: imageSnapshots.length,
+    visibleSnapshots: filteredSnapshots.slice(0, visibleCount),
+    hasMore: visibleCount < filteredSnapshots.length,
+    showMore: () => setVisibleCount(count => count + EVIDENCE_UI.pageSize),
+    total: data?.total ?? imageSnapshots.length,
+    listedCount: imageSnapshots.length,
     isLoading,
     refetch,
     filterMode,

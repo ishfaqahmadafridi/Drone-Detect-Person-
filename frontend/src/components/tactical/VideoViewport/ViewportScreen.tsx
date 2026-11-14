@@ -12,7 +12,6 @@ import { ViewportSplitGrid } from "./ViewportSplitGrid";
 import { useViewportScreen } from "@/hooks";
 
 export const ViewportScreen: React.FC<ViewportScreenProps> = ({
-  containerRef,
   canvasRef,
   streamKey,
   fps,
@@ -30,7 +29,6 @@ export const ViewportScreen: React.FC<ViewportScreenProps> = ({
 
   return (
     <div
-      ref={containerRef}
       className={`${TACTICAL_VIEW_STYLES.ViewportScreen_div_className}${layoutMode === "single" ? "aspect-video overflow-hidden" : "min-h-0"}`}
     >
       {layoutMode && layoutMode !== "single" ? (

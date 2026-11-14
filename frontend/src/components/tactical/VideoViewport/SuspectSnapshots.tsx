@@ -1,44 +1,20 @@
-
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
+import { UserSearch } from "lucide-react";
+import { VIDEO_TOOLS } from "@/constants/tactical";
 import type { SuspectSnapshotsProps } from "@/types";
-import { VIDEO_TESTING } from "@/constants/tactical";
+import { SuspectPortraitGallery } from "./SuspectPortraitGallery";
 
-export function SuspectSnapshots({ portraits, reference = false }: SuspectSnapshotsProps) {
+/** Aerial view: the ground suspects the drone is matching against. */
+export function SuspectSnapshots({ portraits }: SuspectSnapshotsProps) {
   return (
-    <section aria-label={reference ? "Ground suspect reference images" : "Selected suspect snapshots"} className={VIDEO_TESTING.referenceBoxClass}>
-      <h3 className="text-sm font-semibold">{reference ? "Ground reference images" : "Selected suspects"}</h3>
-      {portraits.length === 0 ? (
-        <p className="text-xs mt-1">{reference ? "Select a suspect in Ground CCTV to add a reference image here." : "Freeze the video, select a person, then confirm to save their picture here."}</p>
-      ) : (
-        <div className="flex gap-3 overflow-x-auto py-2">
-          {portraits.map(person => (
-            <figure key={person.id} className={VIDEO_TESTING.portraitCardClass}>
-              <a
-                href={person.image}
-                download={`suspect-${person.id}-${person.capturedAt.replaceAll(":", "-")}.jpg`}
-                title={`Download suspect #${person.id} snapshot`}
-                className={TACTICAL_VIEW_STYLES.SuspectSnapshots_a_className}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={person.image}
-                  alt={`Selected suspect #${person.id}`}
-                  className="w-full h-36 object-contain"
-                />
-              </a>
-              <figcaption className={TACTICAL_VIEW_STYLES.SuspectSnapshots_figcaption_className}>Suspect #{person.id}</figcaption>
-              <a
-                className={`${VIDEO_TESTING.buttonClass} w-full text-center`}
-                href={person.image}
-                download={`suspect-${person.id}.jpg`}
-              >
-                Download Crop
-              </a>
-            </figure>
-          ))}
+    <section aria-label="Ground suspect reference images" className={VIDEO_TOOLS.referenceClass}>
+      <div className={VIDEO_TOOLS.cardBodyClass}>
+        <span className={VIDEO_TOOLS.iconWrapClass}><UserSearch aria-hidden="true" className={VIDEO_TOOLS.iconClass} /></span>
+        <div className="min-w-0">
+          <h3 className={VIDEO_TOOLS.titleClass}>Ground reference photos</h3>
+          <p className={VIDEO_TOOLS.bodyClass}>The drone compares every person it sees with these ground photos.</p>
         </div>
-      )}
-      <p className="text-xs mt-2">{reference ? "These selected ground suspects are the references for aerial matching." : "Open Aerial View to use these images as references for person matching."}</p>
+      </div>
+      <SuspectPortraitGallery portraits={portraits} />
     </section>
   );
 }

@@ -2,22 +2,12 @@
 
 import React from "react";
 import { ViewportTelemetryBadgesProps } from "@/types";
-import {
-  SensorIdentityBadge,
-  StreamStatusBadge,
-  ClassificationLegendBadge,
-} from "./badges";
+import { ClassificationLegendBadge } from "./badges";
 
 export const ViewportTelemetryBadges: React.FC<ViewportTelemetryBadgesProps> = () => {
   return (
     <>
-      {/* 1. Top-Left OSD Sensor Identifier & Timestamp */}
-      <SensorIdentityBadge />
-
-      {/* 2. Top-Right OSD Stream State Badge */}
-      <StreamStatusBadge />
-
-      {/* 3. Bottom OSD Legend & Telemetry Status Bar */}
+      {/* Camera name, feed type and time are shown once, in the panel header and page status. */}
       <ClassificationLegendBadge />
     </>
   );

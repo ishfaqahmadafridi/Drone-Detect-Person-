@@ -51,6 +51,7 @@ export const SidebarTopSection: React.FC<SidebarTopSectionProps> = ({
         onTabChange={onTabChange}
         isCollapsed={isCollapsed}
         threatLevel={threatLevel}
+        viewMode={viewMode}
       />
     </div>
   );

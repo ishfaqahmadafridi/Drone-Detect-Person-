@@ -22,6 +22,16 @@ export const DRONE_CONTROL_PATHS = {
   emergency: "/drone/manual/emergency",
 } as const;
 
+/**
+ * Backend media paths (`/snapshots/…`, `/recordings/…`) are served by the API host, not by Next.
+ * Point them straight at it when an origin is configured; otherwise rely on the dev proxy.
+ */
+export function resolveMediaUrl(path: string): string {
+  if (!path || /^(https?:|data:|blob:)/.test(path)) return path;
+  const origin = process.env.NEXT_PUBLIC_API_ORIGIN?.replace(/\/$/, "");
+  return origin ? `${origin}${path.startsWith("/") ? path : `/${path}`}` : path;
+}
+
 export function resolveVideoStreamUrl(path: string): string {
   const configuredOrigin = process.env.NEXT_PUBLIC_VIDEO_STREAM_ORIGIN?.replace(/\/$/, "");
   if (configuredOrigin) return `${configuredOrigin}${path}`;

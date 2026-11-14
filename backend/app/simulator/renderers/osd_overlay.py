@@ -33,7 +33,8 @@ class RecordingDotConfig:
 @dataclass(frozen=True)
 class CameraHeaderConfig:
     """Top-centre camera identification string."""
-    text: str = "CAM-02 GROUND CCTV | GATE 4 WEST PERIMETER | ELEV: 2.8M | ANGLE: -16 DEG"
+    # Matches the dashboard's default ground camera (CAM-02, Gate 01, North Perimeter).
+    text: str = "CAM-02 | GATE 01 PERIMETER CCTV | NORTH PERIMETER"
     origin: Tuple[int, int] = (95, 33)
     scale: float = 0.52
     color: Tuple[int, int, int] = (220, 230, 240)
@@ -54,10 +55,7 @@ class TimestampConfig:
 @dataclass(frozen=True)
 class StatusFooterConfig:
     """Bottom-edge sensor status string."""
-    text: str = (
-        "CCTV FIXED OPTICAL SENSOR | MOTION SENSITIVITY: HIGH | "
-        "NIGHT/DAY: DAY AUTO | SIGNAL: 99.8%"
-    )
+    text: str = "SIMULATED CCTV FEED"
     x: int = 20
     y_from_bottom: int = 18            # pixels above the bottom edge
     scale: float = 0.42

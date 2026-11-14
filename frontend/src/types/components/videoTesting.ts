@@ -18,4 +18,10 @@ export interface VideoUploadControlsProps {
   message: string;
   error: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  /** True while an uploaded video is the active source. */
+  isTesting?: boolean;
+  finished?: boolean;
+  busy?: boolean;
+  onReplay?: () => void;
+  onStopTest?: () => void;
 }

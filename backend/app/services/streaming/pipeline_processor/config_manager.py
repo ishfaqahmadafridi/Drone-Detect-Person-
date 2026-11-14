@@ -37,7 +37,9 @@ class PipelineConfigManager:
     def update_config(
         self,
         conf_thresh: Optional[float] = None,
-        zone_polygon: Optional[List[Tuple[float, float]]] = None
+        zone_polygon: Optional[List[Tuple[float, float]]] = None,
+        save_on_alert: Optional[bool] = None,
+        snapshot_cooldown: Optional[float] = None,
     ) -> None:
         """
         Thread-safely applies dynamic thresholds and geofence boundary coordinates.
@@ -54,3 +56,11 @@ class PipelineConfigManager:
                     self.config.default_zone_normalized = []
                     self.zone_monitor.zone_polygon_normalized = []
                     self.zone_monitor._recalculate_pixel_polygon()
+            recorder = self.alert_manager.evidence_recorder
+            if save_on_alert is not None:
+                self.config.save_snapshots_on_alert = save_on_alert
+                recorder.save_on_alert = save_on_alert
+            if snapshot_cooldown is not None:
+                self.config.snapshot_cooldown_seconds = snapshot_cooldown
+                self.alert_manager.snapshot_cooldown = snapshot_cooldown
+                recorder.snapshot_cooldown = snapshot_cooldown

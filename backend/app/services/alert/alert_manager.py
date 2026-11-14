@@ -18,7 +18,8 @@ class AlertManagerService:
         snapshots_dir: str = SNAPSHOTS_DIR,
         logs_dir: str = LOGS_DIR,
         snapshot_cooldown: float = DEFAULT_SNAPSHOT_COOLDOWN_SECONDS,
-        enable_audio: bool = False
+        enable_audio: bool = False,
+        save_on_alert: bool = True,
     ):
         self.output_dir = output_dir
         self.snapshots_dir = snapshots_dir
@@ -32,7 +33,8 @@ class AlertManagerService:
             output_dir=output_dir,
             snapshots_dir=snapshots_dir,
             logs_dir=logs_dir,
-            snapshot_cooldown=snapshot_cooldown
+            snapshot_cooldown=snapshot_cooldown,
+            save_on_alert=save_on_alert,
         )
 
         self.current_threat_level = AlertLevel.CLEAR

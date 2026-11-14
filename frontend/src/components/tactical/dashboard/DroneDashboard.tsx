@@ -12,12 +12,8 @@ export const DroneDashboard: React.FC<DroneDashboardProps> = ({ initialTab }) =>
     activeTab,
     isSidebarCollapsed,
     toggleSidebar,
-    handleManualRefresh,
     handleCaptureSnapshot,
     threatLevel,
-    isMuted,
-    toggleMute,
-    flight,
     wall,
     viewMode,
     handleViewSelect,
@@ -27,11 +23,7 @@ export const DroneDashboard: React.FC<DroneDashboardProps> = ({ initialTab }) =>
   return (
     <div className={TACTICAL_VIEW_STYLES.DroneDashboard_div_className}>
       {/* 1. Global Tactical Command Bar */}
-      <Header
-        onRefresh={handleManualRefresh}
-        avionics={flight.avionics}
-        viewMode={viewMode}
-      />
+      <Header />
 
       {/* 2. Workspace Body: Left Sidebar + Center Command Viewport */}
       <TacticalWorkspace
@@ -40,15 +32,9 @@ export const DroneDashboard: React.FC<DroneDashboardProps> = ({ initialTab }) =>
         isSidebarCollapsed={isSidebarCollapsed}
         onToggleCollapse={toggleSidebar}
         onOpenWall={wall.openWall}
-        avionics={flight.avionics}
-        isMuted={isMuted}
-        onToggleMute={toggleMute}
         threatLevel={threatLevel}
         viewMode={viewMode}
         onViewSelect={handleViewSelect}
-        isCommandPending={flight.isCommandPending}
-        onCommand={flight.handleCommand}
-        onRefresh={handleManualRefresh}
         onSnapshotTrigger={handleCaptureSnapshot}
       />
 

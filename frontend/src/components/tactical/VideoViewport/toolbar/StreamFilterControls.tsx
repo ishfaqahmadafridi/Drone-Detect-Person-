@@ -1,28 +1,24 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
-
 
 import React from "react";
+import { VIDEO_TOOLS } from "@/constants/tactical";
 import { StreamFilterControlsProps } from "@/types";
-import { Moon } from "lucide-react";
 
-export const StreamFilterControls: React.FC<StreamFilterControlsProps> = ({
-  isNightVision,
-  onToggleNightVision,
-}) => {
+export const StreamFilterControls: React.FC<StreamFilterControlsProps> = ({ isNightVision, onToggleNightVision }) => {
+  const state = isNightVision ? "on" : "off";
   return (
-    <button
-      onClick={onToggleNightVision}
-      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-all duration-150 active:scale-[0.98] select-none ${
-        isNightVision
-          ? TACTICAL_VIEW_STYLES.StreamFilterControls_button_className
-          : TACTICAL_VIEW_STYLES.StreamFilterControls_button_className_2
-      }`}
-      title="Toggle Night Vision / Infrared Sensor Filter"
-    >
-      <Moon className={`w-3.5 h-3.5 ${isNightVision ? TACTICAL_VIEW_STYLES.BatteryHealthGauge_strong_className : TACTICAL_VIEW_STYLES.GroundWizardStepIndicator_span_className_3}`} />
-      <span>IR: {isNightVision ? "On" : "Off"}</span>
-    </button>
+    <label className={VIDEO_TOOLS.groupClass}>
+      <span className={VIDEO_TOOLS.groupLabelClass}>Night vision</span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={isNightVision}
+        onClick={onToggleNightVision}
+        className={VIDEO_TOOLS.switchTrackClass[state]}
+      >
+        <span aria-hidden="true" className={VIDEO_TOOLS.switchThumbClass[state]} />
+      </button>
+    </label>
   );
 };
 

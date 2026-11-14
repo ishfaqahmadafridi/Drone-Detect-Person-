@@ -50,14 +50,18 @@ class PerspectiveController:
     def update_config(
         self,
         conf_thresh: Optional[float] = None,
-        zone_polygon: Optional[List[Tuple[float, float]]] = None
+        zone_polygon: Optional[List[Tuple[float, float]]] = None,
+        save_on_alert: Optional[bool] = None,
+        snapshot_cooldown: Optional[float] = None,
     ):
         """
         Applies dynamic surveillance tuning parameters across detection, zoning, and alerts.
         """
         self.pipeline_processor.update_config(
             conf_thresh=conf_thresh,
-            zone_polygon=zone_polygon
+            zone_polygon=zone_polygon,
+            save_on_alert=save_on_alert,
+            snapshot_cooldown=snapshot_cooldown,
         )
         self.telemetry_store.update(
             confidence_threshold=self.config.confidence_threshold,

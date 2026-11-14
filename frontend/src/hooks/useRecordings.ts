@@ -1,119 +1,65 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { useSnapshotsQuery } from "@/services/queries/useSnapshotsQuery";
-import { SnapshotItem, RecordingsFilterMode } from "@/types";
-import { recordingsApi } from "@/services/api/recordingsApi";
+import { useRecordingsQuery } from "@/services/queries/useRecordingsQuery";
+import { recordingsApi, normalizeRecording } from "@/services/api/recordingsApi";
+import { apiErrorMessage } from "@/utils/apiError";
+import type { SnapshotFilter, SnapshotItem } from "@/types";
 
 export function useRecordings() {
-  const { data: snapshots = [], isLoading, refetch } = useSnapshotsQuery();
+  const { data, isLoading, isFetching, error, refetch } = useRecordingsQuery();
+  const recordings = useMemo(() => data?.snapshots ?? [], [data]);
+  const [filterMode, setFilterMode] = useState<SnapshotFilter>("all");
+  const [selected, setSelected] = useState<SnapshotItem | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [actionError, setActionError] = useState("");
 
-  const [filterMode, setFilterMode] = useState<RecordingsFilterMode>("all");
-  const [selectedSnapshotState, setSelectedSnapshot] = useState<SnapshotItem | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [isActionLoading, setIsActionLoading] = useState<boolean>(false);
-
-  // Filter snapshots by perspective or media type
-  const filteredSnapshots = useMemo(() => {
-    return snapshots.filter((snap: SnapshotItem) => {
-      if (filterMode === "all") return true;
-      if (filterMode === "video") {
-        return snap.media_type === "video" || snap.filename.endsWith(".mp4");
-      }
-      if (filterMode === "image") {
-        return (snap.media_type === "image" || !snap.filename.endsWith(".mp4")) && snap.media_type !== "video";
-      }
-      return (snap.view_mode ?? "aerial") === filterMode;
-    });
-  }, [snapshots, filterMode]);
-
-  // Derive the active selection safely without triggering state update cascading
-  const selectedSnapshot = useMemo(() => {
-    if (!selectedSnapshotState) return null;
-    const exists = filteredSnapshots.some((s) => s.filename === selectedSnapshotState.filename);
-    return exists ? selectedSnapshotState : null;
-  }, [filteredSnapshots, selectedSnapshotState]);
-
-  // Check initial recording status
   useEffect(() => {
-    recordingsApi.getRecordingStatus()
-      .then((res) => setIsRecording(res.is_recording))
-      .catch(() => {});
+    recordingsApi.getRecordingStatus().then(res => setIsRecording(res.is_recording)).catch(() => undefined);
   }, []);
 
-  const startRecording = useCallback(async () => {
-    try {
-      setIsActionLoading(true);
-      const res = await recordingsApi.startRecording();
-      setIsRecording(true);
-      return res;
-    } catch (err) {
-      console.error("[RECORDINGS] Failed to start recording:", err);
-      throw err;
-    } finally {
-      setIsActionLoading(false);
-    }
-  }, []);
+  const filtered = useMemo(
+    () => recordings.filter(item => filterMode === "all" || (item.view_mode ?? "aerial") === filterMode),
+    [recordings, filterMode],
+  );
 
-  const stopRecording = useCallback(async () => {
+  const toggleRecording = useCallback(async () => {
+    if (pending) return;
+    setPending(true);
+    setActionError("");
     try {
-      setIsActionLoading(true);
-      const res = await recordingsApi.stopRecording();
-      setIsRecording(false);
-      await refetch();
-      if (res.record) {
-        setSelectedSnapshot(res.record);
+      if (isRecording) {
+        const res = await recordingsApi.stopRecording();
+        setIsRecording(false);
+        await refetch();
+        if (res.record) setSelected(normalizeRecording(res.record));
+      } else {
+        await recordingsApi.startRecording();
+        setIsRecording(true);
       }
-      return res;
     } catch (err) {
-      console.error("[RECORDINGS] Failed to stop recording:", err);
-      throw err;
+      setActionError(apiErrorMessage(err));
     } finally {
-      setIsActionLoading(false);
+      setPending(false);
     }
-  }, [refetch]);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const toggleRecording = useCallback(() => {
-    if (isRecording) {
-      return stopRecording();
-    } else {
-      return startRecording();
-    }
-  }, [isRecording, startRecording, stopRecording]);
-
-  const selectRecordAndInspect = useCallback((snap: SnapshotItem) => {
-    setSelectedSnapshot(snap);
-    setIsModalOpen(true);
-  }, []);
-
-  const closePreview = useCallback(() => {
-    setSelectedSnapshot(null);
-  }, []);
+  }, [isRecording, pending, refetch]);
 
   return {
-    snapshots: filteredSnapshots,
-    allSnapshots: snapshots,
-    totalCount: snapshots.length,
-    filteredCount: filteredSnapshots.length,
+    recordings: filtered,
+    total: data?.total ?? recordings.length,
     isLoading,
+    isFetching,
+    loadError: error ? apiErrorMessage(error) : "",
     refetch,
     filterMode,
     setFilterMode,
-    selectedSnapshot,
-    setSelectedSnapshot,
-    isModalOpen,
-    openModal,
-    closeModal,
-    closePreview,
+    selected,
+    open: setSelected,
+    close: () => setSelected(null),
     isRecording,
-    isActionLoading,
-    startRecording,
-    stopRecording,
+    pending,
+    actionError,
     toggleRecording,
-    selectRecordAndInspect,
   };
 }

@@ -1,19 +1,14 @@
-import { RefObject, FormEvent } from "react";
-import { StreamSourceType } from "../index";
+import { RefObject } from "react";
+import type { LucideIcon } from "lucide-react";
 import { TacticalCameraChannel } from "./cameraWall";
 
 // ==========================================
 // 2. Video Viewport Component Props
 // ==========================================
 export interface VideoViewportProps {
-  onSnapshotTrigger?: () => void;
+  onSnapshotTrigger?: ViewportAction;
   onManageCameras?: () => void;
 }
-
-export interface GroundCameraConnectionsProps {
-  onManageCameras?: () => void;
-}
-
 export type ViewportLayoutMode = "single" | "dual" | "quad";
 
 export interface ViewportSplitGridProps {
@@ -39,6 +34,8 @@ export interface ViewportLayoutOption {
   mode: ViewportLayoutMode;
   label: string;
   tooltip: string;
+  icon: LucideIcon;
+  minCameras: number;
 }
 
 export interface UseViewportScreenReturn {
@@ -48,52 +45,34 @@ export interface UseViewportScreenReturn {
   handleSelectCamera: (cam: TacticalCameraChannel) => void;
 }
 
-export interface ViewportHeaderProps {
-  sourceType: string;
-  viewMode?: "aerial" | "ground";
-  trackingMode?: "auto" | "manual";
-  selectedCount?: number;
-  layoutMode?: ViewportLayoutMode;
-  onLayoutChange?: (mode: ViewportLayoutMode) => void;
-  onTrackingModeChange?: (mode: "auto" | "manual") => void;
-  onClearSelectedTargets?: () => void;
-  isEditingZone?: boolean;
-  onToggleEditZone?: () => void;
-  onSnapshotTrigger?: () => void;
-  onToggleFullscreen: () => void;
+export type ViewportAction = () => void | Promise<void>;
+export type ViewportActionName = "snapshot" | "fullscreen";
+
+export interface ViewportHeaderProps extends ViewportHeaderActionsProps {
+  onManageCameras?: () => void;
+  layoutMode: ViewportLayoutMode;
+  connectedCameraCount: number;
+  onLayoutChange: (mode: ViewportLayoutMode) => void;
 }
 
 export interface ViewportLayoutSelectorProps {
   layoutMode: ViewportLayoutMode;
   onLayoutChange: (mode: ViewportLayoutMode) => void;
+  connectedCameraCount: number;
 }
 
 export interface SensorTitleClusterProps {
   className?: string;
 }
 
-export interface ViewportSourceBadgeProps {
-  sourceType: string;
-}
-
-export interface ViewportPerspectiveBadgeProps {
-  viewMode?: "aerial" | "ground";
-}
-
-export interface DetectionModeToggleProps {
-  trackingMode?: "auto" | "manual";
-  selectedCount?: number;
-  onTrackingModeChange?: (mode: "auto" | "manual") => void;
-  onClearSelectedTargets?: () => void;
-}
-
 export interface ViewportHeaderActionsProps {
-  onSnapshotTrigger?: () => void;
-  onToggleFullscreen: () => void;
+  onSnapshotTrigger?: ViewportAction;
+  onToggleFullscreen: ViewportAction;
+  isFullscreen: boolean;
+  fullscreenSupported: boolean;
 }
 
 export interface ViewportScreenProps {
-  containerRef: RefObject<HTMLDivElement | null>;
   canvasRef?: RefObject<HTMLCanvasElement | null>;
   streamKey: number;
   fps: number;
@@ -143,14 +122,6 @@ export interface ViewportTelemetryBadgesProps {
   engine?: string;
 }
 
-export interface SensorIdentityBadgeProps {
-  className?: string;
-}
-
-export interface StreamStatusBadgeProps {
-  className?: string;
-}
-
 export interface ClassificationLegendItem {
   label: string;
   dotClass: string;
@@ -169,33 +140,11 @@ export interface ViewportHudOverlayProps {
   onCancelZone?: () => void;
 }
 
-export interface ZoneBannerProps {
-  onSave: () => void;
-  onReset: () => void;
-  onClear?: () => void;
-  onCancel: () => void;
-}
-
 export interface UseZoneCanvasProps {
   canvasRef: RefObject<HTMLCanvasElement | null>;
   isEditingZone: boolean;
   initialPolygon?: [number, number][];
   onSaveZone: (points: [number, number][]) => Promise<void>;
-}
-
-export interface StreamToolbarProps {
-  sourceType: string;
-  viewMode?: "aerial" | "ground";
-  showRtspField: boolean;
-  isConnectingRtsp: boolean;
-  rtspInput: string;
-  onSourceSelect: (type: StreamSourceType) => void;
-  onViewSelect?: (view: "aerial" | "ground") => void;
-  onRtspInputChange: (val: string) => void;
-  onRtspSubmit: (e: FormEvent) => void;
-  onSnapshotTrigger?: () => void;
-  onToggleFullscreen?: () => void;
-  onOpenEvidence?: () => void;
 }
 
 export interface StreamZoomControlsProps {
@@ -206,33 +155,4 @@ export interface StreamZoomControlsProps {
 export interface StreamFilterControlsProps {
   isNightVision: boolean;
   onToggleNightVision: () => void;
-}
-
-export interface StreamActionButtonsProps {
-  onSnapshotTrigger?: () => void;
-  onOpenEvidence?: () => void;
-  onToggleFullscreen?: () => void;
-}
-
-
-
-export interface StreamSourceSelectorProps {
-  sourceType: string;
-  viewMode?: "aerial" | "ground";
-  onSourceSelect: (type: StreamSourceType) => void;
-}
-
-export interface PerspectiveToggleProps {
-  viewMode?: "aerial" | "ground";
-  onViewSelect: (view: "aerial" | "ground") => void;
-}
-
-export interface StreamRtspFormProps {
-  show: boolean;
-  isConnectingRtsp: boolean;
-  rtspInput: string;
-  onRtspInputChange: (val: string) => void;
-  onRtspSubmit: (e: FormEvent) => void;
-  placeholder?: string;
-  buttonLabel?: string;
 }

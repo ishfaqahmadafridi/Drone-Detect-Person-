@@ -5,10 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { ALERTS_QUERY_KEY } from "@/services/queries/useAlertsQuery";
 import { SNAPSHOTS_QUERY_KEY } from "@/services/queries/useSnapshotsQuery";
-import { useDroneFlight } from "./useDroneFlight";
 import { useCameraWall } from "./useCameraWall";
 import { useTelemetryMetrics } from "./useTelemetryMetrics";
-import { useAudioAlert } from "./useAudioAlert";
 import { useAppSelector } from "@/store";
 import { usePerspectiveSelection } from "./usePerspectiveSelection";
 import { streamApi } from "@/services/api/streamApi";
@@ -46,23 +44,12 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
   const selectPerspective = usePerspectiveSelection();
 
   const { threatLevel } = useTelemetryMetrics();
-  const { isMuted, toggleMute } = useAudioAlert();
-  const flight = useDroneFlight();
   const wall = useCameraWall();
 
-  const handleManualRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ALERTS_QUERY_KEY });
-    queryClient.invalidateQueries({ queryKey: SNAPSHOTS_QUERY_KEY });
-  };
-
   const handleCaptureSnapshot = async () => {
-    try {
-      await streamApi.captureSnapshot(view_mode);
-      queryClient.invalidateQueries({ queryKey: SNAPSHOTS_QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: ALERTS_QUERY_KEY });
-    } catch (e) {
-      console.error("Failed to capture snapshot:", e);
-    }
+    await streamApi.captureSnapshot(view_mode);
+    queryClient.invalidateQueries({ queryKey: SNAPSHOTS_QUERY_KEY });
+    queryClient.invalidateQueries({ queryKey: ALERTS_QUERY_KEY });
   };
 
   const toggleSidebar = () => {
@@ -87,13 +74,9 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
         router.push(targetRoute);
       }
 
-      if (tab === "cameras") {
-        wall.openWall();
-      } else if (tab === "airspace") {
-        void handleViewSelect("aerial");
-      }
+      if (tab === "cameras") wall.openWall();
     },
-    [handleViewSelect, pathname, router, wall]
+    [pathname, router, wall]
   );
 
   return {
@@ -102,12 +85,8 @@ export function useDashboardOrchestrator(initialTab?: TacticalNavTab) {
     handleTabChange,
     isSidebarCollapsed,
     toggleSidebar,
-    handleManualRefresh,
     handleCaptureSnapshot,
     threatLevel,
-    isMuted,
-    toggleMute,
-    flight,
     wall,
     viewMode: (view_mode as "aerial" | "ground") || "aerial",
     handleViewSelect,

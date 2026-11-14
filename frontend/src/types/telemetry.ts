@@ -33,4 +33,6 @@ export interface SurveillanceConfig {
   confidence_threshold: number;
   zone_polygon: [number, number][];
   source_type: StreamSourceType;
+  save_snapshots_on_alert?: boolean;
+  snapshot_cooldown_seconds?: number;
 }

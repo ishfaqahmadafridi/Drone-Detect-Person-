@@ -3,38 +3,32 @@
 import React from "react";
 import { TacticalViewRouterProps } from "@/types";
 import { AirspaceCommandView } from "./AirspaceCommandView";
+import { ConnectionsView } from "./ConnectionsView";
 import { IncidentAuditView } from "./IncidentAuditView";
-import { CalibrationView } from "./CalibrationView";
+import { SettingsView } from "./SettingsView";
 import { RecordingsView } from "./RecordingsView";
 
 export const TacticalViewRouter: React.FC<TacticalViewRouterProps> = ({
   activeTab,
   onSnapshotTrigger,
-  isCommandPending,
-  onCommand,
   viewMode,
   onOpenWall,
   onTabChange,
 }) => {
   switch (activeTab) {
+    case "connections":
+      return <ConnectionsView onTabChange={onTabChange} />;
     case "incidents":
       return <IncidentAuditView />;
     case "recordings":
       return <RecordingsView />;
     case "settings":
-      return (
-        <CalibrationView
-          viewMode={viewMode}
-          onOpenWall={onOpenWall}
-        />
-      );
+      return <SettingsView />;
     case "airspace":
     default:
       return (
         <AirspaceCommandView
           onSnapshotTrigger={onSnapshotTrigger}
-          isCommandPending={isCommandPending}
-          onCommand={onCommand}
           viewMode={viewMode}
           onOpenWall={onOpenWall}
           onTabChange={onTabChange}

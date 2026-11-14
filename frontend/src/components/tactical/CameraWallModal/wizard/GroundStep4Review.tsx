@@ -7,7 +7,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
 import { GroundStep4ReviewProps } from "@/types";
 import { StreamLinkProber } from "./StreamLinkProber";
-import { ArrowLeft, Zap, ShieldCheck, Loader2 } from "lucide-react";
+import { ArrowLeft, Zap, ShieldCheck, LoaderCircle } from "lucide-react";
 
 export const GroundStep4Review: React.FC<GroundStep4ReviewProps> = ({
   config,
@@ -88,7 +88,7 @@ export const GroundStep4Review: React.FC<GroundStep4ReviewProps> = ({
         >
           {isConnecting ? (
             <>
-              <Loader2 className={TACTICAL_VIEW_STYLES.GroundStep4Review_Loader2_className} />
+              <LoaderCircle className={TACTICAL_VIEW_STYLES.GroundStep4Review_Loader2_className} />
               <span>LINKING SENSOR...</span>
             </>
           ) : (

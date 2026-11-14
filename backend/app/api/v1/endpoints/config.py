@@ -15,6 +15,8 @@ def get_config(stream_service=Depends(get_stream_session)):
         "model_name": cfg.model_name,
         "confidence_threshold": cfg.confidence_threshold,
         "zone_polygon": cfg.default_zone_normalized,
+        "save_snapshots_on_alert": cfg.save_snapshots_on_alert,
+        "snapshot_cooldown_seconds": cfg.snapshot_cooldown_seconds,
         "source_type": stream_service.source_type
     }
 
@@ -26,7 +28,9 @@ def update_config(req: ConfigUpdateRequest, stream_service=Depends(get_stream_se
     
     stream_service.update_config(
         conf_thresh=req.confidence_threshold,
-        zone_polygon=poly
+        zone_polygon=poly,
+        save_on_alert=req.save_snapshots_on_alert,
+        snapshot_cooldown=req.snapshot_cooldown_seconds,
     )
     return {
         "message": "Configuration successfully updated",

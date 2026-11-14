@@ -13,7 +13,6 @@ export interface ActiveCameraInfo {
   camLoc: string;
   isGround: boolean;
   isSimulation: boolean;
-  sensorTag: string;
 }
 
 export interface CameraListResponse {
@@ -41,6 +40,24 @@ export interface CameraCreatePayload {
 export interface UpdateConfigPayload {
   confidence_threshold?: number;
   zone_polygon?: [number, number][];
+  save_snapshots_on_alert?: boolean;
+  snapshot_cooldown_seconds?: number;
+}
+
+export interface EvidenceStorageBucket {
+  count: number;
+  size_kb: number;
+}
+
+export interface EvidenceStorageStats {
+  image: EvidenceStorageBucket;
+  video: EvidenceStorageBucket;
+}
+
+export interface EvidenceCleanupResult {
+  deleted: number;
+  freed_kb: number;
+  cutoff: string;
 }
 
 export interface RecordingStatusResponse {

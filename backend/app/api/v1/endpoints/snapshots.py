@@ -22,6 +22,8 @@ def get_snapshots(view: Optional[str] = None):
         limit=100,
     )
     return {
+        # The list is capped for payload size; `total` is the true number of saved snapshots.
+        "total": evidence_repository.count_records(view_mode=view, media_type="image"),
         "snapshots": [
             {
                 "id": r.id,

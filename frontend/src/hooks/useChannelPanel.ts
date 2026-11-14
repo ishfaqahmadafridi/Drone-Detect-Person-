@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import type { FormEvent } from "react";
 import type { StreamChannel, StreamSourceType, TelemetryData } from "@/types";
 import { apiClient } from "@/services/api/client";
 import { streamApi } from "@/services/api/streamApi";
@@ -19,12 +18,10 @@ export function useChannelPanel(channel: StreamChannel) {
   const [telemetry, setTelemetry] = useState<Partial<TelemetryData>>({});
   const [revision, setRevision] = useState(0);
   const [sourceType, setSourceType] = useState<StreamSourceType>("synthetic");
-  const [networkUrl, setNetworkUrl] = useState("");
-  const [showNetwork, setShowNetwork] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [streamError, setStreamError] = useState(false);
-  const { toggleFullscreen } = useFullscreen(containerRef);
+  const { toggleFullscreen, isFullscreen, fullscreenSupported } = useFullscreen(containerRef);
 
   const autoCaptureGround = async () => {
     if (channel !== "ground") return;
@@ -80,19 +77,13 @@ export function useChannelPanel(channel: StreamChannel) {
       setSourceType(result.source_type);
       setRevision(value => value + 1);
       setStreamError(false);
-      setShowNetwork(false);
     } catch (error) { setError(apiErrorMessage(error)); }
     finally { setPending(false); }
   };
 
   const selectSource = (source: StreamSourceType) => {
     if (source === "file") upload.inputRef.current?.click();
-    else if (source === "rtsp") setShowNetwork(true);
     else void connect(source);
-  };
-  const submitNetwork = (event: FormEvent) => {
-    event.preventDefault();
-    if (networkUrl.trim()) void connect("rtsp", networkUrl.trim());
   };
   const reconnect = () => { setRevision(value => value + 1); setStreamError(false); };
   const replay = async () => {
@@ -106,5 +97,5 @@ export function useChannelPanel(channel: StreamChannel) {
     } catch (failure) { setError(apiErrorMessage(failure)); }
     finally { setPending(false); }
   };
-  return { containerRef, telemetry, revision, sourceType, networkUrl, setNetworkUrl, showNetwork, pending, error, streamError, setStreamError, toggleFullscreen, upload, selectSource, submitNetwork, reconnect, replay };
+  return { containerRef, telemetry, revision, sourceType, pending, error, streamError, setStreamError, toggleFullscreen, isFullscreen, fullscreenSupported, upload, selectSource, replay };
 }

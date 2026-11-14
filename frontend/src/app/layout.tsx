@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="dark h-full antialiased"
+      className="h-full antialiased"
     >
       <body className={TACTICAL_VIEW_STYLES.layout_body_className}>
         <AppProviders>{children}</AppProviders>

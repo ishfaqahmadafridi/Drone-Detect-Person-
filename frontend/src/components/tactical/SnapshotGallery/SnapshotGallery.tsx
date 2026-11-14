@@ -1,55 +1,52 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
-
-
 import React from "react";
+import { EVIDENCE_UI, VIDEO_TOOLS } from "@/constants/tactical";
 import { useSnapshotGallery } from "@/hooks";
 import { SnapshotHeader } from "./SnapshotHeader";
 import { SnapshotCard } from "./SnapshotCard";
-import { SnapshotModal } from "./SnapshotModal";
+import { EvidenceViewerModal } from "../EvidenceViewer";
 import { EmptyGalleryState } from "./EmptyGalleryState";
 
 export const SnapshotGallery: React.FC = () => {
   const {
-    snapshots,
-    isLoading,
-    refetch,
-    filterMode,
-    setFilterMode,
-    selectedSnapshot,
-    openSnapshot,
-    closeSnapshot,
+    snapshots, visibleSnapshots, hasMore, showMore, total, listedCount,
+    isLoading, refetch, filterMode, setFilterMode, selectedSnapshot, openSnapshot, closeSnapshot,
   } = useSnapshotGallery();
+  const description = total > listedCount
+    ? `Newest ${listedCount} of ${total.toLocaleString()} saved frames. Click one to enlarge or download.`
+    : "Saved frames, newest first. Click one to enlarge or download.";
 
   return (
-    <div className={TACTICAL_VIEW_STYLES.IncidentLogs_div_className}>
+    <section aria-label="Evidence snapshots" className={EVIDENCE_UI.cardClass}>
       <SnapshotHeader
-        count={snapshots.length}
+        count={total}
+        description={description}
         isLoading={isLoading}
         onRefresh={() => refetch()}
         filterMode={filterMode}
         onFilterChange={setFilterMode}
       />
 
-      <div className="flex items-center gap-3 overflow-x-auto py-1 scrollbar-thin">
-        {snapshots.length === 0 ? (
-          <EmptyGalleryState />
-        ) : (
-          snapshots.map((snap, idx) => (
-            <SnapshotCard
-              key={idx}
-              snapshot={snap}
-              onClick={() => openSnapshot(snap)}
-            />
-          ))
-        )}
-      </div>
+      {snapshots.length === 0 ? (
+        <EmptyGalleryState />
+      ) : (
+        <>
+          <ul className={EVIDENCE_UI.gridClass}>
+            {visibleSnapshots.map(snap => (
+              <SnapshotCard key={snap.id ?? snap.filename} snapshot={snap} onClick={() => openSnapshot(snap)} />
+            ))}
+          </ul>
+          <div className={EVIDENCE_UI.footerClass}>
+            <span>Showing {visibleSnapshots.length} of {snapshots.length}</span>
+            {hasMore && (
+              <button type="button" onClick={showMore} className={VIDEO_TOOLS.secondaryButtonClass}>Show more</button>
+            )}
+          </div>
+        </>
+      )}
 
-      <SnapshotModal
-        snapshot={selectedSnapshot}
-        onClose={closeSnapshot}
-      />
-    </div>
+      <EvidenceViewerModal item={selectedSnapshot} onClose={closeSnapshot} />
+    </section>
   );
 };
 

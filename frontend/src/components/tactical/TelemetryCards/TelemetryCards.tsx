@@ -43,9 +43,5 @@ export const TelemetryCards: React.FC<TelemetryCardsProps> = ({
 };
 
 export default TelemetryCards;
-export * from "./MetricTile";
 export * from "./TelemetryCardTile";
-export * from "./PersonsMetricCard";
-export * from "./IntrudersMetricCard";
-export * from "./SpeedMetricCard";
 export * from "./DetectedPersonsModal";
