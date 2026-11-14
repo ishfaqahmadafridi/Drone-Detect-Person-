@@ -3,14 +3,24 @@ Filesystem Evidence Syncer: Migrates and reconciles disk artifacts into SQLite d
 """
 
 import os
+import re
 from datetime import datetime
 from typing import TYPE_CHECKING
 
 from app.core.config import SNAPSHOTS_DIR, RECORDINGS_DIR
 from app.schemas.evidence import EvidenceRecordCreate
+from app.db.connection import db_manager
 
 if TYPE_CHECKING:
     from app.db.repository import EvidenceRepository
+
+
+def infer_view_mode(filename: str) -> str:
+    """Perspective from a filename token, e.g. ``aerial_syn_1.jpg`` or ``alert_x_ground_2.jpg``."""
+    tokens = re.split(r"[_.\-]", filename.lower())
+    if "aerial" in tokens:
+        return "aerial"
+    return "ground"
 
 
 class FilesystemSyncer:
@@ -34,7 +44,7 @@ class FilesystemSyncer:
                     except OSError:
                         continue
 
-                    view_mode = "ground" if "_ground_" in fname else ("aerial" if "_aerial_" in fname else "ground")
+                    view_mode = infer_view_mode(fname)
                     threat_level = (
                         "INTRUSION"
                         if "intrusion" in fname.lower()
@@ -75,7 +85,7 @@ class FilesystemSyncer:
                     except OSError:
                         continue
 
-                    view_mode = "ground" if "_ground_" in fname else ("aerial" if "_aerial_" in fname else "ground")
+                    view_mode = infer_view_mode(fname)
                     threat_level = (
                         "INTRUSION"
                         if "intrusion" in fname.lower()
@@ -99,5 +109,12 @@ class FilesystemSyncer:
                     )
                     repository.insert(create_dto)
                     synced_count += 1
+
+        # Rows synced before token matching existed recorded `aerial_*` files as ground.
+        with db_manager.session() as conn:
+            conn.execute(
+                "UPDATE evidence_records SET view_mode = 'aerial' "
+                "WHERE view_mode = 'ground' AND filename LIKE 'aerial\\_%' ESCAPE '\\'"
+            )
 
         return synced_count

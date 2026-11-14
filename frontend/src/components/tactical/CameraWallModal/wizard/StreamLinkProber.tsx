@@ -5,7 +5,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
 import { StreamLinkProberProps } from "@/types";
 import { useStreamLinkProber } from "@/hooks/useStreamLinkProber";
-import { Activity, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
+import { Activity, CircleCheck, TriangleAlert, LoaderCircle } from "lucide-react";
 
 /**
  * Standalone tactical stream connection prober component.
@@ -31,12 +31,12 @@ export const StreamLinkProber: React.FC<StreamLinkProberProps> = ({
         {testResult ? (
           testResult.success ? (
             <span className={TACTICAL_VIEW_STYLES.StreamLinkProber_span_className}>
-              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+              <CircleCheck className="w-3.5 h-3.5 shrink-0" />
               <span>LINK ONLINE ({testResult.latency_ms}ms)</span>
             </span>
           ) : (
             <span className={TACTICAL_VIEW_STYLES.StreamLinkProber_span_className_2}>
-              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+              <TriangleAlert className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">{testResult.message}</span>
             </span>
           )
@@ -53,7 +53,7 @@ export const StreamLinkProber: React.FC<StreamLinkProberProps> = ({
         disabled={isTesting}
         className={TACTICAL_VIEW_STYLES.StreamLinkProber_button_className}
       >
-        {isTesting && <Loader2 className={TACTICAL_VIEW_STYLES.StreamLinkProber_Loader2_className} />}
+        {isTesting && <LoaderCircle className={TACTICAL_VIEW_STYLES.StreamLinkProber_Loader2_className} />}
         <span>{isTesting ? "PROBING..." : "TEST LINK"}</span>
       </button>
     </div>

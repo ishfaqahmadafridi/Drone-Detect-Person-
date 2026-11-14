@@ -6,12 +6,14 @@ import {
 } from "@/types";
 import { DEFAULT_CONNECTED_CAMERA_IDS } from "@/constants/tactical";
 import { getSplitGridLayoutClass } from "@/utils";
+import { selectViewportCameras } from "@/utils/gridUtils";
 import { useCameraFleet } from "./useCameraFleet";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { toggleConnectCamera } from "@/store/slices/telemetrySlice";
 
 export const useViewportSplitGrid = ({
   onSelectCamera,
+  layoutMode,
 }: UseViewportSplitGridProps): UseViewportSplitGridReturn => {
   const dispatch = useAppDispatch();
   const { cameras } = useCameraFleet();
@@ -22,8 +24,8 @@ export const useViewportSplitGrid = ({
   );
 
   const channelsToDisplay = useMemo(
-    () => cameras.filter(camera => connectedIds.includes(camera.id) && camera.viewMode === viewMode),
-    [cameras, connectedIds, viewMode]
+    () => selectViewportCameras(cameras, connectedIds, viewMode ?? "aerial", activeId, layoutMode),
+    [cameras, connectedIds, viewMode, activeId, layoutMode]
   );
 
   const gridClass = useMemo(

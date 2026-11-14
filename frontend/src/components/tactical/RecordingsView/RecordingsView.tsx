@@ -1,73 +1,75 @@
 "use client";
 
 import React from "react";
-import { RecordingsViewProps } from "@/types";
+import { Circle, Film, RefreshCw, Square } from "lucide-react";
+import { EVIDENCE_UI, VIDEO_TOOLS } from "@/constants/tactical";
 import { useRecordings } from "@/hooks";
-import { RecordingsListPane } from "./RecordingsListPane";
-import { RecordingsFullscreenModal } from "./RecordingsFullscreenModal";
-import { RecordingsFooter } from "./RecordingsFooter";
+import type { RecordingsViewProps } from "@/types";
+import { EvidenceSectionHeader } from "../IncidentLogs/EvidenceSectionHeader";
+import { EvidenceViewerModal } from "../EvidenceViewer";
+import { RecordingRow } from "./RecordingRow";
 
 export const RecordingsView: React.FC<RecordingsViewProps> = ({ className = "" }) => {
   const {
-    snapshots,
-    totalCount,
-    filteredCount,
-    isLoading,
-    refetch,
-    filterMode,
-    setFilterMode,
-    selectedSnapshot,
-    isModalOpen,
-    closeModal,
-    isRecording,
-    isActionLoading,
-    toggleRecording,
-    selectRecordAndInspect,
+    recordings, total, isLoading, isFetching, loadError, refetch, filterMode, setFilterMode,
+    selected, open, close, isRecording, pending, actionError, toggleRecording,
   } = useRecordings();
 
   return (
-    <div className={`flex flex-col h-full gap-4 p-3 md:p-5 ${className}`}>
-      {/* ── Main Recordings Workspace (Full-Width Tactical Grid) ── */}
-      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
-        <RecordingsListPane
-          snapshots={snapshots}
-          totalCount={totalCount}
-          filteredCount={filteredCount}
-          isLoading={isLoading}
-          filterMode={filterMode}
-          selectedSnapshot={selectedSnapshot}
-          onSelectSnapshot={selectRecordAndInspect}
-          onFilterChange={setFilterMode}
-          onRefresh={() => refetch()}
-          isRecording={isRecording}
-          onToggleRecording={toggleRecording}
-          isActionLoading={isActionLoading}
-        />
-      </div>
+    <section aria-label="Recordings" className={`${EVIDENCE_UI.cardClass} ${className}`}>
+      <EvidenceSectionHeader
+        icon={Film}
+        title="Recordings"
+        count={total}
+        description={isRecording ? "Recording the live video now. Press Stop to save it." : "Saved videos of the live feed, newest first."}
+      >
+        <div role="group" aria-label="Filter by perspective" className={VIDEO_TOOLS.segmentedClass}>
+          {EVIDENCE_UI.filters.map(filter => (
+            <button
+              key={filter.value}
+              type="button"
+              aria-pressed={filterMode === filter.value}
+              onClick={() => setFilterMode(filter.value)}
+              className={filterMode === filter.value ? VIDEO_TOOLS.segmentClass.active : VIDEO_TOOLS.segmentClass.idle}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+        <button type="button" onClick={() => refetch()} disabled={isFetching} className={VIDEO_TOOLS.secondaryButtonClass}>
+          <RefreshCw aria-hidden="true" className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />Refresh
+        </button>
+        <button
+          type="button"
+          onClick={() => void toggleRecording()}
+          disabled={pending}
+          aria-pressed={isRecording}
+          className={isRecording ? EVIDENCE_UI.stopRecordingClass : VIDEO_TOOLS.primaryButtonClass}
+        >
+          {isRecording
+            ? <><Square aria-hidden="true" className="h-4 w-4 fill-current" />Stop recording</>
+            : <><Circle aria-hidden="true" className="h-4 w-4 fill-current" />Start recording</>}
+        </button>
+      </EvidenceSectionHeader>
 
-      {/* ── Bottom Advisory Banner ── */}
-      {!isLoading && totalCount > 0 && (
-        <RecordingsFooter totalCount={totalCount} />
+      {(actionError || loadError) && <p role="alert" className={VIDEO_TOOLS.errorClass}>{actionError || loadError}</p>}
+
+      {recordings.length === 0 ? (
+        <div className={EVIDENCE_UI.emptyClass}>
+          <span className={EVIDENCE_UI.emptyIconClass}><Film aria-hidden="true" className="h-5 w-5" /></span>
+          <p className={EVIDENCE_UI.emptyTitleClass}>{isLoading ? "Loading recordings…" : "No recordings yet"}</p>
+          {!isLoading && <p className={EVIDENCE_UI.emptyTextClass}>Press Start recording to save the live video. Snapshots are on the Incident Logs page.</p>}
+        </div>
+      ) : (
+        <ul className={EVIDENCE_UI.listClass}>
+          {recordings.map(item => <RecordingRow key={item.id ?? item.filename} item={item} onPlay={open} />)}
+        </ul>
       )}
 
-      {/* ── High-Resolution Fullscreen Inspection Modal ── */}
-      <RecordingsFullscreenModal
-        snapshot={selectedSnapshot}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
-    </div>
+      <EvidenceViewerModal item={selected} onClose={close} />
+    </section>
   );
 };
 
 export default RecordingsView;
-export * from "./RecordingsHeader";
-export * from "./RecordingsFilterTabs";
-export * from "./RecordingsListItem";
-export * from "./RecordingsListPane";
-export * from "./RecordingsPreviewPane";
-export * from "./RecordingsFullscreenModal";
-export * from "./RecordingsEmptyState";
-export * from "./RecordingsFooter";
-export * from "./EvidenceRecordRow";
-export * from "./RecordDetailPanel";
+export * from "./RecordingRow";

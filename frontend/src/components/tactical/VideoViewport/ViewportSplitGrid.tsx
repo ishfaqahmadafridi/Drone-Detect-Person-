@@ -5,7 +5,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
 import { ViewportSplitGridProps } from "@/types";
 import { TacticalCameraFeedPreview } from "../CameraWallModal/card/TacticalCameraFeedPreview";
-import { ArrowUpRight, CheckCircle2, X } from "lucide-react";
+import { ArrowUpRight, CircleCheck, X } from "lucide-react";
 import { useViewportSplitGrid } from "@/hooks";
 
 export const ViewportSplitGrid: React.FC<ViewportSplitGridProps> = ({
@@ -53,7 +53,7 @@ export const ViewportSplitGrid: React.FC<ViewportSplitGridProps> = ({
               <div className="flex items-center gap-1.5 shrink-0">
                 {isCamActive ? (
                   <span className={TACTICAL_VIEW_STYLES.CardHeader_span_className_5}>
-                    <CheckCircle2 className="w-3.5 h-3.5" /> PRIMARY ({fps} FPS)
+                    <CircleCheck className="w-3.5 h-3.5" /> PRIMARY ({fps} FPS)
                   </span>
                 ) : (
                   <button
@@ -71,6 +71,7 @@ export const ViewportSplitGrid: React.FC<ViewportSplitGridProps> = ({
                     type="button"
                     onClick={() => handleDisconnectCamera(cam.id)}
                     title="Disconnect camera from simultaneous multi-view"
+                    aria-label={`Disconnect ${cam.name}`}
                     className={TACTICAL_VIEW_STYLES.ViewportSplitGrid_button_className_2}
                   >
                     <X className="w-3.5 h-3.5" />

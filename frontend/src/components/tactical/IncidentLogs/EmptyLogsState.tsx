@@ -1,18 +1,11 @@
-
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
 import { ShieldCheck } from "lucide-react";
+import { EVIDENCE_UI } from "@/constants/tactical";
 
-export const EmptyLogsState: React.FC = () => {
-  return (
-    <div className={TACTICAL_VIEW_STYLES.EmptyLogsState_div_className}>
-      <ShieldCheck className={TACTICAL_VIEW_STYLES.EmptyLogsState_ShieldCheck_className} />
-      <span className={TACTICAL_VIEW_STYLES.EmptyLogsState_span_className}>
-        NO INCIDENTS
-      </span>
-      <span className={TACTICAL_VIEW_STYLES.EmptyLogsState_span_className_2}>
-        Restricted-zone intrusion events appear here.
-      </span>
-    </div>
-  );
-};
+export const EmptyLogsState: React.FC = () => (
+  <div className={EVIDENCE_UI.emptyClass}>
+    <span className={EVIDENCE_UI.emptyIconClass}><ShieldCheck aria-hidden="true" className="h-5 w-5" /></span>
+    <p className={EVIDENCE_UI.emptyTitleClass}>No incidents</p>
+    <p className={EVIDENCE_UI.emptyTextClass}>When someone enters a restricted zone, the event is listed here with its evidence frame.</p>
+  </div>
+);

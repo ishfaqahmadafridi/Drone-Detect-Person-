@@ -22,7 +22,6 @@ export function useActiveCamera(): ActiveCameraInfo {
   const camId = active_camera_id || fallback?.id || "";
   const camName = camera_name || fallback?.name || "";
   const camLoc = camera_location || fallback?.location || "";
-  const sensorTag = `${camId} / ${camName.toUpperCase()} / ${camLoc.toUpperCase()}`;
 
   return {
     camId,
@@ -30,6 +29,5 @@ export function useActiveCamera(): ActiveCameraInfo {
     camLoc,
     isGround,
     isSimulation,
-    sensorTag,
   };
 }

@@ -34,7 +34,7 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       )}
 
       {/* Threat Alert Badge */}
-      {!isCollapsed && item.id === "incidents" && threatLevel !== "CLEAR" && (
+      {!isCollapsed && item.id === "incidents" && threatLevel === "INTRUSION" && (
         <span className={TACTICAL_VIEW_STYLES.SidebarNavItem_span_className}>
           ALERT
         </span>

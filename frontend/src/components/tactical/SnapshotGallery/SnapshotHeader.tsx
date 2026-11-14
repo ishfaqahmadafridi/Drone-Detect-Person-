@@ -1,74 +1,31 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
-
-
 import React from "react";
-import { Image as ImageIcon, RotateCw } from "lucide-react";
+import { Images, RefreshCw } from "lucide-react";
+import { EVIDENCE_UI, VIDEO_TOOLS } from "@/constants/tactical";
 import { SnapshotHeaderProps } from "@/types";
+import { EvidenceSectionHeader } from "../IncidentLogs/EvidenceSectionHeader";
 
 export const SnapshotHeader: React.FC<SnapshotHeaderProps> = ({
-  count,
-  isLoading,
-  onRefresh,
-  filterMode = "all",
-  onFilterChange,
-}) => {
-  return (
-    <div className={TACTICAL_VIEW_STYLES.IncidentHeader_div_className}>
-      <div className="flex items-center gap-2">
-        <ImageIcon className={TACTICAL_VIEW_STYLES.FlightDeckHeader_Navigation_className} />
-        <h3 className={TACTICAL_VIEW_STYLES.GroundStep1Device_span_className}>
-          EVIDENTIARY SNAPSHOTS & INCIDENT FRAMES
-        </h3>
-        <span className={TACTICAL_VIEW_STYLES.SnapshotHeader_span_className}>
-          {count} Captures
-        </span>
+  count, description, isLoading, onRefresh, filterMode = "all", onFilterChange,
+}) => (
+  <EvidenceSectionHeader icon={Images} title="Evidence snapshots" count={count} description={description}>
+    {onFilterChange && (
+      <div role="group" aria-label="Filter by perspective" className={VIDEO_TOOLS.segmentedClass}>
+        {EVIDENCE_UI.filters.map(filter => (
+          <button
+            key={filter.value}
+            type="button"
+            aria-pressed={filterMode === filter.value}
+            onClick={() => onFilterChange(filter.value)}
+            className={filterMode === filter.value ? VIDEO_TOOLS.segmentClass.active : VIDEO_TOOLS.segmentClass.idle}
+          >
+            {filter.label}
+          </button>
+        ))}
       </div>
-
-      <div className="flex items-center gap-3">
-        {onFilterChange && (
-          <div className={TACTICAL_VIEW_STYLES.SnapshotHeader_div_className}>
-            <button
-              onClick={() => onFilterChange("all")}
-              className={`px-2 py-0.5 uppercase transition-colors ${
-                filterMode === "all"
-                  ? TACTICAL_VIEW_STYLES.SnapshotHeader_button_className
-                  : TACTICAL_VIEW_STYLES.SnapshotHeader_button_className_2
-              }`}
-            >
-              ALL
-            </button>
-            <button
-              onClick={() => onFilterChange("aerial")}
-              className={`${TACTICAL_VIEW_STYLES.SnapshotHeader_button_className_3}${
-                filterMode === "aerial"
-                  ? TACTICAL_VIEW_STYLES.SnapshotHeader_button_className_4
-                  : TACTICAL_VIEW_STYLES.SnapshotHeader_button_className_2
-              }`}
-            >
-              AERIAL
-            </button>
-            <button
-              onClick={() => onFilterChange("ground")}
-              className={`${TACTICAL_VIEW_STYLES.SnapshotHeader_button_className_3}${
-                filterMode === "ground"
-                  ? TACTICAL_VIEW_STYLES.SnapshotHeader_button_className_5
-                  : TACTICAL_VIEW_STYLES.SnapshotHeader_button_className_2
-              }`}
-            >
-              GROUND
-            </button>
-          </div>
-        )}
-
-        <button
-          onClick={onRefresh}
-          className={TACTICAL_VIEW_STYLES.SnapshotHeader_button_className_6}
-          title="Refresh captured frames"
-        >
-          <RotateCw className={`w-3 h-3 ${isLoading ? "animate-spin" : ""}`} /> Refresh
-        </button>
-      </div>
-    </div>
-  );
-};
+    )}
+    <button type="button" onClick={onRefresh} disabled={isLoading} className={VIDEO_TOOLS.secondaryButtonClass}>
+      <RefreshCw aria-hidden="true" className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />Refresh
+    </button>
+  </EvidenceSectionHeader>
+);

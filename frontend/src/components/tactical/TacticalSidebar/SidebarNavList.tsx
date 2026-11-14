@@ -4,7 +4,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 import { SidebarNavListProps } from "@/types";
 
-import { NAV_ITEMS } from "@/constants";
+import { isNavItemActive, sidebarNavItems } from "@/utils/navigation";
 import { SidebarNavItem } from "./SidebarNavItem";
 
 export const SidebarNavList: React.FC<SidebarNavListProps> = ({
@@ -12,6 +12,7 @@ export const SidebarNavList: React.FC<SidebarNavListProps> = ({
   onTabChange,
   isCollapsed,
   threatLevel,
+  viewMode,
 }) => {
   return (
     <div className="flex-1 flex flex-col gap-1.5 p-2.5 overflow-y-auto">
@@ -23,11 +24,11 @@ export const SidebarNavList: React.FC<SidebarNavListProps> = ({
         {isCollapsed ? "NAV" : "WORKSPACES"}
       </div>
 
-      {NAV_ITEMS.map((item) => (
+      {sidebarNavItems(viewMode).map((item) => (
         <SidebarNavItem
           key={item.id}
           item={item}
-          isActive={activeTab === item.id}
+          isActive={isNavItemActive(item.id, activeTab)}
           isCollapsed={isCollapsed}
           threatLevel={threatLevel}
           onSelect={onTabChange}

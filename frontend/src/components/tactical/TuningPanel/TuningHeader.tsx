@@ -3,7 +3,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 
 import React from "react";
-import { Sliders, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { SlidersHorizontal, CircleCheck, ChevronDown, ChevronUp } from "lucide-react";
 import { TuningHeaderProps } from "@/types";
 
 export const TuningHeader: React.FC<TuningHeaderProps> = ({
@@ -18,7 +18,7 @@ export const TuningHeader: React.FC<TuningHeaderProps> = ({
       className="w-full flex items-center justify-between group cursor-pointer focus:outline-none"
     >
       <div className="flex items-center gap-2">
-        <Sliders className={TACTICAL_VIEW_STYLES.TuningHeader_Sliders_className} />
+        <SlidersHorizontal className={TACTICAL_VIEW_STYLES.TuningHeader_Sliders_className} />
         <h3 className={TACTICAL_VIEW_STYLES.TuningHeader_h3_className}>
           SURVEILLANCE PARAMETERS
         </h3>
@@ -26,7 +26,7 @@ export const TuningHeader: React.FC<TuningHeaderProps> = ({
       <div className="flex items-center gap-2">
         {showSavedToast && (
           <span className={TACTICAL_VIEW_STYLES.TuningHeader_span_className}>
-            <CheckCircle2 className="w-3.5 h-3.5" /> Updated
+            <CircleCheck className="w-3.5 h-3.5" /> Updated
           </span>
         )}
         <span className={TACTICAL_VIEW_STYLES.TuningHeader_span_className_2}>

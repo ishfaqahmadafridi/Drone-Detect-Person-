@@ -1,5 +1,4 @@
 import { StreamSourceType } from "../index";
-
 export interface GroundWizardStepOption { number: GroundWizardStep; title: string; }
 export interface GroundSensorPreset {
   group: "wired" | "wireless" | "phone";
@@ -24,7 +23,6 @@ export interface TacticalCameraChannel {
   status: "ONLINE" | "STANDBY" | "CONNECTING" | "OFFLINE";
   resolution?: string;
 }
-
 export interface CameraWireModel {
   id: string;
   channel_num: string;
@@ -180,11 +178,6 @@ export interface HeaderActionControlsProps {
   onClose: () => void;
 }
 
-export interface AerialFeedCardProps {
-  isActive: boolean;
-  onSelect: () => void;
-}
-
 export type GroundDeviceCategory = "wall_cctv" | "mobile_phone";
 export type WallCameraConnectionType = "wired" | "wireless";
 export type GroundWizardStep = 1 | 2 | 3 | 4;
@@ -268,27 +261,4 @@ export interface GroundSensorModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConnect: (url: string) => void;
-}
-
-export interface MobileGroundFeedCardProps {
-  isActive: boolean;
-  onConnectRtsp?: (url: string) => void;
-  onSelectFeed?: (feedType: StreamSourceType, viewMode: "aerial" | "ground") => void;
-}
-
-export interface GroundActiveStreamStateProps {
-  onPromote: () => void;
-  onReconfigure: () => void;
-}
-
-export interface MobileGroundCardHeaderProps {
-  isActive: boolean;
-}
-
-export interface MobilePixelQuickConnectProps {
-  onConnectRtsp?: (url: string) => void;
-}
-
-export interface MobileCustomStreamFormProps {
-  onConnectRtsp?: (url: string) => void;
 }

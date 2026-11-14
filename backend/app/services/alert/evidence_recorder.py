@@ -28,12 +28,14 @@ class EvidenceRecorder:
         logs_dir: str = LOGS_DIR,
         snapshot_cooldown: float = DEFAULT_SNAPSHOT_COOLDOWN_SECONDS,
         auto_record_clips: bool = False,
+        save_on_alert: bool = True,
     ):
         self.output_dir = output_dir
         self.snapshots_dir = snapshots_dir
         self.logs_dir = logs_dir
         self.snapshot_cooldown = snapshot_cooldown
         self.auto_record_clips = auto_record_clips
+        self.save_on_alert = save_on_alert
         
         self.last_snapshot_time = 0.0
         self.alert_history: List[Dict] = []
@@ -67,7 +69,7 @@ class EvidenceRecorder:
         is_active_alert = threat_level == AlertLevel.INTRUSION
         
         snapshot_saved_path = None
-        if is_active_alert and (now - self.last_snapshot_time >= self.snapshot_cooldown):
+        if is_active_alert and self.save_on_alert and (now - self.last_snapshot_time >= self.snapshot_cooldown):
             self.last_snapshot_time = now
             timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
             view_mode = str(details.get("view_mode", "aerial")).lower()

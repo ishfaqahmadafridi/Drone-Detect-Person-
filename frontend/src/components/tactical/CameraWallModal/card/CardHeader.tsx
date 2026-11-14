@@ -4,7 +4,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 import React from "react";
 import { CameraCardHeaderProps } from "@/types";
-import { CheckCircle2, Radio } from "lucide-react";
+import { CircleCheck, Radio } from "lucide-react";
 
 export const CardHeader: React.FC<CameraCardHeaderProps> = ({
   channel,
@@ -32,7 +32,7 @@ export const CardHeader: React.FC<CameraCardHeaderProps> = ({
 
       {isActive ? (
         <span className={TACTICAL_VIEW_STYLES.CardHeader_span_className_5}>
-          <CheckCircle2 className="w-3.5 h-3.5" /> PRIMARY VIEWPORT
+          <CircleCheck className="w-3.5 h-3.5" /> PRIMARY VIEWPORT
         </span>
       ) : isConnected ? (
         <span className={TACTICAL_VIEW_STYLES.CardHeader_span_className_6}>

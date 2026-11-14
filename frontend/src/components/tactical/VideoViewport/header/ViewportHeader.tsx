@@ -1,64 +1,29 @@
-"use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
-
-
-import React from "react";
-import { ViewportHeaderProps } from "@/types";
+import { PanelsTopLeft } from "lucide-react";
+import { VIEWPORT_CONTROLS } from "@/constants/tactical";
+import type { ViewportHeaderProps } from "@/types";
 import { SensorTitleCluster } from "./SensorTitleCluster";
-import { SourceBadge } from "./SourceBadge";
-import { PerspectiveBadge } from "./PerspectiveBadge";
-import { DetectionModeToggle } from "./DetectionModeToggle";
 import { ViewportLayoutSelector } from "./ViewportLayoutSelector";
 import { ViewportHeaderActions } from "./ViewportHeaderActions";
 
-export const ViewportHeader: React.FC<ViewportHeaderProps> = ({
-  sourceType,
-  viewMode = "aerial",
-  trackingMode = "auto",
-  selectedCount = 0,
-  layoutMode = "single",
-  onLayoutChange,
-  onTrackingModeChange,
-  onClearSelectedTargets,
-  onSnapshotTrigger,
-  onToggleFullscreen,
-}) => {
+export function ViewportHeader({ layoutMode, connectedCameraCount, onLayoutChange, onManageCameras, ...actions }: ViewportHeaderProps) {
   return (
-    <div className={TACTICAL_VIEW_STYLES.ViewportHeader_div_className}>
-      {/* Primary Optical Sensor Telemetry Cluster */}
-      <div className="flex items-center gap-2.5 flex-wrap">
-        <SensorTitleCluster />
-        <SourceBadge sourceType={sourceType} />
-        <PerspectiveBadge viewMode={viewMode} />
-        <DetectionModeToggle
-          trackingMode={trackingMode}
-          selectedCount={selectedCount}
-          onTrackingModeChange={onTrackingModeChange}
-          onClearSelectedTargets={onClearSelectedTargets}
-        />
-      </div>
-
-      {/* Viewport Layout Mode Selector & Action Controls */}
-      <div className="flex items-center gap-3">
-        {onLayoutChange && (
-          <ViewportLayoutSelector
-            layoutMode={layoutMode}
-            onLayoutChange={onLayoutChange}
-          />
+    <div role="group" aria-label="Video viewport controls" className={VIEWPORT_CONTROLS.headerClass}>
+      <SensorTitleCluster />
+      <div className={VIEWPORT_CONTROLS.controlsClass}>
+        <ViewportLayoutSelector layoutMode={layoutMode} connectedCameraCount={connectedCameraCount} onLayoutChange={onLayoutChange} />
+        {onManageCameras && !actions.isFullscreen && (
+          <button type="button" className={VIEWPORT_CONTROLS.buttonClass} onClick={onManageCameras}>
+            <PanelsTopLeft aria-hidden="true" className={VIEWPORT_CONTROLS.iconClass} />
+            <span className={VIEWPORT_CONTROLS.responsiveLabelClass}>Cameras</span>
+          </button>
         )}
-        <ViewportHeaderActions
-          onSnapshotTrigger={onSnapshotTrigger}
-          onToggleFullscreen={onToggleFullscreen}
-        />
+        <ViewportHeaderActions {...actions} />
       </div>
     </div>
   );
-};
+}
 
 export default ViewportHeader;
 export * from "./SensorTitleCluster";
-export * from "./SourceBadge";
-export * from "./PerspectiveBadge";
-export * from "./DetectionModeToggle";
 export * from "./ViewportLayoutSelector";
 export * from "./ViewportHeaderActions";

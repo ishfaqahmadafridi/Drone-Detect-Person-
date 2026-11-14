@@ -6,9 +6,6 @@ import { TacticalViewRouter } from "./views/TacticalViewRouter";
 
 export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
   activeTab,
-  isCommandPending,
-  onCommand,
-  onRefresh,
   onSnapshotTrigger,
   viewMode,
   onOpenWall,
@@ -19,9 +16,7 @@ export const MissionCommandViewport: React.FC<MissionCommandViewportProps> = ({
       {/* Dynamic Command Modes */}
       <TacticalViewRouter
         activeTab={activeTab}
-        onSnapshotTrigger={onSnapshotTrigger || onRefresh}
-        isCommandPending={isCommandPending}
-        onCommand={onCommand}
+        onSnapshotTrigger={onSnapshotTrigger}
         viewMode={viewMode}
         onOpenWall={onOpenWall}
         onTabChange={onTabChange}

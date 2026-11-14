@@ -1,24 +1,27 @@
+import { VIEWPORT_LAYOUT_CAPACITY, VIEWPORT_LAYOUT_OPTIONS, VIEWPORT_CONTROLS } from "@/constants/tactical";
+import type { ViewportLayoutMode, StreamChannel } from "@/types";
 import { TacticalCameraChannel } from "@/types";
 
-export const getSplitGridLayoutClass = (channelCount: number): string => {
-  if (channelCount <= 1) return "grid grid-cols-1";
-  if (channelCount === 2) {
-    return "grid grid-cols-1 md:grid-cols-2";
-  }
-  if (channelCount === 3) {
-    return "grid grid-cols-1 md:grid-cols-3";
-  }
-  return "grid grid-cols-1 md:grid-cols-2";
-};
+export const getSplitGridLayoutClass = (channelCount: number): string =>
+  channelCount <= VIEWPORT_LAYOUT_CAPACITY.single ? VIEWPORT_CONTROLS.singleGridClass : VIEWPORT_CONTROLS.gridClass;
 
-export const filterConnectedChannels = (
-  allChannels: readonly TacticalCameraChannel[],
+export const availableViewportLayouts = (cameraCount: number) =>
+  VIEWPORT_LAYOUT_OPTIONS.filter(option => cameraCount >= option.minCameras);
+
+export function resolveViewportLayout(layout: ViewportLayoutMode, cameraCount: number): ViewportLayoutMode {
+  const available = availableViewportLayouts(cameraCount);
+  return available.some(option => option.mode === layout) ? layout : available.at(-1)?.mode ?? "single";
+}
+
+export function selectViewportCameras(
+  cameras: readonly TacticalCameraChannel[],
   connectedIds: readonly string[],
-  layoutMode: "dual" | "quad" = "dual"
-): readonly TacticalCameraChannel[] => {
-  const matched = allChannels.filter((cam) => connectedIds.includes(cam.id));
-  if (matched.length > 0) {
-    return matched;
-  }
-  return allChannels.slice(0, layoutMode === "dual" ? 2 : 4);
-};
+  view: StreamChannel,
+  activeId: string,
+  layout: ViewportLayoutMode,
+): readonly TacticalCameraChannel[] {
+  const connected = cameras.filter(camera => camera.viewMode === view && connectedIds.includes(camera.id));
+  const active = connected.find(camera => camera.id === activeId);
+  const ordered = active ? [active, ...connected.filter(camera => camera.id !== activeId)] : connected;
+  return ordered.slice(0, VIEWPORT_LAYOUT_CAPACITY[layout]);
+}

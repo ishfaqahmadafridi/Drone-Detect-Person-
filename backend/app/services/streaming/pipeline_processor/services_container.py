@@ -40,6 +40,7 @@ class PipelineServicesContainer:
             snapshots_dir=self.config.snapshots_dir,
             logs_dir=self.config.logs_dir,
             snapshot_cooldown=self.config.snapshot_cooldown_seconds,
+            save_on_alert=self.config.save_snapshots_on_alert,
             enable_audio=self.config.enable_audio_alert
         )
 

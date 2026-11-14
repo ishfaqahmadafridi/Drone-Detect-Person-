@@ -4,28 +4,17 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 import React from "react";
 import { DeviceDeckCardProps } from "@/types";
-import { DeviceDeckHeader } from "./DeviceDeckHeader";
-import { DeviceDeckGrid } from "./DeviceDeckGrid";
-import { DeviceDeckActions } from "./DeviceDeckActions";
 import { SlidersHorizontal } from "lucide-react";
 import { DroneMovementPanel } from "./manual/DroneMovementPanel";
 
 export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
-  isCommandPending,
-  onCommand,
   viewMode = "aerial",
   onToggleTuning,
   isTuningOpen = false,
 }) => {
   return (
     <div className={TACTICAL_VIEW_STYLES.DeviceDeckCard_div_className}>
-      {viewMode === "ground" ? (
-        <>
-          <DeviceDeckHeader viewMode={viewMode} />
-          <DeviceDeckGrid />
-          <DeviceDeckActions isCommandPending={isCommandPending} onCommand={onCommand} viewMode={viewMode} />
-        </>
-      ) : <DroneMovementPanel />}
+      {viewMode === "aerial" && <DroneMovementPanel />}
 
       {/* Detection tuning */}
       {onToggleTuning && (
@@ -46,6 +35,3 @@ export const DeviceDeckCard: React.FC<DeviceDeckCardProps> = ({
 };
 
 export default DeviceDeckCard;
-export * from "./DeviceDeckHeader";
-export * from "./DeviceDeckGrid";
-export * from "./DeviceDeckActions";

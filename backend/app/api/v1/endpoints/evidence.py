@@ -2,10 +2,11 @@
 Evidence API Endpoints: Persistent SQLite database queries, audit details, and record purging.
 """
 
+from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Query
 
-from app.schemas.evidence import EvidenceRecord, EvidenceListResponse
+from app.schemas.evidence import EvidenceRecord, EvidenceListResponse, EvidenceCleanupRequest
 from app.db import evidence_repository
 
 router = APIRouter()
@@ -40,6 +41,20 @@ def get_evidence(
         "count": len(records),
         "records": records,
     }
+
+
+@router.get("/evidence/stats")
+def get_evidence_stats():
+    """Stored evidence count and size per media type (snapshots = image, recordings = video)."""
+    return evidence_repository.storage_stats()
+
+
+@router.post("/evidence/cleanup")
+def cleanup_evidence(req: EvidenceCleanupRequest):
+    """Permanently delete evidence older than the requested number of days."""
+    cutoff = (datetime.now() - timedelta(days=req.older_than_days)).strftime("%Y-%m-%d %H:%M:%S")
+    deleted, freed_kb = evidence_repository.delete_older_than(cutoff, req.media_type)
+    return {"deleted": deleted, "freed_kb": round(freed_kb, 1), "cutoff": cutoff}
 
 
 @router.get("/evidence/{record_id}", response_model=EvidenceRecord)

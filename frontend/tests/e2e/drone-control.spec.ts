@@ -210,11 +210,64 @@ test("keyboard flies the drone: W moves forward, arrow up climbs, release return
 });
 
 
-test("settings uses the same manual controls without simulated launch actions", async ({ page }) => {
+test("settings shows real detection, alert and system settings without duplicating flight controls", async ({ page }) => {
   await page.goto("/settings");
-  const panel = page.getByRole("region", { name: "Tello movement controls" });
-  await expect(panel).toBeVisible();
-  await expect(page.getByRole("button", { name: "LAUNCH / RE-FLY", exact: true })).toHaveCount(0);
-  await panel.getByRole("button", { name: "Connect controls", exact: true }).click();
-  await expect(panel.getByRole("button", { name: "Take off", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Settings", level: 1 })).toBeVisible();
+  await expect(page.locator("#confidence-aerial")).toBeVisible();
+  await expect(page.locator("#confidence-ground")).toBeVisible();
+  await expect(page.getByRole("switch", { name: "Intrusion siren" })).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByRole("region", { name: "Storage" })).toBeVisible();
+  // Flight controls live on the command page only.
+  await expect(page.getByRole("region", { name: "Tello movement controls" })).toHaveCount(0);
+});
+
+
+test("viewport toolbar hides unavailable layouts and opens camera management", async ({ page }) => {
+  const toolbar = page.getByRole("group", { name: "Video viewport controls", exact: true });
+  await expect(toolbar.getByRole("group", { name: "Camera layout" })).toHaveCount(0);
+  await expect(toolbar.getByRole("button", { name: "AUTO", exact: true })).toHaveCount(0);
+  await expect(toolbar.getByRole("button", { name: "MANUAL", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Snapshot", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Fullscreen", exact: true })).toHaveCount(1);
+  await toolbar.screenshot({ path: "/private/tmp/aero-viewport-toolbar-desktop.png" });
+  await page.setViewportSize({ width: 375, height: 900 });
+  await expect(toolbar.getByRole("button", { name: "Snapshot", exact: true })).toBeVisible();
+  // The sidebar collapses after the resize; wait for the layout to settle before measuring.
+  await expect.poll(() => toolbar.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  await toolbar.screenshot({ path: "/private/tmp/aero-viewport-toolbar-mobile.png" });
+  await toolbar.getByRole("button", { name: "Cameras", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Close Camera Wall Modal" })).toBeVisible();
+});
+
+test("snapshot action shows backend errors and succeeds on retry", async ({ page }) => {
+  let calls = 0;
+  await page.route("**/api/snapshots/capture**", async route => {
+    calls += 1;
+    await route.fulfill(calls === 1
+      ? { status: 409, json: { detail: "Wait for a video frame before capturing evidence." } }
+      : { json: { message: "Captured", filename: "frame.jpg", view_mode: "aerial" } });
+  });
+  const toolbar = page.getByRole("group", { name: "Video viewport controls", exact: true });
+  await toolbar.getByRole("button", { name: "Snapshot", exact: true }).click();
+  await expect(toolbar.getByRole("alert")).toHaveText("Wait for a video frame before capturing evidence.");
+  await toolbar.getByRole("button", { name: "Snapshot", exact: true }).click();
+  await expect(toolbar.getByRole("status")).toHaveText("Snapshot saved to evidence.");
+  await expect(toolbar.getByRole("alert")).toHaveCount(0);
+  expect(calls).toBe(2);
+});
+
+test("fullscreen actions work and follow native browser exit", async ({ page }) => {
+  const toolbar = page.getByRole("group", { name: "Video viewport controls", exact: true });
+  const enter = toolbar.getByRole("button", { name: "Fullscreen", exact: true });
+  await expect(enter).toBeEnabled();
+  await enter.click();
+  await expect(toolbar.getByRole("button", { name: "Exit fullscreen", exact: true })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.fullscreenElement !== null)).toBe(true);
+  await toolbar.getByRole("button", { name: "Exit fullscreen", exact: true }).click();
+  await expect.poll(() => page.evaluate(() => document.fullscreenElement === null)).toBe(true);
+  await toolbar.getByRole("button", { name: "Fullscreen", exact: true }).click();
+  // Use the same native event path as Escape, without relying on headless Chrome's OS shortcut handling.
+  await page.evaluate(() => document.exitFullscreen());
+  await expect.poll(() => page.evaluate(() => document.fullscreenElement === null)).toBe(true);
+  await expect(toolbar.getByRole("button", { name: "Fullscreen", exact: true })).toHaveAttribute("aria-pressed", "false");
 });

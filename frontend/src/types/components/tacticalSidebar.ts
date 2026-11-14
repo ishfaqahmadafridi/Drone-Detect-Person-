@@ -1,4 +1,4 @@
-import { TacticalNavTab, ThreatLevel, DroneAvionics } from "../index";
+import { TacticalNavTab, ThreatLevel } from "../index";
 
 // ==========================================
 // 10. Tactical Sidebar Component Props
@@ -8,10 +8,6 @@ export interface TacticalSidebarProps {
   onTabChange: (tab: TacticalNavTab) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
-  onOpenWall?: () => void;
-  avionics?: DroneAvionics;
-  isMuted: boolean;
-  onToggleMute: () => void;
   threatLevel: ThreatLevel;
   viewMode?: "aerial" | "ground";
   onViewSelect?: (view: "aerial" | "ground") => void;
@@ -23,20 +19,12 @@ export interface SidebarPerspectiveToggleProps {
   isCollapsed: boolean;
 }
 
-export interface SidebarHeaderProps {
-  isCollapsed: boolean;
-  onToggleCollapse: () => void;
-  flightState: string;
-  isAirborne: boolean;
-  viewMode?: "aerial" | "ground";
-}
-
 export interface SidebarNavListProps {
   activeTab: TacticalNavTab;
   onTabChange: (tab: TacticalNavTab) => void;
   isCollapsed: boolean;
   threatLevel: ThreatLevel;
-  onOpenWall?: () => void;
+  viewMode: "aerial" | "ground";
 }
 
 export interface NavItemConfig {
@@ -54,47 +42,18 @@ export interface SidebarNavItemProps {
   onSelect: (id: TacticalNavTab) => void;
 }
 
-export interface SidebarCameraWallTriggerProps {
-  isCollapsed: boolean;
-  onOpenWall: () => void;
-}
-
-export interface SidebarTelemetryWidgetProps {
-  batteryPct: number;
-  isBatteryLow: boolean;
-  altitude: number;
-  speed: number;
-  viewMode?: "aerial" | "ground";
-}
-
-export interface SidebarFooterProps {
-  isMuted: boolean;
-  onToggleMute: () => void;
-  isCollapsed: boolean;
-}
-
 export interface SidebarTopSectionProps {
   isCollapsed: boolean;
   onToggleCollapse: () => void;
-  flightState: string;
-  isAirborne: boolean;
   viewMode?: "aerial" | "ground";
   onViewSelect?: (view: "aerial" | "ground") => void;
   activeTab: TacticalNavTab;
   onTabChange: (tab: TacticalNavTab) => void;
-  onOpenWall?: () => void;
   threatLevel: ThreatLevel;
 }
 
 export interface SidebarBottomSectionProps {
   isCollapsed: boolean;
-  batteryPct: number;
-  isBatteryLow: boolean;
-  altitude: number;
-  speed: number;
-  viewMode?: "aerial" | "ground";
-  isMuted: boolean;
-  onToggleMute: () => void;
 }
 
 export interface SidebarSystemHealthProps {

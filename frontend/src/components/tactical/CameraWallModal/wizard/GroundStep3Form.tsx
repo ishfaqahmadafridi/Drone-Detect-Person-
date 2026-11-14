@@ -8,7 +8,7 @@ import React from "react";
 import { GroundPresetPicker } from "./GroundPresetPicker";
 import { groundSensorValidity } from "@/utils/groundSensorConfig";
 import { GroundStep3FormProps } from "@/types";
-import { ArrowLeft, ArrowRight, Lock, Network, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Lock, Network, TriangleAlert, CircleCheck } from "lucide-react";
 
 export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
   config,
@@ -205,14 +205,14 @@ export const GroundStep3Form: React.FC<GroundStep3FormProps> = ({
       {/* Real-time Validation Banner */}
       {!isFormValid ? (
         <div className={TACTICAL_VIEW_STYLES.GroundStep3Form_div_className_3}>
-          <AlertTriangle className={TACTICAL_VIEW_STYLES.GroundStep3Form_AlertTriangle_className} />
+          <TriangleAlert className={TACTICAL_VIEW_STYLES.GroundStep3Form_AlertTriangle_className} />
           <span>
             CONNECTION PARAMETERS INCOMPLETE: Provide valid Camera Host IP and Port to proceed.
           </span>
         </div>
       ) : (
         <div className={TACTICAL_VIEW_STYLES.GroundStep3Form_div_className_4}>
-          <CheckCircle2 className={TACTICAL_VIEW_STYLES.GroundStep3Form_CheckCircle2_className} />
+          <CircleCheck className={TACTICAL_VIEW_STYLES.GroundStep3Form_CheckCircle2_className} />
           <span>Parameters validated. Ready to test the connection.</span>
         </div>
       )}

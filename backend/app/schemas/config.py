@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field
 class ConfigUpdateRequest(BaseModel):
     confidence_threshold: Optional[float] = Field(None, ge=0.05, le=1.0)
     zone_polygon: Optional[List[List[float]]] = None
+    save_snapshots_on_alert: Optional[bool] = None
+    snapshot_cooldown_seconds: Optional[float] = Field(None, ge=1.0, le=3600.0)
 
 class StreamSourceRequest(BaseModel):
     source_type: str = Field(..., description="synthetic, webcam, file, or rtsp")

@@ -66,4 +66,3 @@ export * from "./card";
 export * from "./grid";
 export * from "./wizard/GroundSensorWizard";
 export * from "./wizard/GroundSensorModal";
-export * from "./legacy";

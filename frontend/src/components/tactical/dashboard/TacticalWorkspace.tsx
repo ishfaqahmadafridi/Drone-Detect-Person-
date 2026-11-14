@@ -11,15 +11,9 @@ export const TacticalWorkspace: React.FC<TacticalWorkspaceProps> = ({
   isSidebarCollapsed,
   onToggleCollapse,
   onOpenWall,
-  avionics,
-  isMuted,
-  onToggleMute,
   threatLevel,
   viewMode,
   onViewSelect,
-  isCommandPending,
-  onCommand,
-  onRefresh,
   onSnapshotTrigger,
 }) => {
   return (
@@ -30,10 +24,6 @@ export const TacticalWorkspace: React.FC<TacticalWorkspaceProps> = ({
         onTabChange={onTabChange}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={onToggleCollapse}
-        onOpenWall={onOpenWall}
-        avionics={avionics}
-        isMuted={isMuted}
-        onToggleMute={onToggleMute}
         threatLevel={threatLevel}
         viewMode={viewMode}
         onViewSelect={onViewSelect}
@@ -42,9 +32,6 @@ export const TacticalWorkspace: React.FC<TacticalWorkspaceProps> = ({
       {/* Primary Workspace Center: Dynamic Mission Command Viewport */}
       <MissionCommandViewport
         activeTab={activeTab}
-        isCommandPending={isCommandPending}
-        onCommand={onCommand}
-        onRefresh={onRefresh}
         onSnapshotTrigger={onSnapshotTrigger}
         viewMode={viewMode}
         onOpenWall={onOpenWall}

@@ -1,55 +1,40 @@
-
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 import React from "react";
+import { ImageOff } from "lucide-react";
+import { EVIDENCE_UI } from "@/constants/tactical";
 import { useToggle } from "@/hooks/useToggle";
-import { Clock } from "lucide-react";
-import { SnapshotCardProps } from "@/types";
 import { useEvidenceMetadata } from "@/hooks";
+import { SnapshotCardProps } from "@/types";
 
 export const SnapshotCard: React.FC<SnapshotCardProps> = ({ snapshot, onClick }) => {
   const [imgError, setImgError] = useToggle(false);
-  const { datePart, timePart, perspectiveLabel, perspectiveBadgeClass } =
-    useEvidenceMetadata(snapshot);
+  const { datePart, timePart } = useEvidenceMetadata(snapshot);
+  const view = snapshot.view_mode === "aerial" ? "aerial" : "ground";
 
   return (
-    <div
-      onClick={onClick}
-      className={TACTICAL_VIEW_STYLES.SnapshotCard_div_className}
-    >
-      {/* Thumbnail / Fallback */}
-      {imgError ? (
-        <div className={TACTICAL_VIEW_STYLES.SnapshotCard_div_className_2}>
-          <Clock className={TACTICAL_VIEW_STYLES.SnapshotCard_Clock_className} />
-          <span className={TACTICAL_VIEW_STYLES.PerimeterDeckHeader_p_className}>Preview Unavailable</span>
+    <li>
+      <button type="button" onClick={onClick} className={`${EVIDENCE_UI.tileClass} w-full`} aria-label={`Open snapshot ${snapshot.filename}`}>
+        <div className={EVIDENCE_UI.thumbClass}>
+          {imgError ? (
+            <div className={EVIDENCE_UI.thumbFallbackClass}>
+              <ImageOff aria-hidden="true" className="h-5 w-5" />No preview
+            </div>
+          ) : (
+            /* eslint-disable-next-line @next/next/no-img-element -- backend-served evidence file */
+            <img
+              src={snapshot.thumbnail_url || snapshot.url}
+              alt=""
+              loading="lazy"
+              onError={() => setImgError(true)}
+              className={EVIDENCE_UI.thumbImageClass}
+            />
+          )}
+          <span className={EVIDENCE_UI.viewBadgeClass[view]}>{EVIDENCE_UI.viewLabels[view]}</span>
         </div>
-      ) : (
-        /* eslint-disable-next-line @next/next/no-img-element */
-        <img
-          src={snapshot.thumbnail_url || snapshot.url}
-          alt={snapshot.filename}
-          onError={() => setImgError(true)}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-      )}
-
-      {/* Perspective Badge Top-Right */}
-      <span
-        className={`absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-mono-code font-bold uppercase shadow-md border ${perspectiveBadgeClass}`}
-      >
-        {perspectiveLabel}
-      </span>
-
-      {/* Clear Time & Info Bottom Bar */}
-      <div className={TACTICAL_VIEW_STYLES.SnapshotCard_div_className_3}>
-        <div className={TACTICAL_VIEW_STYLES.SnapshotCard_div_className_4}>
-          <Clock className={TACTICAL_VIEW_STYLES.EvidenceRecordRow_Clock_className} />
-          <span>{timePart}</span>
-          <span className={TACTICAL_VIEW_STYLES.SnapshotCard_span_className}>{datePart}</span>
+        <div className={EVIDENCE_UI.tileBodyClass}>
+          <span className={EVIDENCE_UI.tileTimeClass}>{timePart} · {datePart}</span>
+          <span className={EVIDENCE_UI.tileFileClass} title={snapshot.filename}>{snapshot.filename}</span>
         </div>
-        <span className={TACTICAL_VIEW_STYLES.SnapshotCard_span_className_2}>
-          {snapshot.filename}
-        </span>
-      </div>
-    </div>
+      </button>
+    </li>
   );
 };

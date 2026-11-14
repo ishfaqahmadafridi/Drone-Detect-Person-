@@ -1,5 +1,6 @@
 export * from "./AirspaceCommandView";
 export * from "./IncidentAuditView";
-export * from "./CalibrationView";
+export * from "./ConnectionsView";
+export * from "./SettingsView";
 export * from "./TacticalViewRouter";
 export * from "./RecordingsView";

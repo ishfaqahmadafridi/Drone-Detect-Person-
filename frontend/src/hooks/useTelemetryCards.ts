@@ -9,7 +9,7 @@ export function useTelemetryCards(viewMode?: TelemetryCardsProps["viewMode"]) {
   const metrics = useTelemetryMetrics();
   const snapshots = useSnapshotsQuery();
   const cards = buildTelemetryCards(
-    { ...metrics, evidenceCount: snapshots.data?.length },
+    { ...metrics, evidenceCount: snapshots.data?.total },
     () => setIsModalOpen(true),
   );
   return {

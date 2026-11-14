@@ -140,11 +140,15 @@ class StreamManagerService:
     def update_config(
         self,
         conf_thresh: Optional[float] = None,
-        zone_polygon: Optional[List[Tuple[float, float]]] = None
+        zone_polygon: Optional[List[Tuple[float, float]]] = None,
+        save_on_alert: Optional[bool] = None,
+        snapshot_cooldown: Optional[float] = None,
     ):
         self.perspective_controller.update_config(
             conf_thresh=conf_thresh,
-            zone_polygon=zone_polygon
+            zone_polygon=zone_polygon,
+            save_on_alert=save_on_alert,
+            snapshot_cooldown=snapshot_cooldown,
         )
 
     # -------------------------------------------------------------------------

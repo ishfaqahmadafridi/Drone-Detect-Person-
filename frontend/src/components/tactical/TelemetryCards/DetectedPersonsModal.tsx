@@ -7,16 +7,7 @@ import React from "react";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setSelectedTargetIds } from "@/store/slices/telemetrySlice";
 import { DetectedPersonsModalProps, Detection } from "@/types";
-import {
-  Users,
-  X,
-  ShieldAlert,
-  ShieldCheck,
-  Crosshair,
-  Radar,
-  Radio,
-  Eye,
-} from "lucide-react";
+import { Users, X, ShieldAlert, ShieldCheck, Crosshair, Radio, Eye } from "lucide-react";
 
 export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
   isOpen,
@@ -117,13 +108,12 @@ export const DetectedPersonsModal: React.FC<DetectedPersonsModalProps> = ({
           </div>
         </div>
 
-        {/* 3. Targets List / Radar Zero-State */}
+        {/* 3. Targets List / Empty State */}
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3 min-h-[220px]">
           {detections.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center gap-3 my-auto">
               <div className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_div_className_6}>
-                <Radar className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_Radar_className} />
-                <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_4} />
+                <Users className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_Radar_className} />
               </div>
               <div className="flex flex-col gap-1 max-w-sm">
                 <span className={TACTICAL_VIEW_STYLES.DetectedPersonsModal_span_className_5}>

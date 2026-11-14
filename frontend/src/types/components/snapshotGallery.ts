@@ -3,12 +3,15 @@ import { SnapshotItem } from "../index";
 // ==========================================
 // 6. Snapshot Gallery Component Props
 // ==========================================
+export type SnapshotFilter = "all" | "aerial" | "ground";
+
 export interface SnapshotHeaderProps {
   count: number;
+  description: string;
   isLoading: boolean;
   onRefresh: () => void;
-  filterMode?: "all" | "aerial" | "ground";
-  onFilterChange?: (filter: "all" | "aerial" | "ground") => void;
+  filterMode?: SnapshotFilter;
+  onFilterChange?: (filter: SnapshotFilter) => void;
 }
 
 export interface SnapshotCardProps {
@@ -16,7 +19,12 @@ export interface SnapshotCardProps {
   onClick: () => void;
 }
 
-export interface SnapshotModalProps {
-  snapshot: SnapshotItem | null;
+export interface EvidenceViewerModalProps {
+  item: SnapshotItem | null;
   onClose: () => void;
+}
+
+export interface EvidenceMediaProps {
+  item: SnapshotItem;
+  isVideo: boolean;
 }

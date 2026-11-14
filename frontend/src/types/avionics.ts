@@ -1,7 +1,6 @@
 // ==============================================================================
 // UAV Flight State & Drone Avionics Types
 // ==============================================================================
-
 export type DroneFlightState =
   | "DISARMED"
   | "STANDBY"
@@ -31,12 +30,4 @@ export interface DroneAvionics {
   camera_fps: number;
   camera_sensor_temp_c: number;
   camera_detecting: boolean;
-}
-
-export interface DroneCommandResponse {
-  success: boolean;
-  message: string;
-  flight_state: string;
-  altitude_m: number;
-  battery_percent: number;
 }

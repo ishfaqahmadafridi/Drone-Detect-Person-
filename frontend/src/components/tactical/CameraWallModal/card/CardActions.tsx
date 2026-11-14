@@ -4,7 +4,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 import React from "react";
 import { CameraCardActionsProps } from "@/types";
-import { CheckCircle2, PlusCircle, XCircle } from "lucide-react";
+import { CircleCheck, CirclePlus, CircleX } from "lucide-react";
 
 export const CardActions: React.FC<CameraCardActionsProps> = ({
   isActive,
@@ -29,7 +29,7 @@ export const CardActions: React.FC<CameraCardActionsProps> = ({
                 : TACTICAL_VIEW_STYLES.CardActions_button_className_2
             }`}
           >
-            <CheckCircle2 className={TACTICAL_VIEW_STYLES.CardActions_CheckCircle2_className} />
+            <CircleCheck className={TACTICAL_VIEW_STYLES.CardActions_CheckCircle2_className} />
             <span>{isActive ? "ACTIVE PRIMARY" : "SET AS PRIMARY"}</span>
           </button>
 
@@ -42,7 +42,7 @@ export const CardActions: React.FC<CameraCardActionsProps> = ({
             title="Disconnect camera from simultaneous multi-view"
             className={TACTICAL_VIEW_STYLES.CardActions_button_className_3}
           >
-            <XCircle className="w-3.5 h-3.5" />
+            <CircleX className="w-3.5 h-3.5" />
             <span>UNLINK</span>
           </button>
         </>
@@ -57,7 +57,7 @@ export const CardActions: React.FC<CameraCardActionsProps> = ({
             }}
             className={TACTICAL_VIEW_STYLES.CardActions_button_className_4}
           >
-            <PlusCircle className="w-4 h-4" />
+            <CirclePlus className="w-4 h-4" />
             <span>CONNECT SENSOR (MULTI-LIVE)</span>
           </button>
         </>

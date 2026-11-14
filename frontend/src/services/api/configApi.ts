@@ -6,8 +6,8 @@ import { SurveillanceConfig } from "@/types";
 
 
 export const configApi = {
-  getConfig: async (): Promise<SurveillanceConfig> => {
-    const { data } = await apiClient.get<SurveillanceConfig>("/config");
+  getConfig: async (channel?: "ground" | "aerial"): Promise<SurveillanceConfig> => {
+    const { data } = await apiClient.get<SurveillanceConfig>("/config", { params: { channel } });
     return data;
   },
 

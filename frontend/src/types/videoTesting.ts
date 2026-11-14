@@ -8,7 +8,16 @@ export interface SuspectSnapshot {
 
 export interface SuspectSnapshotsProps {
   portraits: SuspectSnapshot[];
-  reference?: boolean;
+}
+
+export interface SuspectPortraitGalleryProps {
+  portraits: SuspectSnapshot[];
+}
+
+export interface SuspectPeopleListProps {
+  detections: Detection[];
+  pending: boolean;
+  onSelect: (id: number) => void;
 }
 
 export interface FrozenSelection {
@@ -38,27 +47,11 @@ export interface TargetSelectResponse {
 
 
 export type StreamChannel = "ground" | "aerial";
-export interface ChannelPanelProps { channel: StreamChannel; }
 export interface SuspectSelectionProps {
   channel?: StreamChannel;
   sourceType?: string;
   selectedTargetIds?: number[];
   onOpenAerialView?: () => void;
-}
-
-export interface SuspectActionToolbarProps {
-  pending: boolean;
-  isFrozen: boolean;
-  selectedCount: number;
-  onAutoCapture: () => void;
-  onManualFreeze: () => void;
-  onClear: () => void;
-}
-
-export interface SuspectQuickSelectChipsProps {
-  detections: Detection[];
-  pending: boolean;
-  onSelectPerson: (id: number) => void;
 }
 
 export interface SuspectFreezeModalProps {

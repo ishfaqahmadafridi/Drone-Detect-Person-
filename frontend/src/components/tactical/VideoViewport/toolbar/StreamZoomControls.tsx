@@ -1,34 +1,26 @@
 "use client";
-import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
-
 
 import React from "react";
+import { VIDEO_TOOLS } from "@/constants/tactical";
 import { StreamZoomControlsProps } from "@/types";
 
-export const StreamZoomControls: React.FC<StreamZoomControlsProps> = ({
-  zoomLevel,
-  onZoomChange,
-}) => {
-  const presets = [1.0, 2.0, 4.0];
-
-  return (
-    <div className={TACTICAL_VIEW_STYLES.StreamZoomControls_div_className}>
-      {presets.map((zoom) => (
+export const StreamZoomControls: React.FC<StreamZoomControlsProps> = ({ zoomLevel, onZoomChange }) => (
+  <div className={VIDEO_TOOLS.groupClass}>
+    <span id="video-zoom-label" className={VIDEO_TOOLS.groupLabelClass}>Zoom</span>
+    <div role="group" aria-labelledby="video-zoom-label" className={VIDEO_TOOLS.segmentedClass}>
+      {VIDEO_TOOLS.zoomLevels.map((zoom) => (
         <button
           key={zoom}
+          type="button"
+          aria-pressed={zoomLevel === zoom}
           onClick={() => onZoomChange(zoom)}
-          className={`px-2.5 py-1 rounded text-xs font-mono-code font-medium cursor-pointer transition-all duration-150 active:scale-95 ${
-            zoomLevel === zoom
-              ? TACTICAL_VIEW_STYLES.StreamZoomControls_button_className
-              : TACTICAL_VIEW_STYLES.StreamZoomControls_button_className_2
-          }`}
-          title={`Set Optical Zoom to ${zoom}x`}
+          className={zoomLevel === zoom ? VIDEO_TOOLS.segmentClass.active : VIDEO_TOOLS.segmentClass.idle}
         >
-          {zoom}x
+          {zoom}×
         </button>
       ))}
     </div>
-  );
-};
+  </div>
+);
 
 export default StreamZoomControls;

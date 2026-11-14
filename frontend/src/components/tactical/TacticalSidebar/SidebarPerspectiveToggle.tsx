@@ -4,7 +4,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 import React from "react";
 import { SidebarPerspectiveToggleProps } from "@/types";
-import { Crosshair, Video } from "lucide-react";
+import { Cctv, Drone } from "lucide-react";
 
 export const SidebarPerspectiveToggle: React.FC<SidebarPerspectiveToggleProps> = ({
   viewMode,
@@ -24,7 +24,7 @@ export const SidebarPerspectiveToggle: React.FC<SidebarPerspectiveToggleProps> =
               : TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className_2
           }`}
         >
-          <Crosshair className="w-4 h-4" />
+          <Drone className="w-4 h-4" />
         </button>
         <button
           onClick={() => onViewSelect("ground")}
@@ -36,7 +36,7 @@ export const SidebarPerspectiveToggle: React.FC<SidebarPerspectiveToggleProps> =
               : TACTICAL_VIEW_STYLES.SidebarPerspectiveToggle_button_className_2
           }`}
         >
-          <Video className="w-4 h-4" />
+          <Cctv className="w-4 h-4" />
         </button>
       </div>
     );

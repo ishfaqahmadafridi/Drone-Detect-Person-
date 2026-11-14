@@ -1,4 +1,5 @@
-import { TacticalNavTab, ThreatLevel, DroneAvionics } from "../index";
+import type { ViewportAction } from "./viewport";
+import { TacticalNavTab, ThreatLevel } from "../index";
 import { CameraWallModalProps } from "./cameraWall";
 
 // ==========================================
@@ -10,16 +11,10 @@ export interface TacticalWorkspaceProps {
   isSidebarCollapsed: boolean;
   onToggleCollapse: () => void;
   onOpenWall: () => void;
-  avionics?: DroneAvionics;
-  isMuted: boolean;
-  onToggleMute: () => void;
   threatLevel: ThreatLevel;
   viewMode: "aerial" | "ground";
   onViewSelect: (view: "aerial" | "ground") => void;
-  isCommandPending: boolean;
-  onCommand: (action: string) => void;
-  onRefresh: () => void;
-  onSnapshotTrigger: () => void;
+  onSnapshotTrigger: ViewportAction;
 }
 
 export interface TacticalOverlaysProps {

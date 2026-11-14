@@ -3,7 +3,7 @@ Evidence Repository: Persistent SQLite storage operations for tactical recording
 """
 
 import os
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from app.db.connection import db_manager
 from app.db.schema import initialize_schema
@@ -129,6 +129,43 @@ class EvidenceRepository:
                 print(f"[REPOSITORY] Failed to delete file {record.file_path}: {err}")
 
         return True
+
+    def storage_stats(self) -> Dict[str, Dict[str, float]]:
+        """Count and total size (KB) of stored evidence per media type."""
+        with db_manager.session() as conn:
+            rows = conn.execute(
+                "SELECT media_type, COUNT(*) AS count, COALESCE(SUM(file_size_kb), 0) AS size_kb "
+                "FROM evidence_records GROUP BY media_type;"
+            ).fetchall()
+        stats = {"image": {"count": 0, "size_kb": 0.0}, "video": {"count": 0, "size_kb": 0.0}}
+        for row in rows:
+            stats[row["media_type"]] = {"count": row["count"], "size_kb": float(row["size_kb"])}
+        return stats
+
+    def delete_older_than(self, cutoff: str, media_type: str) -> Tuple[int, float]:
+        """Delete records (and files) of ``media_type`` created before ``cutoff`` ('YYYY-MM-DD HH:MM:SS').
+
+        Returns the number of records removed and the KB they occupied.
+        """
+        with db_manager.session() as conn:
+            rows = conn.execute(
+                "SELECT file_path, file_size_kb FROM evidence_records WHERE media_type = ? AND created_at < ?;",
+                (media_type, cutoff),
+            ).fetchall()
+            conn.execute(
+                "DELETE FROM evidence_records WHERE media_type = ? AND created_at < ?;",
+                (media_type, cutoff),
+            )
+        freed_kb = 0.0
+        for row in rows:
+            freed_kb += float(row["file_size_kb"] or 0)
+            path = row["file_path"]
+            if path and os.path.exists(path):
+                try:
+                    os.remove(path)
+                except OSError as err:
+                    print(f"[REPOSITORY] Failed to delete file {path}: {err}")
+        return len(rows), freed_kb
 
     def sync_filesystem_records(self) -> int:
         """Manual trigger to synchronize filesystem files into SQLite."""

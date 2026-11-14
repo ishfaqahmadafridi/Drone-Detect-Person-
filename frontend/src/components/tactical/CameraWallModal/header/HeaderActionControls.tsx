@@ -4,7 +4,7 @@ import { TACTICAL_VIEW_STYLES } from "@/constants/tactical";
 
 import React from "react";
 import { HeaderActionControlsProps } from "@/types";
-import { SplitSquareVertical, LayoutGrid, X } from "lucide-react";
+import { SquareSplitVertical, LayoutGrid, X } from "lucide-react";
 
 export const HeaderActionControls: React.FC<HeaderActionControlsProps> = ({
   onConnectAll,
@@ -32,7 +32,7 @@ export const HeaderActionControls: React.FC<HeaderActionControlsProps> = ({
             className={TACTICAL_VIEW_STYLES.HeaderActionControls_button_className_2}
             title="View Drone Aerial & Ground CCTV live at the same time"
           >
-            <SplitSquareVertical className="w-3.5 h-3.5" />
+            <SquareSplitVertical className="w-3.5 h-3.5" />
             <span>DUAL (2-UP)</span>
           </button>
 

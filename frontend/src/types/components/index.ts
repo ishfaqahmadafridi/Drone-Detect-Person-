@@ -10,7 +10,6 @@ export * from "./incidentLogs";
 export * from "./snapshotGallery";
 export * from "./providers";
 export * from "./avionicsDeck";
-export * from "./perimeterDeck";
 export * from "./cameraWall";
 export * from "./tacticalSidebar";
 export * from "./views";
