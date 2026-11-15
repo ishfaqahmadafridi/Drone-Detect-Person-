@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DroneDashboard } from "@/components/tactical";
 
 export const metadata: Metadata = {
-  title: "AERO-GUARD | Perimeter Cameras & Multi-Feed Wall",
+  title: "Cameras",
   description: "Fixed CCTV perimeter surveillance, IP camera links, and multi-sensor live stream grid.",
 };
 

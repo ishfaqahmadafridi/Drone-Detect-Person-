@@ -1,7 +1,11 @@
 import type { Metadata, Viewport } from "next";
 
 export const siteMetadata: Metadata = {
-  title: "AERO-GUARD | Drone Aerial Surveillance & Multi-Person Intrusion Console",
+  applicationName: "Drone Clock",
+  title: {
+    default: "Drone Clock",
+    template: "Drone Clock · %s",
+  },
   description:
     "Real-time aerial drone & ground perimeter surveillance, zone intrusion tracking, and crowd gathering analytics powered by specialized YOLO11n (VisDrone), YOLO26s (MOT20), BoT-SORT, ByteTrack, Next.js, Redux, and TanStack Query.",
   keywords: [
@@ -16,7 +20,7 @@ export const siteMetadata: Metadata = {
     "ByteTrack",
     "Next.js",
   ],
-  authors: [{ name: "AERO-GUARD Defense Systems" }],
+  authors: [{ name: "Drone Clock" }],
 };
 
 export const siteViewport: Viewport = {

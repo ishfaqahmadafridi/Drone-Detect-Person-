@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DroneDashboard } from "@/components/tactical";
 
 export const metadata: Metadata = {
-  title: "AERO-GUARD | Tactical Drone Surveillance & Threat Defense Console",
+  title: { absolute: "Drone Clock" },
   description: "Real-time tactical drone aerial surveillance, perimeter monitoring, and AI intrusion analytics.",
 };
 
