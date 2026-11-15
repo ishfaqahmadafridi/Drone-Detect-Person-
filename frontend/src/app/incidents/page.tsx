@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DroneDashboard } from "@/components/tactical";
 
 export const metadata: Metadata = {
-  title: "AERO-GUARD | Incident Audit Logs & Intrusion Alerts",
+  title: "Incidents",
   description: "Real-time threat log auditing, multi-person gathering alerts, and security breach event history.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DroneDashboard } from "@/components/tactical";
 
 export const metadata: Metadata = {
-  title: "AERO-GUARD | Connections",
+  title: "Connections",
   description: "Connect the drone and ground cameras, and see which devices are live.",
 };
 

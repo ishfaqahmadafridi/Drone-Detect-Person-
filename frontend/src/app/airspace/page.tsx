@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DroneDashboard } from "@/components/tactical";
 
 export const metadata: Metadata = {
-  title: "AERO-GUARD | Airspace Command Deck",
+  title: "Airspace",
   description: "Tactical UAV airspace telemetry, gimbal optical sensor feed, and active aerial perimeter monitoring.",
 };
 
