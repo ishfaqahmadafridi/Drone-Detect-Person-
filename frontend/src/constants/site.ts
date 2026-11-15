@@ -20,7 +20,7 @@ export const siteMetadata: Metadata = {
     "ByteTrack",
     "Next.js",
   ],
-  authors: [{ name: "AERO-GUARD Defense Systems" }],
+  authors: [{ name: "Drone Clock" }],
 };
 
 export const siteViewport: Viewport = {

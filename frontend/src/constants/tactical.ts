@@ -775,7 +775,7 @@ export const BATTERY_THRESHOLDS = { healthy: 50, warning: 20, critical: 25 } as 
 export const TELEMETRY_DISPLAY = { millisecondsPerSecond: 1000 } as const;
 
 export const BRAND_IDENTITY = {
-  name: "AERO-GUARD",
+  name: "DRONE CLOCK",
   tagline: "AERIAL SECURITY",
   markPath: "/brand/aero-guard-mark.svg",
   markSize: 64,
