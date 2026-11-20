@@ -22,4 +22,3 @@ If invalid data is sent (e.g., negative altitude or invalid coordinates), Pydant
 | `cameras.py` | Schemas for registering tactical cameras, IP RTSP URLs, and connection statuses. |
 | `reid.py` | Schemas for suspect matching (`ReIDTarget`, `ReIDCandidate`, `ReIDStatus`). |
 | `tracking.py` | Schemas for tracking modes (automatic multi-target vs. manual single suspect lock). |
-| `generative.py` | Schemas for generative aerial diffusion prompt requests and image output URLs. |

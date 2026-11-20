@@ -31,4 +31,3 @@ Whenever the user clicks a button, changes a camera, or looks at live telemetry 
 | `endpoints/recordings.py` | Lists recorded MP4 video clips saved during security breaches. |
 | `endpoints/evidence.py` | SQLite database search API for stored evidence with filters and pagination. |
 | `endpoints/tracking.py` | Switches between automatic multi-person tracking and manual suspect target locking. |
-| `endpoints/generative.py` | Generates aerial diffusion images using Replicate Cloud API for edge-case simulation. |
