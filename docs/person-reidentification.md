@@ -62,12 +62,17 @@ cd backend
 .venv\Scripts\python.exe scripts/smoke_reid.py --device cpu --report ../runs/reid/cpu-smoke.json
 ```
 
-Measured locally: Python 3.13.14, PyTorch 2.13.0+cpu, torchvision 0.29.0+cpu;
-13.2 seconds to load and 7.3-7.6 seconds per eight-frame sequence with flip
-augmentation and two CPU threads. Output was finite, normalized and
-2048-dimensional. This used real trained weights with artificial inputs; it
-was **not an accuracy test or a simultaneous detection benchmark**. Several
-people require multiple jobs, so CPU candidate updates are delayed.
+Verified on November 20, 2026: Python 3.13.14, PyTorch 2.14.0+cpu and
+torchvision 0.29.0+cpu. The real-model smoke test passed with finite, normalized,
+2048-dimensional features for both camera channels. Loading took 24.8 seconds;
+eight-frame sequences took 11.1 and 10.0 seconds with flip augmentation and two
+CPU threads. The report is saved at `runs/reid/cpu-smoke.json`. The 35 ReID,
+camera-channel and model-selection tests also passed.
+
+These timings are one local run using artificial inputs, with integration tests
+running alongside it; they are **not an accuracy test or a simultaneous detection
+benchmark**. Several people require multiple jobs, so CPU candidate updates are
+delayed. Matching accuracy still needs paired, labeled ground/aerial recordings.
 
 Short uploaded recordings hold at the end by default. This lets pending CPU
 matching finish instead of losing its reference/gallery on every automatic loop.
@@ -99,9 +104,10 @@ python scripts/setup_reid.py --install-source --download-weights
 ```
 
 Choose CPU or CUDA PyTorch wheels appropriate to the machine. The runtime file
-pins the locally tested versions; it does not install an NVIDIA driver or ensure
-CUDA support. The local environment uses existing system packages, so a clean
-installation still needs validation on the destination machine.
+pins the locally tested compatible pair; it does not install an NVIDIA driver
+or ensure CUDA support. The current backend virtual environment has its own
+installed dependencies. Validate installation and inference on each destination
+machine.
 
 Copy .env.example to .env only when no .env exists. Otherwise edit your existing
 settings. Setup downloads assets, checks the pinned revision, SHA-256 hashes,
@@ -215,3 +221,23 @@ can produce no_match but must be calibrated on your footage.
 
 Contract tests use fake encoders for scheduling, lifecycle and API checks.
 The smoke script separately checks actual pretrained inference.
+
+For a complete inference-path check, run:
+
+```powershell
+cd backend
+.venv\Scripts\python.exe scripts/smoke_reid.py --device cpu --pipeline --report ../runs/reid/cpu-pipeline-smoke.json
+```
+
+The additional pipeline check collects eight clean crops per channel, freezes and
+selects the ground reference, runs the real pretrained worker, checks aerial
+candidate evidence, and verifies that source resets remove stale results. This
+passed locally on November 20, 2026. The report contains both raw encoder and
+pipeline results. Artificial inputs verify functionality; use paired, labeled
+recordings and `benchmark_reid.py` to evaluate matching accuracy.
+
+Frozen selections retain independent copies of their sampled tracklets while live
+tracking advances. At buffer capacity, a valid newcomer can replace the least
+recently seen absent track; visible tracks and selected ground tracks are retained.
+Worker shutdown prevents subsequent startup, and unexpected process exits are
+reported through the matching panel with retry guidance.

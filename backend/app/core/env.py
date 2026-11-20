@@ -40,6 +40,5 @@ def load_environment() -> None:
 # Execute loading on initial module import
 load_environment()
 
-REPLICATE_API_TOKEN: str = os.getenv("REPLICATE_API_TOKEN", "")
 GROUND_MODEL_NAME: str = os.getenv("GROUND_MODEL_NAME", DEFAULT_GROUND_MODEL_NAME)
 AERIAL_MODEL_NAME: str = os.getenv("AERIAL_MODEL_NAME", DEFAULT_AERIAL_MODEL_NAME)

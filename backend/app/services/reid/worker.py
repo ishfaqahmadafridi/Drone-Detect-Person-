@@ -33,18 +33,28 @@ class ModelWorker:
         self.process = None
         self.connection = None
         self._lifecycle_lock = threading.Lock()
+        self._closed = False
 
     def _receive(self):
         connection = self.connection
-        if not connection.poll(self.settings.worker_timeout_seconds):
-            raise RuntimeError("X-TFCLIP worker timed out. Check device memory, workload and dependencies, then retry.")
-        success, result = connection.recv()
+        if connection is None:
+            raise RuntimeError("X-TFCLIP worker is not running; retry matching.")
+        try:
+            if not connection.poll(self.settings.worker_timeout_seconds):
+                raise RuntimeError("X-TFCLIP worker timed out. Check device memory, workload and dependencies, then retry.")
+            success, result = connection.recv()
+        except (EOFError, OSError) as exc:
+            raise RuntimeError("X-TFCLIP worker exited before replying. Check available memory and retry matching.") from exc
         if not success:
             raise RuntimeError(result)
         return result
 
     def start(self):
         with self._lifecycle_lock:
+            if self._closed:
+                raise RuntimeError("X-TFCLIP worker was closed before startup.")
+            if self.process is not None:
+                raise RuntimeError("X-TFCLIP worker is already started.")
             context = multiprocessing.get_context("spawn")
             self.connection, child = context.Pipe()
             self.process = context.Process(target=_serve, args=(child, self.settings), daemon=True, name="xtfclip")
@@ -58,6 +68,7 @@ class ModelWorker:
 
     def close(self):
         with self._lifecycle_lock:
+            self._closed = True
             if self.process is not None:
                 if self.process.is_alive():
                     self.process.terminate()
