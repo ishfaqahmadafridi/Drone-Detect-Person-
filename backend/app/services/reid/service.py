@@ -10,6 +10,7 @@ import logging
 import threading
 import time
 from collections import deque
+from dataclasses import replace
 
 from app.core.config import ReIDConfig
 from app.schemas.reid import ReIDCandidate, ReIDStatus, ReIDTarget
@@ -61,7 +62,10 @@ class ReIDService:
     def freeze_ground(self):
         """Retain sampled crops while the operator considers a frozen frame."""
         with self._lock:
-            self._frozen_ground = dict(self._tracks["ground"])
+            self._frozen_ground = {
+                pid: replace(track, frames=deque(track.frames, maxlen=self.settings.sequence_length))
+                for pid, track in self._tracks["ground"].items()
+            }
 
     def resume_ground(self):
         with self._lock:
@@ -105,6 +109,7 @@ class ReIDService:
                     self.reset_channel(channel)
                 return
             tracks = self._tracks[channel]
+            visible_ids = {d.get("id") for d in detections}
             # Existing tracks and selected targets have priority when a scene is crowded.
             ordered = sorted(detections, key=lambda d: (d.get("id") not in self._selected_ids,
                                                        d.get("id") not in tracks))
@@ -114,8 +119,6 @@ class ReIDService:
                     continue
                 track = tracks.get(pid)
                 if track is None:
-                    if len(tracks) >= self.settings.max_tracks:
-                        continue
                     track = Tracklet(pid, deque(maxlen=self.settings.sequence_length))
                 track.last_seen = now
                 if now - track.last_sample < self.settings.sample_seconds:
@@ -123,6 +126,16 @@ class ReIDService:
                 crop = person_crop(frame, detection, self.settings)
                 if crop is None:
                     continue
+                if pid not in tracks and len(tracks) >= self.settings.max_tracks:
+                    # Admit newcomers without waiting for the full TTL, but never
+                    # churn people still visible or a selected ground reference.
+                    removable = [item for item in tracks.values()
+                                 if item.track_id not in visible_ids and
+                                 (channel != "ground" or item.track_id not in self._selected_ids)]
+                    if not removable:
+                        continue
+                    oldest = min(removable, key=lambda item: item.last_seen)
+                    del tracks[oldest.track_id]
                 tracks[pid] = track
                 track.frames.append(crop)
                 track.last_sample, track.seen_at = now, time.time()
@@ -168,17 +181,25 @@ class ReIDService:
             if self._worker is None:
                 self._status, self._message = "loading", f"Loading X-TFCLIP on {self.settings.device}..."
         try:
-            if self._worker is None:
-                self._worker = self._worker_factory(self.settings)
-                self._worker.start()
+            with self._lock:
+                if self._stop.is_set():
+                    return
+                needs_start = self._worker is None
+                if needs_start:
+                    self._worker = self._worker_factory(self.settings)
+                worker = self._worker
+            if needs_start:
+                worker.start()
             started = time.monotonic()
-            output = self._worker.encode([job.frames for job in jobs], [job.channel for job in jobs])
+            output = worker.encode([job.frames for job in jobs], [job.channel for job in jobs])
             if len(output) != len(jobs):
                 raise ValueError("Model returned an unexpected embedding batch size")
             embeddings = [normalized_embedding(vector) for vector in output]
             if len({vector.shape for vector in embeddings}) != 1:
                 raise ValueError("Model returned inconsistent embedding dimensions")
             with self._lock:
+                if self._stop.is_set():
+                    return
                 self._status, self._message = "ready", "Appearance candidates require operator review. Scores are not probabilities."
                 self._inference_ms = round((time.monotonic() - started) * 1000, 1)
                 if generation != self._generation:
@@ -262,11 +283,13 @@ class ReIDService:
                               last_inference_ms=self._inference_ms, generation=self._generation)
 
     def close(self):
-        self._stop.set()
+        with self._lock:
+            self._stop.set()
+            worker = self._worker
         self._wake.set()
         # Terminate an in-flight inference process before joining the scheduler.
-        if self._worker:
-            self._worker.close()
+        if worker:
+            worker.close()
         if self._thread:
             self._thread.join(timeout=WORKER_SHUTDOWN_SECONDS)
         with self._lock:

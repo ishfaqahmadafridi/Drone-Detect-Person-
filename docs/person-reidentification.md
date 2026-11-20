@@ -215,3 +215,23 @@ can produce no_match but must be calibrated on your footage.
 
 Contract tests use fake encoders for scheduling, lifecycle and API checks.
 The smoke script separately checks actual pretrained inference.
+
+For a complete inference-path check, run:
+
+```powershell
+cd backend
+.venv\Scripts\python.exe scripts/smoke_reid.py --device cpu --pipeline --report ../runs/reid/cpu-pipeline-smoke.json
+```
+
+The additional pipeline check collects eight clean crops per channel, freezes and
+selects the ground reference, runs the real pretrained worker, checks aerial
+candidate evidence, and verifies that source resets remove stale results. This
+passed locally on November 20, 2026. The report contains both raw encoder and
+pipeline results. Artificial inputs verify functionality; use paired, labeled
+recordings and `benchmark_reid.py` to evaluate matching accuracy.
+
+Frozen selections retain independent copies of their sampled tracklets while live
+tracking advances. At buffer capacity, a valid newcomer can replace the least
+recently seen absent track; visible tracks and selected ground tracks are retained.
+Worker shutdown prevents subsequent startup, and unexpected process exits are
+reported through the matching panel with retry guidance.

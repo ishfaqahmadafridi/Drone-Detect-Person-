@@ -196,6 +196,79 @@ class ReIDTests(unittest.TestCase):
         self.assertEqual(set(self.service._references), {1, 2})
         self.assertIn("first 2", self.service.snapshot().message)
 
+    def test_freeze_keeps_the_original_samples_as_live_tracking_advances(self):
+        self.feed("ground")
+        self.service.freeze_ground()
+        frozen = self.service._frozen_ground[1]
+        original = np.stack(frozen.frames).copy()
+        self.frame[:] = 255
+        self.feed("ground")
+        self.service.select([1])
+        np.testing.assert_array_equal(np.stack(self.service._references[1].frames), original)
+        self.assertIsNot(frozen, self.service._tracks["ground"][1])
+
+    def test_new_aerial_tracks_replace_absent_tracks_when_buffer_is_full(self):
+        self.service.settings = replace(self.settings, max_tracks=2)
+        self.feed("aerial", detections=self.detections[:2])
+        # ID 2 remains visible. ID 3 replaces absent ID 1 before its TTL expires.
+        self.feed("aerial", detections=self.detections[1:])
+        self.assertEqual(set(self.service._tracks["aerial"]), {2, 3})
+
+    def test_rejected_crop_does_not_evict_valid_buffered_track(self):
+        self.service.settings = replace(self.settings, max_tracks=1)
+        self.feed("aerial", detections=self.detections[:1])
+        self.feed("aerial", detections=[{**self.detections[1], "conf": 0.1}])
+        self.assertEqual(set(self.service._tracks["aerial"]), {1})
+
+    def test_selected_ground_track_is_preserved_at_buffer_capacity(self):
+        self.service.settings = replace(self.settings, max_tracks=1)
+        self.feed("ground", [1], detections=self.detections[:1])
+        self.feed("ground", [1], detections=self.detections[1:])
+        self.assertEqual(set(self.service._tracks["ground"]), {1})
+
+    def test_shutdown_during_inference_does_not_publish_late_results(self):
+        entered, release = threading.Event(), threading.Event()
+
+        class ClosingWorker(FakeWorker):
+            def encode(self, sequences, channels):
+                entered.set()
+                release.wait(5)
+                return super().encode(sequences, channels)
+
+            def close(self):
+                super().close()
+                release.set()
+
+        self.service._worker_factory = ClosingWorker
+        self.feed("ground", [1])
+        thread = threading.Thread(target=self.service.process_once)
+        thread.start()
+        self.assertTrue(entered.wait(5))
+        self.service.close()
+        thread.join(5)
+        self.assertFalse(thread.is_alive())
+        self.assertEqual(self.service.snapshot().targets, [])
+        self.assertNotEqual(self.service._status, "ready")
+
+    def test_closed_worker_cannot_start_a_new_process(self):
+        from app.services.reid.worker import ModelWorker
+        worker = ModelWorker(self.settings)
+        worker.close()
+        with self.assertRaisesRegex(RuntimeError, "closed before startup"):
+            worker.start()
+        self.assertIsNone(worker.process)
+
+    def test_worker_crash_reports_actionable_error(self):
+        from app.services.reid.worker import ModelWorker
+        from unittest.mock import Mock
+        worker = ModelWorker(self.settings)
+        worker.connection = Mock()
+        worker.connection.poll.return_value = True
+        worker.connection.recv.side_effect = EOFError
+        with self.assertRaisesRegex(RuntimeError, "exited before replying"):
+            worker._receive()
+        worker.close()
+
     def test_top_four_cap_and_buffer_capacity(self):
         self.service.settings = replace(self.settings, max_tracks=5)
         detections = [{**self.detections[0], "id": pid} for pid in range(1, 8)]
