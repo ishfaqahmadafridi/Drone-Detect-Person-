@@ -46,16 +46,27 @@ export function resolveVideoStreamUrl(path: string): string {
  * Resolves the appropriate WebSocket URL based on runtime browser environment.
  */
 export function getWebSocketTelemetryUrl(channel?: "ground" | "aerial"): string {
+  const resolved = getBackendWebSocketUrl(NETWORK_CONFIG.WS_TELEMETRY_PATH);
+  if (!resolved) return "";
+  const url = new URL(resolved);
+  if (channel) url.searchParams.set("channel", channel);
+  return url.toString();
+}
+
+export function getBackendWebSocketUrl(path: string): string {
   if (typeof window === "undefined") return "";
 
   const origin = process.env.NEXT_PUBLIC_WS_ORIGIN || process.env.NEXT_PUBLIC_API_ORIGIN ||
     (window.location.port === NETWORK_CONFIG.DEV_FRONTEND_PORT
       ? `${window.location.protocol}//${window.location.hostname}:${NETWORK_CONFIG.DEV_API_PORT}`
       : window.location.origin);
-  const url = new URL(NETWORK_CONFIG.WS_TELEMETRY_PATH, origin);
+  const url = new URL(path, origin);
   url.protocol = url.protocol === "https:" || url.protocol === "wss:" ? "wss:" : "ws:";
-  if (channel) url.searchParams.set("channel", channel);
   return url.toString();
+}
+
+export function getDroneMovementSocketUrl(): string {
+  return getBackendWebSocketUrl(`${deployment.apiBasePath}${DRONE_CONTROL_PATHS.input}`);
 }
 
 export function getCameraStreamUrl(cameraId: string): string {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { droneControlApi } from "@/services/api/droneControlApi";
+import { DroneMovementSocket } from "@/services/api/droneMovementSocket";
 import { DRONE_MOVEMENT } from "@/constants/tactical";
 import { createDroneControlSessionId, droneMovementAxes } from "@/utils/droneMovement";
 import { apiErrorMessage } from "@/utils/apiError";
@@ -29,37 +30,44 @@ export function useDroneMovement() {
   const cameraBusy = useRef(false);
   const emergencyBusy = useRef(false);
   const [emergencyPending, setEmergencyPending] = useState(false);
+  const movementSocket = useRef<DroneMovementSocket | null>(null);
 
   const updateOwnership = useCallback((value: boolean) => {
     owns.current = value;
     setOwnsControl(value);
   }, []);
 
-  const publish = useCallback(() => {
+  const publish = useCallback(function publishInput() {
     dirty.current = true;
     if (inFlight.current || !enabled.current) return;
-    const task = async () => {
-      while (dirty.current && enabled.current) {
-        dirty.current = false;
-        // A reply that started before an emergency/connect/action describes stale state; drop it.
-        const requestRevision = revision.current;
-        try {
-          const result = await droneControlApi.input(session.current, ++sequence.current,
-            droneMovementAxes(directions.current, DRONE_MOVEMENT.defaultPower));
-          if (mounted.current && requestRevision === revision.current) setStatus(result);
-        } catch (err) {
-          if (requestRevision !== revision.current) continue;
-          enabled.current = false;
-          directions.current.clear();
-          if (mounted.current) {
-            setHeld([]);
-            updateOwnership(false);
-            setError(apiErrorMessage(err));
-          }
-        }
+    dirty.current = false;
+    // A reply that started before an emergency/connect/action describes stale state; drop it.
+    const requestRevision = revision.current;
+    const acceptStatus = (result: DroneControlStatus) => {
+      if (mounted.current && requestRevision === revision.current) setStatus(result);
+    };
+    const rejectInput = (err: unknown) => {
+      if (requestRevision !== revision.current) return;
+      enabled.current = false;
+      directions.current.clear();
+      if (mounted.current) {
+        setHeld([]);
+        updateOwnership(false);
+        setError(apiErrorMessage(err));
       }
     };
-    inFlight.current = task().finally(() => { inFlight.current = null; });
+    try {
+      const axes = droneMovementAxes(directions.current, DRONE_MOVEMENT.defaultPower);
+      const nextSequence = ++sequence.current;
+      if (movementSocket.current?.send(session.current, nextSequence, axes, acceptStatus, rejectInput)) return;
+      inFlight.current = droneControlApi.input(session.current, nextSequence, axes)
+        .then(acceptStatus).catch(rejectInput).finally(() => {
+          inFlight.current = null;
+          if (dirty.current && enabled.current) publishInput();
+        });
+    } catch (err) {
+      rejectInput(err);
+    }
   }, [updateOwnership]);
 
   const releaseAll = useCallback(() => {
@@ -88,6 +96,7 @@ export function useDroneMovement() {
     return () => {
       disposed = true;
       releaseAll();
+      movementSocket.current?.close();
       enabled.current = false;
       mounted.current = false;
       clearInterval(timer);
@@ -151,6 +160,8 @@ export function useDroneMovement() {
       if (!mounted.current || requestRevision !== revision.current) return;
       setStatus(result);
       updateOwnership(true);
+      movementSocket.current ??= new DroneMovementSocket();
+      movementSocket.current.connect();
       if (result.mode === "tello" && result.flight_state === "landed") await startCamera();
       if (!mounted.current || requestRevision !== revision.current) return;
       enabled.current = !document.hidden && focused.current;
@@ -163,11 +174,13 @@ export function useDroneMovement() {
 
   const action = async (value: DroneManualAction | "disconnect") => {
     if (busy.current || cameraBusy.current || emergencyBusy.current) return;
-    const requestRevision = ++revision.current;
+    revision.current += 1;
     busy.current = true;
     setPending(true);
     setError("");
     releaseAll();
+    // Socket replies to the pre-action neutral packet must not overwrite the action result.
+    const requestRevision = ++revision.current;
     enabled.current = false;
     await inFlight.current;
     try {
@@ -178,6 +191,7 @@ export function useDroneMovement() {
       if (!mounted.current || requestRevision !== revision.current) return;
       setStatus(result);
       updateOwnership(result.connected);
+      if (!result.connected) movementSocket.current?.close();
       enabled.current = result.connected && !document.hidden && focused.current;
       publish();
     } catch (err) {

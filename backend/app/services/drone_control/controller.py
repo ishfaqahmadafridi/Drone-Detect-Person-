@@ -89,6 +89,12 @@ class DroneMovementController:
             self.axes = request.axes.model_copy()
             self.updated = self.clock()
             self._expiry_sent = False
+            # Forward accepted input now; periodic ticks only repeat the latest axes.
+            try:
+                self.tick()
+            except Exception as exc:
+                self._fail(exc)
+                raise HTTPException(503, f"Tello movement send failed: {exc}") from exc
             return self.status()
 
     def _expired(self):

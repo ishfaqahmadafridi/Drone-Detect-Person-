@@ -63,6 +63,34 @@ def test_missing_drone_response_does_not_report_connected(sdk_api):
     assert not client.get("/api/drone/manual/status").json()["connected"]
 
 
+def test_websocket_movement_release_and_ownership_use_real_udp(sdk_api):
+    client, peer, session = sdk_api
+    assert client.post("/api/drone/manual/connect", json=session).status_code == 200
+    assert client.post("/api/drone/manual/action", json={**session, "action": "takeoff"}).status_code == 200
+    with client.websocket_connect("/api/drone/manual/input") as ws:
+        ws.send_json({**session, "sequence": 1, "axes": {"forward_back": 25}})
+        ws.send_json({**session, "sequence": 2, "axes": {}})
+        assert ws.receive_json()["sequence"] == 1
+        assert ws.receive_json()["status"]["axes"]["forward_back"] == 0
+        wait_for(lambda: "rc 0 25 0 0" in peer.snapshot())
+        wait_for(lambda: peer.snapshot()[-1] == "rc 0 0 0 0")
+        ws.send_json({"session_id": str(uuid4()), "sequence": 3, "axes": {"yaw": 25}})
+        assert "Connect" in ws.receive_json()["error"]
+
+
+def test_websocket_rejects_stale_sequence_and_invalid_axes(sdk_api):
+    client, peer, session = sdk_api
+    client.post("/api/drone/manual/connect", json=session)
+    with client.websocket_connect("/api/drone/manual/input") as ws:
+        ws.send_json({**session, "sequence": 2, "axes": {}})
+        assert ws.receive_json()["sequence"] == 2
+        ws.send_json({**session, "sequence": 1, "axes": {}})
+        assert "Outdated" in ws.receive_json()["error"]
+    with client.websocket_connect("/api/drone/manual/input") as ws:
+        ws.send_json({**session, "sequence": 3, "axes": {"yaw": 101}})
+        assert "Invalid" in ws.receive_json()["error"]
+
+
 def test_takeoff_timeout_is_unknown_and_not_retried(sdk_api):
     client, peer, session = sdk_api
     assert client.post("/api/drone/manual/connect", json=session).status_code == 200

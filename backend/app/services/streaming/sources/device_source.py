@@ -9,6 +9,7 @@ from app.services.streaming.sources.device.capture import (
     is_rtsp_source, is_video_file, open_capture, release_capture,
 )
 from app.services.streaming.sources.device.file_playback import FilePlayback
+from app.services.streaming.sources.device.live_capture import LatestLiveCapture
 
 
 class DeviceFrameSource(BaseFrameSource):
@@ -20,7 +21,8 @@ class DeviceFrameSource(BaseFrameSource):
         self.transport = "udp" if str(transport).lower() == "udp" else "tcp"
         self.end_behavior = end_behavior
         self._cap = None
-        self.last_frame_at = None
+        self._live_capture = None
+        self._last_frame_at = None
         self._is_network_rtsp = is_rtsp_source(source_path)
         self._is_video_file = is_video_file(source_path)
         self._playback = FilePlayback(end_behavior)
@@ -31,6 +33,15 @@ class DeviceFrameSource(BaseFrameSource):
     def _open(self):
         self.release()
         self._cap = open_capture(self.source_path, self.transport)
+        if (self.is_active and isinstance(self.source_path, str)
+                and self.source_path.lower().startswith("udp://")):
+            self._live_capture = LatestLiveCapture(self._cap)
+
+    @property
+    def last_frame_at(self):
+        if self._live_capture is not None:
+            return self._live_capture.last_frame_at
+        return self._last_frame_at
 
     @property
     def is_active(self) -> bool:
@@ -59,12 +70,14 @@ class DeviceFrameSource(BaseFrameSource):
         try:
             if not self.is_active:
                 return False, None
+            if self._live_capture is not None:
+                return self._live_capture.read_frame()
             if self._is_video_file:
                 ok, frame = self._playback.read_frame(self._cap)
             else:
                 ok, frame = self._cap.read()
             if ok and frame is not None:
-                self.last_frame_at = time.monotonic()
+                self._last_frame_at = time.monotonic()
                 return True, frame
         except Exception:
             # The provider owns simulation fallback for unavailable captures.
@@ -74,4 +87,9 @@ class DeviceFrameSource(BaseFrameSource):
 
     def release(self) -> None:
         capture, self._cap = self._cap, None
-        release_capture(capture)
+        live, self._live_capture = self._live_capture, None
+        self._last_frame_at = None
+        if live is not None:
+            live.release()
+        else:
+            release_capture(capture)
