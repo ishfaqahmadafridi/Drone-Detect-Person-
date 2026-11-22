@@ -57,3 +57,15 @@ export interface DroneVideoStatus {
   receiving: boolean;
   message: string;
 }
+
+export interface DroneMovementSocketReply {
+  sequence?: number;
+  status?: DroneControlStatus;
+  error?: string;
+}
+
+export interface DroneMovementSocketPending {
+  sequence: number;
+  onStatus: (status: DroneControlStatus) => void;
+  onError: (error: Error) => void;
+}

@@ -15,7 +15,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: ".venv/bin/python tests/drone_control_e2e_server.py",
+      command: `"${process.platform === "win32" ? ".venv/Scripts/python.exe" : ".venv/bin/python"}" tests/drone_control_e2e_server.py`,
       cwd: path.resolve(__dirname, "../backend"),
       url: "http://127.0.0.1:8011/api/drone/manual/status",
       timeout: 120_000,
@@ -25,6 +25,8 @@ export default defineConfig({
       url: "http://127.0.0.1:3100/drone",
       timeout: 180_000,
       env: {
+        BACKEND_ORIGIN: "http://127.0.0.1:8011",
+        NEXT_PUBLIC_WS_ORIGIN: "http://127.0.0.1:8011",
         NEXT_DIST_DIR: ".next-e2e",
         NEXT_FONT_GOOGLE_MOCKED_RESPONSES: path.resolve(__dirname, "tests/support/google-fonts.cjs"),
       },

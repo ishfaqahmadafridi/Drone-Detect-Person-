@@ -39,10 +39,12 @@ const DRONE_BUTTON_BASE = "min-h-11 touch-none select-none rounded-lg border tex
 
 export const DRONE_MOVEMENT = {
   videoStatusIntervalMs: 2000,
-  heartbeatMs: 100,
+  heartbeatMs: 50,
+  socketMaxBufferedBytes: 1024,
+  socketMaxPendingInputs: 64,
   requestTimeoutMs: 2000,
   controlTimeoutMs: 45000,
-  defaultPower: 25,
+  defaultPower: 100,
   maxPower: 100,
   lowBatteryPercent: 20,
   title: "Tello flight control",

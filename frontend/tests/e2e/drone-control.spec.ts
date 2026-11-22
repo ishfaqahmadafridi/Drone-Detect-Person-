@@ -35,6 +35,12 @@ test.beforeEach(async ({ page, request }) => {
 });
 
 test("connect, take off, hold/release every direction, hover, land, disconnect", async ({ page, request }) => {
+  const socketFrames: string[] = [];
+  page.on("websocket", socket => {
+    if (new URL(socket.url()).pathname === "/api/drone/manual/input") {
+      socket.on("framesent", event => socketFrames.push(String(event.payload)));
+    }
+  });
   const panel = page.getByRole("region", { name: "Tello movement controls" });
   await expect(panel.getByRole("button", { name: "Take off", exact: true })).toHaveCount(0); // Not offered in this state.
   await expect(page.getByRole("button", { name: "Takeoff", exact: true })).toHaveCount(0);
@@ -45,10 +51,10 @@ test("connect, take off, hold/release every direction, hover, land, disconnect",
   await panel.getByRole("button", { name: "Take off", exact: true }).click();
   await expect(panel.getByRole("button", { name: "Land", exact: true })).toBeEnabled();
   const cases = [
-    ["left", "rc -25 0 0 0"], ["right", "rc 25 0 0 0"],
-    ["forward", "rc 0 25 0 0"], ["backward", "rc 0 -25 0 0"],
-    ["up", "rc 0 0 25 0"], ["down", "rc 0 0 -25 0"],
-    ["rotate left", "rc 0 0 0 -25"], ["rotate right", "rc 0 0 0 25"],
+    ["left", "rc -100 0 0 0"], ["right", "rc 100 0 0 0"],
+    ["forward", "rc 0 100 0 0"], ["backward", "rc 0 -100 0 0"],
+    ["up", "rc 0 0 100 0"], ["down", "rc 0 0 -100 0"],
+    ["rotate left", "rc 0 0 0 -100"], ["rotate right", "rc 0 0 0 100"],
   ];
   for (const [direction, command] of cases) {
     const button = panel.getByRole("button", { name: `Hold to move ${direction}`, exact: true });
@@ -69,6 +75,8 @@ test("connect, take off, hold/release every direction, hover, land, disconnect",
   expect(packets).toContain("command");
   expect(packets).toContain("takeoff");
   expect(packets).toContain("land");
+  expect(socketFrames.some(frame => JSON.parse(frame).axes.forward_back === 100)).toBe(true);
+  expect(socketFrames.some(frame => Object.values(JSON.parse(frame).axes).every(value => value === 0))).toBe(true);
 });
 
 test("missing drone acknowledgement shows connection failure", async ({ page, request }) => {
@@ -86,7 +94,7 @@ test("closing the browser control page stops movement through the backend watchd
   const forward = panel.getByRole("button", { name: "Hold to move forward", exact: true });
   await forward.hover();
   await page.mouse.down();
-  await expect.poll(async () => (await request.get(`${backend}/__test__/packets`)).json()).toContain("rc 0 25 0 0");
+  await expect.poll(async () => (await request.get(`${backend}/__test__/packets`)).json()).toContain("rc 0 100 0 0");
   await page.close();
   await expect.poll(async () => (await request.get(`${backend}/api/drone/manual/status`)).json())
     .toMatchObject({ input_expired: true, axes: { left_right: 0, forward_back: 0, up_down: 0, yaw: 0 } });
@@ -201,7 +209,7 @@ test("keyboard flies the drone: W moves forward, arrow up climbs, release return
   await page.locator("body").click({ position: { x: 5, y: 5 } });
   await page.keyboard.down("w");
   await page.keyboard.down("ArrowUp");
-  await expect.poll(() => packetsOf(request)).toContain("rc 0 25 25 0");
+  await expect.poll(() => packetsOf(request)).toContain("rc 0 100 100 0");
   await expect(panel.getByRole("button", { name: "Hold to move forward", exact: true })).toHaveAttribute("aria-pressed", "true");
   await page.keyboard.up("w");
   await page.keyboard.up("ArrowUp");
@@ -222,19 +230,19 @@ test("settings shows real detection, alert and system settings without duplicati
 });
 
 
-test("viewport toolbar hides unavailable layouts and opens camera management", async ({ page }) => {
+test("viewport toolbar hides unavailable layouts and opens camera management", async ({ page }, testInfo) => {
   const toolbar = page.getByRole("group", { name: "Video viewport controls", exact: true });
   await expect(toolbar.getByRole("group", { name: "Camera layout" })).toHaveCount(0);
   await expect(toolbar.getByRole("button", { name: "AUTO", exact: true })).toHaveCount(0);
   await expect(toolbar.getByRole("button", { name: "MANUAL", exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Snapshot", exact: true })).toHaveCount(1);
   await expect(page.getByRole("button", { name: "Fullscreen", exact: true })).toHaveCount(1);
-  await toolbar.screenshot({ path: "/private/tmp/aero-viewport-toolbar-desktop.png" });
+  await toolbar.screenshot({ path: testInfo.outputPath("viewport-toolbar-desktop.png") });
   await page.setViewportSize({ width: 375, height: 900 });
   await expect(toolbar.getByRole("button", { name: "Snapshot", exact: true })).toBeVisible();
   // The sidebar collapses after the resize; wait for the layout to settle before measuring.
   await expect.poll(() => toolbar.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
-  await toolbar.screenshot({ path: "/private/tmp/aero-viewport-toolbar-mobile.png" });
+  await toolbar.screenshot({ path: testInfo.outputPath("viewport-toolbar-mobile.png") });
   await toolbar.getByRole("button", { name: "Cameras", exact: true }).click();
   await expect(page.getByRole("button", { name: "Close Camera Wall Modal" })).toBeVisible();
 });

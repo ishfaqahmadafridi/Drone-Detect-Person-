@@ -4,9 +4,20 @@ import { useDroneMovement } from "@/hooks/useDroneMovement";
 import { droneControlApi } from "@/services/api/droneControlApi";
 import type { DroneControlStatus } from "@/types";
 import { droneTelemetryTiles } from "@/utils/droneMovement";
+import type { DroneMovementSocket } from "@/services/api/droneMovementSocket";
+
+const fastInput = vi.hoisted(() => vi.fn<DroneMovementSocket["send"]>(() => false));
 
 vi.mock("@/services/api/droneControlApi", () => ({
   droneControlApi: { startVideo: vi.fn(), videoStatus: vi.fn(), status: vi.fn(), connect: vi.fn(), input: vi.fn(), action: vi.fn(), disconnect: vi.fn(), emergency: vi.fn() },
+}));
+
+vi.mock("@/services/api/droneMovementSocket", () => ({
+  DroneMovementSocket: class {
+    connect() {}
+    close() {}
+    send = fastInput;
+  },
 }));
 
 const base: DroneControlStatus = {
@@ -17,6 +28,7 @@ const base: DroneControlStatus = {
 beforeEach(() => {
   vi.useFakeTimers();
   vi.resetAllMocks();
+  fastInput.mockReturnValue(false);
   vi.mocked(droneControlApi.startVideo).mockResolvedValue({ requested: true, receiving: false, message: "Waiting for frames" });
   vi.mocked(droneControlApi.videoStatus).mockResolvedValue({ requested: true, receiving: false, message: "Waiting for frames" });
   vi.mocked(droneControlApi.status).mockResolvedValue(base);
@@ -33,6 +45,21 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); });
 
 describe("manual control input lifecycle", () => {
+  it("sends press and release immediately over the socket without awaiting a reply", async () => {
+    const { result } = renderHook(() => useDroneMovement());
+    await act(async () => { await result.current.connect(); });
+    await act(async () => { await result.current.action("takeoff"); });
+    fastInput.mockClear();
+    fastInput.mockReturnValue(true);
+    const httpCalls = vi.mocked(droneControlApi.input).mock.calls.length;
+    act(() => {
+      result.current.press("right");
+      result.current.release("right");
+    });
+    expect(fastInput).toHaveBeenCalledTimes(2);
+    expect(droneControlApi.input).toHaveBeenCalledTimes(httpCalls);
+  });
+
   it("starts camera separately after real SDK connection without issuing a flight action", async () => {
     vi.mocked(droneControlApi.connect).mockResolvedValue({ ...base, mode: "tello", connected: true });
     const { result } = renderHook(() => useDroneMovement());
@@ -95,7 +122,7 @@ describe("manual control input lifecycle", () => {
     await act(async () => { await result.current.connect(); });
     await act(async () => { await result.current.action("takeoff"); });
     await act(async () => { result.current.press("left"); });
-    expect(vi.mocked(droneControlApi.input).mock.lastCall?.[2].left_right).toBe(-25);
+    expect(vi.mocked(droneControlApi.input).mock.lastCall?.[2].left_right).toBe(-100);
     await act(async () => { result.current.release("left"); });
     expect(vi.mocked(droneControlApi.input).mock.lastCall?.[2].left_right).toBe(0);
     await act(async () => { window.dispatchEvent(new Event("blur")); });
@@ -131,6 +158,17 @@ describe("manual control input lifecycle", () => {
 });
 
 describe("safety and telemetry", () => {
+  it("ignores a delayed pre-action socket reply after takeoff completes", async () => {
+    const { result } = renderHook(() => useDroneMovement());
+    await act(async () => { await result.current.connect(); });
+    fastInput.mockClear();
+    fastInput.mockReturnValue(true);
+    await act(async () => { await result.current.action("takeoff"); });
+    const preActionReply = fastInput.mock.calls[0][3];
+    act(() => { preActionReply({ ...base, connected: true, flight_state: "landed" }); });
+    expect(result.current.status?.flight_state).toBe("airborne");
+  });
+
   it("sends emergency stop even while a takeoff is still awaiting its acknowledgement", async () => {
     vi.mocked(droneControlApi.action).mockImplementation(() => new Promise(() => {}));
     vi.mocked(droneControlApi.emergency).mockResolvedValue({ ...base, connected: true, flight_state: "unknown", error: "Emergency motor stop sent." });

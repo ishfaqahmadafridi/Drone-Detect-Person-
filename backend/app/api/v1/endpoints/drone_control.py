@@ -1,5 +1,7 @@
 """Manual control API; video source selection is intentionally independent."""
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
+from pydantic import ValidationError
+from starlette.concurrency import run_in_threadpool
 from app.schemas.drone import DroneControlSession, DroneControlConnect, DroneControlAction, DroneControlInput, DroneControlStatus, DroneVideoStatus
 from app.services.drone_control.controller import drone_movement_controller
 
@@ -19,6 +21,28 @@ def connect(request: DroneControlConnect):
 @router.post("/input", response_model=DroneControlStatus)
 def movement(request: DroneControlInput):
     return drone_movement_controller.input(request)
+
+
+@router.websocket("/input")
+async def movement_socket(websocket: WebSocket):
+    """Persistent movement channel; ownership and sequence checks match HTTP input."""
+    await websocket.accept()
+    try:
+        while True:
+            try:
+                request = DroneControlInput.model_validate(await websocket.receive_json())
+                result = await run_in_threadpool(drone_movement_controller.input, request)
+            except (ValidationError, ValueError):
+                await websocket.send_json({"error": "Invalid movement input."})
+                await websocket.close(code=1008)
+                return
+            except HTTPException as exc:
+                await websocket.send_json({"error": str(exc.detail)})
+                await websocket.close(code=1008)
+                return
+            await websocket.send_json({"sequence": request.sequence, "status": result.model_dump(mode="json")})
+    except WebSocketDisconnect:
+        pass  # Existing input lease expires without further browser heartbeats.
 
 
 @router.post("/action", response_model=DroneControlStatus)

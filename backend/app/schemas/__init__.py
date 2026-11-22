@@ -29,10 +29,6 @@ from app.schemas.evidence import (
     EvidenceRecord,
     EvidenceListResponse,
 )
-from app.schemas.generative import (
-    AerialDiffusionRequest,
-    AerialDiffusionResponse,
-)
 
 __all__ = [
     "IncidentAlertItem",
@@ -52,6 +48,4 @@ __all__ = [
     "EvidenceRecordCreate",
     "EvidenceRecord",
     "EvidenceListResponse",
-    "AerialDiffusionRequest",
-    "AerialDiffusionResponse",
 ]

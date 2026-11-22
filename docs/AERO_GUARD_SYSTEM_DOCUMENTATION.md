@@ -165,7 +165,6 @@ Detailed breakdown of every directory and file across the entire repository.
 | `endpoints/recordings.py` | Video clip recording archive queries and downloads. |
 | `endpoints/evidence.py` | Paginated SQLite database search and deletion for recorded media. |
 | `endpoints/tracking.py` | Tracking mode switching (automatic multi-person vs manual suspect lock). |
-| `endpoints/generative.py` | Cloud generative aerial diffusion image synthesis via Replicate API. |
 
 #### 📂 `backend/app/core/`
 **Purpose**: Centralized configuration, paths, hardware device detection, and environment variables.  
@@ -204,7 +203,6 @@ Detailed breakdown of every directory and file across the entire repository.
 | `cameras.py` | Camera registration, RTSP link definitions, and connection diagnostics models. |
 | `reid.py` | Suspect matching targets, candidates, and similarity score schemas. |
 | `tracking.py` | Tracking mode configurations (auto vs. manual suspect locking). |
-| `generative.py` | Aerial diffusion prompt requests and synthesized image outputs. |
 
 #### 📂 `backend/app/services/detector/`
 **Purpose**: Real-time YOLO deep learning inference and multi-object tracking.  

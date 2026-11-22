@@ -52,7 +52,7 @@ python scripts/setup_reid.py --install-source --download-weights
 ```
 
 The local `.env` and provided template enable CPU inference. Real CPU inference
-has passed: about 7-8 seconds per eight-frame sequence on this machine. This
+has passed: about 10-11 seconds per eight-frame sequence in the latest local smoke test. This
 verifies execution, not identification accuracy. GPU use requires CUDA-enabled
 PyTorch and `REID_DEVICE=cuda:0`; detection has its own `DETECTION_DEVICE` setting.
 

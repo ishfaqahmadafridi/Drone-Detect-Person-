@@ -18,8 +18,6 @@ _LAZY_EXPORTS = {
     "DroneStreamService": "stream_service",
     "drone_stream_service": "stream_service",
     "ZoneMonitorService": "zone_service",
-    "AerialDiffusionService": "generative_service",
-    "generative_service": "generative_service",
 }
 
 
@@ -45,6 +43,4 @@ __all__ = [
     "TargetTrackerService",
     "tracking_service",
     "ZoneMonitorService",
-    "AerialDiffusionService",
-    "generative_service",
 ]

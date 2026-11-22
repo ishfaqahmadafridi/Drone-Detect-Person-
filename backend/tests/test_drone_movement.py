@@ -65,6 +65,28 @@ def test_expired_input_sends_neutral_then_stops_keepalives(control):
     assert c.transport.send_rc.call_count == count
 
 
+def test_input_and_release_send_without_waiting_for_periodic_tick(control):
+    c = control
+    c.service.action(c.owner, "takeoff")
+    c.transport.send_rc.reset_mock()
+    c.service.input(movement(c.owner, 1, forward_back=25))
+    assert c.transport.send_rc.call_args.args[0].forward_back == 25
+    c.service.input(movement(c.owner, 2))
+    assert c.transport.send_rc.call_count == 2
+    assert not any(c.transport.send_rc.call_args.args[0].model_dump().values())
+
+
+def test_input_send_failure_disables_movement(control):
+    c = control
+    c.service.action(c.owner, "takeoff")
+    c.transport.send_rc.side_effect = OSError("link lost")
+    with pytest.raises(HTTPException) as error:
+        c.service.input(movement(c.owner, 1, forward_back=25))
+    assert error.value.status_code == 503
+    assert not c.service.connected
+    assert c.service.flight_state == "unknown"
+
+
 def test_old_packets_and_other_operators_cannot_override(control):
     c = control
     c.service.action(c.owner, "takeoff")

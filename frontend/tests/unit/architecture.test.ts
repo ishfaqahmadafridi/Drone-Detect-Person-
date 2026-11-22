@@ -12,7 +12,8 @@ function sourceFiles(directory: string): string[] {
 
 it("keeps TSX types/state in central types/hooks and component indexes export-only", () => {
   const violations: string[] = [];
-  for (const file of sourceFiles("src")) {
+  for (const sourcePath of sourceFiles("src")) {
+    const file = sourcePath.split(path.sep).join("/");
     const source = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true,
       file.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
     const record = (node: ts.Node, rule: string) => violations.push(`${file}:${source.getLineAndCharacterOfPosition(node.getStart()).line + 1} ${rule}`);

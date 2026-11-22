@@ -59,3 +59,23 @@ def test_missing_opencv_returns_inactive_source(monkeypatch):
     assert not source.is_active
     assert source.read_frame() == (False, None)
     source.release()
+
+
+def test_udp_source_uses_latest_frame_reader_and_delegates_cleanup():
+    handle = MagicMock()
+    frame = object()
+    with patch("app.services.streaming.sources.device_source.open_capture", return_value=handle), patch(
+        "app.services.streaming.sources.device_source.LatestLiveCapture"
+    ) as reader:
+        reader.return_value.read_frame.return_value = (True, frame)
+        reader.return_value.last_frame_at = 123.0
+        source = DeviceFrameSource("udp://0.0.0.0:11111", transport="udp")
+        reader.assert_called_once_with(handle)
+        assert source.read_frame() == (True, frame)
+        assert source.last_frame_at == 123.0
+        handle.read.assert_not_called()
+        source.release()
+        source.release()
+        reader.return_value.release.assert_called_once()
+        handle.release.assert_not_called()  # Reader owns release after read exits.
+        assert source.last_frame_at is None

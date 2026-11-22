@@ -48,10 +48,27 @@ Simulation validates control state and command flow, not aircraft physics.
    SDK mode, then use the new panel's takeoff, movement, and landing controls.
    Successful SDK connection does not measure the aircraft's airborne state.
 
-The browser sends the latest axes every 100 ms, serializing requests rather than
-queuing every pointer event. The backend repeats fresh input every 50 ms. Those
+The browser sends direction changes and releases immediately over a persistent
+WebSocket, without waiting for earlier replies, and refreshes held axes every
+50 ms. HTTP input remains a serialized fallback if the socket is unavailable.
+The backend repeats fresh input every 50 ms. Those
 rates are configurable engineering defaults, not values recovered from the APK.
-Movement magnitude defaults to 25 on the SDK's -100…100 channel range.
+Manual movement and rotation use magnitude 100, the maximum command value on
+the SDK's -100…100 channel range. Opposite directions still cancel to neutral;
+releasing a control sends zero on its axis. This requests maximum movement,
+not direct motor power or a guaranteed physical speed. Aircraft performance
+and automatic tracking still require hardware validation.
+Accepted input (including release to neutral) is also sent immediately, without
+waiting for the next periodic backend tick.
+
+The movement socket uses the same host selection as telemetry, with the path
+`/api/drone/manual/input`. Set `NEXT_PUBLIC_WS_ORIGIN` to the backend origin when
+the frontend uses a separate host or a nonstandard development port; production
+reverse proxies must forward WebSocket upgrades. Changing this environment
+variable requires restarting/rebuilding the frontend. Pending replies and socket
+buffering are bounded; a stalled active connection disables input and requires
+reconnecting controls. Ownership, sequence checks, and the backend input expiry
+apply to both transports.
 
 Release, pointer cancellation, focus loss, hidden tabs, and component cleanup
 clear held directions. After 0.6 seconds without input, the backend attempts one
@@ -192,6 +209,12 @@ through the same serialized command transport and selects the aerial Tello sourc
 OpenCV's FFmpeg backend decodes UDP video on port 11111. Frames enter the existing
 detection and MJPEG pipeline; no additional inference loop is created. Starting
 video does not take off or land.
+
+Live UDP capture drains decoded frames in a dedicated reader and keeps only the
+newest frame for the existing pipeline. Slow inference therefore skips older
+frames instead of accumulating a playback backlog. This does not eliminate
+decoder, inference, network, or browser latency. Actual flight smoothness still
+requires testing with the aircraft.
 
 The camera message distinguishes requested video from recently decoded frames.
 If video is missing or stops, simulation fallback keeps the viewer open. A waiting
